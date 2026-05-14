@@ -1,0 +1,7 @@
+# EU Space Act — obligations.
+# AUTHORED BY MAX. Phase 1 of the build plan.
+# Format: see schema.yaml.
+
+source: eu_space_act
+jurisdiction: EU
+obligations: []  # Phase 1 task: populate.

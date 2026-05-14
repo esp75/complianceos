@@ -1,0 +1,29 @@
+# Obligation schema for Celestia Dynamics reg-graph.
+# Pydantic-compatible. Loaded by app/api/rag/ and app/api/ingest/.
+# Max owns the content of every regulation file in this directory.
+
+version: 1
+
+# Top-level obligation record.
+obligation:
+  required:
+    - id              # stable canonical ID, e.g. EU-SPACE-ACT-2024-ART-12-3
+    - source          # one of: eu_space_act | fcc_22_74 | itu_filings | iso_24113
+    - article         # human-readable citation
+    - text            # verbatim text of the obligation
+    - rationale_code  # controlled vocabulary, see rationale_codes.yaml
+    - effective_date  # ISO-8601
+    - applicability   # operator | manufacturer | launch_provider | ground_segment
+  optional:
+    - supersedes      # list of obligation IDs this replaces
+    - superseded_by   # set when this obligation is retired
+    - references      # list of related obligation IDs (graph edges)
+    - tags            # free-form, e.g. "debris-mitigation", "spectrum"
+    - jurisdiction    # ISO-3166 alpha-2 or "EU" or "INTERNATIONAL"
+
+# Graph edge types for reg-graph (Apache AGE).
+edges:
+  - implements       # obligation X implements treaty/standard Y
+  - conflicts_with   # X and Y contradict — must be resolved manually
+  - cited_by         # X is cited by case/decision Y
+  - depends_on       # compliance with X requires Y first

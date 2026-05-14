@@ -1,0 +1,24 @@
+# Controlled vocabulary for obligation.rationale_code.
+# Used by the RAG layer to force citation-grounded answers.
+
+codes:
+  DEBRIS_MITIGATION:
+    description: On-orbit collision avoidance and post-mission disposal.
+  SPECTRUM_COORDINATION:
+    description: Frequency assignment, coordination requests, harmful interference.
+  LAUNCH_AUTHORIZATION:
+    description: Pre-launch licensing and notification obligations.
+  ENVIRONMENTAL_IMPACT:
+    description: NEPA-style or EU equivalent environmental review.
+  THIRD_PARTY_LIABILITY:
+    description: Insurance and indemnity obligations.
+  CROSS_BORDER_DATA:
+    description: Cross-border transfer of satellite telemetry / payload data.
+  CYBER_RESILIENCE:
+    description: Security obligations on command/control link and ground segment.
+  END_OF_LIFE:
+    description: Deorbit timelines, passivation, disposal orbits.
+  REGISTRATION:
+    description: Object registration under the 1976 UN Registration Convention.
+  EXPORT_CONTROL:
+    description: ITAR / EU dual-use / Wassenaar obligations.

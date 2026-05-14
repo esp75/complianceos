@@ -1,0 +1,43 @@
+# Vendor reference clones (read-only OSS references, not dependencies)
+vendor/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+.uv-cache/
+*.egg-info/
+dist/
+build/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+.turbo/
+
+# Editors
+.vscode/
+.idea/
+.DS_Store
+
+# Local infra
+data/
+*.log
+
+# Secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# OS
+Thumbs.db
+
+# Coolify deploy state
+infra/coolify/.state/
