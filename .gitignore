@@ -30,6 +30,11 @@ out/
 data/
 *.log
 
+# Skyfield/Hapsira ephemeris downloads (auto-fetched on first import,
+# 30-200 MB each — never commit, never run from repo root)
+de*.bsp
+de*.bsp.download*
+
 # Secrets
 .env
 .env.local
