@@ -37,6 +37,9 @@ dev = [
 
 [tool.pytest.ini_options]
 testpaths = ["app", "mcps", "tests"]
+# `vendor` MUST stay excluded. vendor/skyfield/contrib/almanac2/test_almanac2.py
+# calls `load('de430t.bsp')` at module import time, which writes a 128 MB JPL
+# ephemeris file to cwd. Unbounded collection there filled the disk once already.
 norecursedirs = ["vendor", ".venv", "node_modules", "data", "infra/coolify/.state"]
 asyncio_mode = "auto"
 
