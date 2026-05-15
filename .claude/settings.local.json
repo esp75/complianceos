@@ -4,7 +4,10 @@
       "Bash(bun --version)",
       "Bash(git --version)",
       "Bash(uv --version)",
-      "Bash(docker --version)"
+      "Bash(docker --version)",
+      "Read(//Users/esponsor/.claude/plugins/**)",
+      "Read(//Users/esponsor/.gbrain/**)",
+      "Read(//Users/esponsor/.claude/skills/gstack/**)"
     ]
   }
 }

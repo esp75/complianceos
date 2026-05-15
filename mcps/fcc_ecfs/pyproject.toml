@@ -1,0 +1,20 @@
+[project]
+name = "celestia-mcp-fcc-ecfs"
+version = "0.1.0"
+description = "MCP server: FCC Electronic Comment Filing System (ECFS) watcher."
+requires-python = ">=3.12"
+dependencies = [
+  "mcp[cli]>=1.0",
+  "httpx>=0.28",
+  "pydantic>=2.13",
+]
+
+[project.scripts]
+fcc-ecfs-mcp = "fcc_ecfs_mcp:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]

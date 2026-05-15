@@ -1,0 +1,75 @@
+# Local dev stack for complianceOS.
+# Production deploy uses Coolify on Hetzner — this file is for local dev only.
+#
+# Bring up:    docker compose -f infra/docker-compose.yml up -d postgres
+# Bring all:   docker compose -f infra/docker-compose.yml up -d
+# Tear down:   docker compose -f infra/docker-compose.yml down
+
+name: complianceos
+
+services:
+  postgres:
+    image: apache/age:latest
+    container_name: complianceos-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: celestia
+      POSTGRES_PASSWORD: celestia_dev_only
+      POSTGRES_DB: celestia
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U celestia -d celestia"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ../app/api
+      dockerfile: Dockerfile
+    container_name: complianceos-api
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+asyncpg://celestia:celestia_dev_only@postgres:5432/celestia
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../app/api:/app:ro
+    profiles: ["full"]
+
+  web:
+    build:
+      context: ../app/web
+      dockerfile: Dockerfile
+    container_name: complianceos-web
+    depends_on:
+      - api
+    environment:
+      NEXT_PUBLIC_API_URL: http://api:8000
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../app/web:/app
+      - /app/node_modules
+    profiles: ["full"]
+
+  # Phase 7: Trillian-Tessera transparency log. Uncomment when Phase 7 begins.
+  # trillian-tessera:
+  #   image: ghcr.io/transparency-dev/tessera:latest
+  #   container_name: complianceos-tessera
+  #   restart: unless-stopped
+  #   environment:
+  #     TESSERA_BACKEND: postgres
+  #     TESSERA_DSN: postgres://celestia:celestia_dev_only@postgres:5432/celestia_tessera
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   ports:
+  #     - "8088:8088"
+  #   profiles: ["full"]
