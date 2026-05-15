@@ -9,7 +9,12 @@ name: complianceos
 
 services:
   postgres:
-    image: apache/age:latest
+    # Postgres 17 + Apache AGE + pgvector. Built from infra/postgres/Dockerfile
+    # because no upstream image bundles AGE and pgvector together.
+    build:
+      context: ./postgres
+      dockerfile: Dockerfile
+    image: complianceos/postgres-age-vector:pg17
     container_name: complianceos-postgres
     restart: unless-stopped
     environment:
@@ -17,7 +22,8 @@ services:
       POSTGRES_PASSWORD: celestia_dev_only
       POSTGRES_DB: celestia
     ports:
-      - "5432:5432"
+      # Host 5433 → container 5432. 5432 is left for other projects' Postgres.
+      - "5433:5432"
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
       - ./postgres/init:/docker-entrypoint-initdb.d:ro
