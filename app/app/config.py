@@ -20,6 +20,8 @@ class Settings(BaseSettings):
     # --- Authorization (OpenFGA) ---
     # BFF-boundary authorization checks happen against this OpenFGA HTTP API (ADR-0012).
     openfga_url: str = "http://openfga:8080"
+    # theopenlane names its store "openlane"; the client resolves store + latest model id.
+    openfga_store_name: str = "openlane"
 
     # --- OIDC (Dex for local dev; EU IdP in Phase 4) ---
     oidc_issuer_url: str = "http://dex:5556/dex"

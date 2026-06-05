@@ -54,3 +54,4 @@ models/
 weights/
 *.safetensors
 *.bin
+.gstack/

@@ -7,7 +7,7 @@ GraphQL here localizes schema drift across theopenlane SHA bumps.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 import httpx
 
@@ -53,7 +53,16 @@ class OpenlaneClient:
         payload = resp.json()
         if payload.get("errors"):
             raise OpenlaneError(f"theopenlane GraphQL errors: {payload['errors']}")
-        return payload.get("data", {})
+        return cast("dict[str, Any]", payload.get("data", {}))
+
+    async def get_self(self, token: str) -> dict[str, Any]:
+        """Resolve the current user (theopenlane ``self`` query) for a bearer token.
+
+        A Personal Access Token works standalone; a raw JWT also needs core's session
+        cookie, which the BFF does not hold — so PATs are the practical BFF credential.
+        """
+        data = await self.execute("{ self { id email firstName lastName } }", token=token)
+        return cast("dict[str, Any]", data.get("self", {}))
 
     async def ping(self) -> bool:
         """Readiness probe — hits theopenlane's own /ready endpoint.

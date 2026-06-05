@@ -8,38 +8,29 @@ Concerns that span every layer: who can do what (auth), how we know it's working
 
 ## Sub-folders
 
-- `auth/` — OpenFGA model definitions for the operator/insurer/regulator/admin tetrad. Backed by theopenlane/core's auth surface.
+- `auth/` — the operator/insurer/regulator/admin tetrad realized on top of theopenlane/core's auth surface via OpenFGA **groups + tuples** (not a custom model). See [`tetrad-roles.md`](../../cross-cutting/auth/tetrad-roles.md) and [`seed-tuples.yaml`](../../cross-cutting/auth/seed-tuples.yaml).
 - `observability/` — Prometheus rules, Grafana dashboards, Loki log-pipeline configs. All EU-hosted.
 - `deploy/` — docker-compose.yml, Coolify configuration, nginx ingress, LetsEncrypt automation.
 
-## Auth model (high-level)
+## Auth model (tetrad via groups, ADR-0012)
 
-```
-type Organization
-type Framework
-type Control
-type Evidence
-type User
+theopenlane's embedded OpenFGA model is auto-written on startup and must not be patched
+(ADR-0001). It ships `organization` roles `admin/member/owner` and an object-creator
+pattern (`<obj>_creator: [group#member]`, `can_create_<obj>: can_edit or <obj>_creator`).
+The tetrad is built **on top** of these primitives with groups + relationship tuples —
+no custom `organization#operator/#insurer/#regulator` types (those would require a fork).
 
-relations:
-  Organization#member          -> User
-  Organization#operator        -> User
-  Organization#insurer         -> User
-  Organization#regulator       -> User
-  Organization#admin           -> User
-  Framework#org                -> Organization
-  Control#framework            -> Framework
-  Evidence#org                 -> Organization
-  Evidence#control             -> Control
+| Tetrad role | org role | extra | net capability |
+|---|---|---|---|
+| admin | `ADMIN` | `audit_log_viewer` tuple | create + read + audit |
+| operator | `MEMBER` | Operators group = evidence/control/standard creator | `can_create_*`, read |
+| insurer | `MEMBER` | — | read only (BFF scopes to underwritten orgs) |
+| regulator | `MEMBER` | `audit_log_viewer` tuple | read + audit (BFF scopes by jurisdiction) |
 
-policies:
-  operator   can read/write Evidence within their Org
-  insurer    can read Evidence + risk scores across Orgs they have a contract with
-  regulator  can read Evidence + audit logs across Orgs they have jurisdiction over
-  admin      can read/write all
-```
-
-(Full model in `auth/openfga.model.fga` — future, Phase 1.)
+Cross-org scoping (which orgs an insurer/regulator may see) is **not expressible in the
+upstream model** and is enforced at the BFF boundary (`app/clients/openfga.py`), per
+ADR-0012. The mapping spec is [`cross-cutting/auth/tetrad-roles.md`](../../cross-cutting/auth/tetrad-roles.md);
+the executable seeder is `app/app/auth/seed_tetrad.py` (verified by OpenFGA `/check`).
 
 ## Observability targets (Phase 4)
 

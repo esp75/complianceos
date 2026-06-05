@@ -1,0 +1,39 @@
+# Declarative summary of the tetrad seeded by app/app/auth/seed_tetrad.py.
+# This documents intent; the executable source of truth is the seeder, which uses
+# theopenlane GraphQL mutations where they exist and OpenFGA /write otherwise.
+# See tetrad-roles.md.
+
+org: "Celestia Demo Operator"   # organization:<ULID> at runtime
+
+groups:
+  Operators:      { creator_for: [evidence, control, standard] }  # via updateOrganization add*CreatorIDs
+  Insurers:       { creator_for: [] }
+  Regulators:     { creator_for: [] }
+  Administrators: { creator_for: [] }
+
+roles:
+  admin:
+    org_membership: ADMIN
+    groups: [Administrators]
+    extra_tuples: []
+  operator:
+    org_membership: MEMBER
+    groups: [Operators]
+    extra_tuples: []
+  insurer:
+    org_membership: MEMBER
+    groups: [Insurers]
+    extra_tuples: []
+  regulator:
+    org_membership: MEMBER
+    groups: [Regulators]
+    # no theopenlane mutation for audit_log_viewer -> written directly to the FGA store
+    extra_tuples:
+      - { user: "user:<regulator>", relation: audit_log_viewer, object: "organization:<org>" }
+
+# Expected OpenFGA /check outcomes (asserted by the seeder):
+expect:
+  operator:  { can_create_evidence: true,  audit_log_viewer: false }
+  insurer:   { can_create_evidence: false, can_view: true }
+  regulator: { audit_log_viewer: true,     can_create_evidence: false }
+  admin:     { can_create_evidence: true,  audit_log_viewer: true }

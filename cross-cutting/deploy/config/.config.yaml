@@ -21,7 +21,8 @@ server:
   cors:
     alloworigins:
       - http://localhost:3001   # openmct / SSO test UI
-      - http://localhost:8000   # Celestia FastAPI BFF
+      - http://localhost:8000   # Celestia FastAPI BFF (default)
+      - http://localhost:8001   # Celestia FastAPI BFF (when 8000 is taken locally)
       - https://studio.apollographql.com
       - https://sandbox.embed.apollographql.com
   defaulttrustcenterdomain: "localhost:3004"

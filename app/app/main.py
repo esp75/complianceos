@@ -12,7 +12,8 @@ from contextlib import asynccontextmanager
 import httpx
 from fastapi import FastAPI
 
-from app.api import health
+from app.api import auth, health
+from app.clients.openfga import OpenFGAClient
 from app.clients.openlane import OpenlaneClient
 from app.config import get_settings
 
@@ -22,6 +23,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     settings = get_settings()
     async with httpx.AsyncClient(timeout=settings.upstream_timeout_seconds) as http:
         app.state.openlane = OpenlaneClient(settings, http)
+        app.state.openfga = OpenFGAClient(settings, http)
         yield
 
 
@@ -33,3 +35,4 @@ app = FastAPI(
 )
 
 app.include_router(health.router)
+app.include_router(auth.router)

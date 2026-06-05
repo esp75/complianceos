@@ -80,6 +80,10 @@ services:
 
   core:
     image: ghcr.io/theopenlane/core:v1.20.6
+    # core is published amd64-only. On Apple Silicon run the VM with Rosetta
+    # (`colima start --vm-type vz --vz-rosetta`) — QEMU emulation corrupts Go's heap
+    # ("fatal error: found bad pointer in Go heap") and crash-loops core.
+    platform: linux/amd64
     depends_on:
       postgres:
         condition: service_healthy
@@ -155,7 +159,8 @@ services:
       - CELESTIA_OPENFGA_URL=http://openfga:8080
       - CELESTIA_OIDC_ISSUER_URL=http://dex:5556/dex
     ports:
-      - "8000:8000"
+      # Host 8001 (8000 is commonly taken by other local dev servers); container stays 8000.
+      - "8001:8000"
     restart: unless-stopped
 
 volumes:
