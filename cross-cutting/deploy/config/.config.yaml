@@ -1,0 +1,160 @@
+# Celestia L1 — theopenlane/core config.
+# Based on upstream config/config-dev.example.yaml @ vendored SHA a76ccb5c.
+# In-network connections (DB, redis, authz host, jobqueue) are overridden by the
+# CORE_* env vars set on the `core` service in docker-compose.yml — keep those in sync.
+server:
+  dev: true
+  complexitylimit: 200
+  graphPool:
+    maxWorkers: 10
+  csrfprotection:
+    enabled: false
+    header: X-CSRF-Token
+    cookie: ol.csrf-token
+    secure: false
+    samesite: Lax
+    cookiepath: /
+  enablegraphextensions: true
+  enablegraphsubscriptions: false
+  cachecontrol:
+    enabled: false
+  cors:
+    alloworigins:
+      - http://localhost:3001   # openmct / SSO test UI
+      - http://localhost:8000   # Celestia FastAPI BFF
+      - https://studio.apollographql.com
+      - https://sandbox.embed.apollographql.com
+  defaulttrustcenterdomain: "localhost:3004"
+  trustcentercnametarget: "cname.demo-dns.com"
+  tls:
+    enabled: false
+campaignwebhook:
+  enabled: false
+  resendapikey: ""
+  resendsecret: ""
+db:
+  debug: true
+  drivername: pgx
+  cachettl: 10s
+  multiwrite: false
+  migrationprovider: "goose"
+  runmigrations: true
+  enablehistory: true
+
+jobqueue:
+
+auth:
+  enabled: true
+  token:
+    kid: "02GGBS68AM12178M0REW3CEAFF"
+    audience: "http://localhost:17608"
+    refreshaudience: "http://localhost:17608"
+    issuer: "http://localhost:17608"
+    jwksEndpoint: "http://localhost:17608/.well-known/jwks.json"
+  supportedproviders:
+    - google
+    - github
+  providers:
+    google:
+      clientendpoint: "http://localhost:17608"
+      clientid: "client_id_here.apps.googleusercontent.com"
+      clientsecret: "client_secret_here"
+      scopes:
+        - email
+        - profile
+    github:
+      clientendpoint: "http://localhost:17608"
+      clientid: "client_id_here"
+      clientsecret: "client_secret_here"
+      scopes:
+        - user:email
+        - read:user
+    webauthn:
+      debug: false
+      enabled: true
+      relyingpartyid: "localhost"
+      requestorigins:
+        - "http://localhost:3001"
+
+totp:
+  codelength: 6
+  enabled: true
+  issuer: "celestia.eu"
+  recoverycodecount: 16
+  recoverycodelength: 8
+  redis: true
+  secret: "change-me-local-only"
+
+authz:
+  enabled: true
+  storename: openlane
+  hosturl: http://localhost:8080
+  # dev: rewrite the embedded FGA model on changes; container restart needed to apply.
+  createnewmodel: true
+  credentials:
+    apitoken: "change-me-local-only"
+
+sessions:
+  encryptionkey: encryptionsecret
+  signingkey: my-signing-secret
+  httponly: true
+  samesite: "Lax"
+  secure: false
+
+ratelimit:
+  enabled: false
+
+entConfig:
+  maxschemaimportsize: 262144
+  modules:
+    enabled: false
+    usesandbox: true
+    devmode: true
+  entitytypes:
+    - vendor
+    - account
+    - customer
+
+objectstorage:
+  devmode: true
+  enabled: true
+  providers:
+    disk:
+      bucket: ""
+      credentials:
+        accesskeyid: ""
+        accountid: ""
+        apitoken: ""
+        projectid: ""
+        secretaccesskey: ""
+      enabled: false
+      endpoint: ""
+      ensureavailable: false
+      region: ""
+
+subscription:
+  enabled: false
+  privatestripekey: not_an_actual_key
+
+cloudflare:
+  apitoken: ""
+  accountid: ""
+  clientid: ""
+  clientsecret: ""
+  enabled: false
+
+workflows:
+  cel:
+    evaloptimize: true
+    extendedvalidations: true
+    interruptcheckfrequency: 100
+    parserexpressionsizelimit: 100000
+    parserrecursionlimit: 250
+    timeout: 100000000
+  enabled: true
+  gala:
+    enabled: true
+    failonenqueueerror: false
+    maxretries: 5
+    queuename: events
+    workercount: 10

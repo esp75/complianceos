@@ -1,0 +1,33 @@
+# Celestia River job worker config. Based on upstream
+# docker/configs/riverboat/.config.dev.yaml @ SHA a76ccb5c, with the DB host and
+# API host pointed at compose service names (not host.docker.internal).
+river:
+  databaseHost: postgres://postgres:password@postgres:5432/jobs?sslmode=disable
+  runMigrations: true
+  queues:
+    - name: email
+      maxWorkers: 100
+    - name: default
+      maxWorkers: 100
+    - name: compliance
+      maxWorkers: 100
+    - name: notifications
+      maxWorkers: 100
+  workers:
+    openlaneconfig:
+      openlaneapihost: "http://core:17608"
+      # Non-empty placeholder so riverboat passes its startup token check and runs the
+      # River schema migrations the core job queue depends on. Replace with a real PAT
+      # (minted from core) when background jobs that call the API are needed (M2/M3).
+      openlaneapitoken: "tolp_dev_placeholder_token"
+    emailWorker:
+      config:
+        enabled: true
+        devMode: true
+        fromEmail: no-reply@celestia.eu
+        testDir: fixtures/email
+        token: ""
+    exportContentWorker:
+      config:
+        enabled: true
+refreshInterval: 600000000000

@@ -1,0 +1,163 @@
+# Celestia ComplianceOS v0.2 — L1 substrate dev stack.
+#
+# Celestia-owned compose (ADR-0012). Replicates the env contract from theopenlane
+# upstream docker/docker-compose-published.yml but pins exact image tags and lives
+# in the audited repo surface. `external/` is gitignored, so we do NOT depend on
+# upstream compose files.
+#
+# Image pins (verify against GHCR; track in docs/upstream-watch.md):
+#   core      v1.20.6  — matches vendored SHA a76ccb5c (ADR-0001 cites v1.20.6).
+#   openfga   v1.15.1  — from upstream docker-compose-fga.yml.
+#   redis     7.4.9    — from upstream docker-compose-redis.yml.
+#   dex       v2.45.1  — from upstream docker-compose.yml.
+#
+# Usage (from this directory):
+#   docker compose up -d
+#   curl localhost:8000/readyz        # BFF -> L1 wire check
+#   docker compose down               # add -v to drop volumes
+
+name: celestia-l1
+
+services:
+  postgres:
+    image: postgres:17
+    command: postgres -c 'max_connections=150'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pg-init:/docker-entrypoint-initdb.d:ro
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  openfga-migrate:
+    image: openfga/openfga:v1.15.1
+    command: migrate
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - OPENFGA_DATASTORE_ENGINE=postgres
+      - OPENFGA_DATASTORE_URI=postgres://postgres:password@postgres:5432/openfga?sslmode=disable
+
+  openfga:
+    image: openfga/openfga:v1.15.1
+    depends_on:
+      openfga-migrate:
+        condition: service_completed_successfully
+    command:
+      - run
+      - --check-query-cache-enabled
+      - --authn-method=none
+    environment:
+      - OPENFGA_DATASTORE_ENGINE=postgres
+      - OPENFGA_DATASTORE_URI=postgres://postgres:password@postgres:5432/openfga?sslmode=disable
+      - OPENFGA_LOG_FORMAT=json
+      - OPENFGA_PLAYGROUND_ENABLED=true
+    ports:
+      - "8080:8080"   # HTTP API (BFF authorization checks)
+      - "8081:8081"   # gRPC
+      - "3000:3000"   # playground (dev only)
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/grpc_health_probe", "-addr=openfga:8081"]
+      interval: 5s
+      timeout: 30s
+      retries: 5
+
+  redis:
+    image: redis:7.4.9-alpine
+    command: redis-server --save 20 1 --loglevel warning
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  core:
+    image: ghcr.io/theopenlane/core:v1.20.6
+    depends_on:
+      postgres:
+        condition: service_healthy
+      openfga:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    # The image runs as nonroot (65532) with CWD=/, where the bundled FGA model
+    # (fga/model/model.fga) lives but is not writable. core generates ephemeral dev
+    # JWT keys into its CWD on startup, which nonroot cannot do at /. For local dev we
+    # run as root so key generation succeeds while the bundled model stays resolvable.
+    # PRODUCTION: revert to nonroot and supply keys via a mounted keywatcher KeyDir.
+    user: "0:0"
+    command:
+      - serve
+      - --debug
+      - --pretty
+      - --config=/config/.config.yaml
+    environment:
+      # In-network overrides of the bind-mounted config (keep in sync with config/.config.yaml).
+      - CORE_AUTHZ_HOSTURL=http://openfga:8080
+      - CORE_REDIS_ADDRESS=redis:6379
+      - CORE_DB_PRIMARYDBSOURCE=postgres://postgres:password@postgres:5432/core?sslmode=disable
+      - CORE_JOBQUEUE_CONNECTIONURI=postgres://postgres:password@postgres:5432/jobs?sslmode=disable
+    volumes:
+      - type: bind
+        source: ./config/.config.yaml
+        target: /config/.config.yaml
+        read_only: true
+    ports:
+      - "17608:17608"   # GraphQL /query + /ready + /.well-known
+    restart: unless-stopped
+
+  riverboat:
+    # River job-queue worker. Owns the River schema migrations (runMigrations: true)
+    # that core's job queue / gala workflow engine require, so it must run for core to
+    # boot cleanly. Uses a placeholder API token in dev (see riverboat.config.yaml);
+    # swap for a real PAT when API-calling jobs are needed (M2/M3).
+    image: ghcr.io/theopenlane/riverboat:${RIVERBOAT_TAG:-arm64-latest}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command:
+      - serve
+      - --debug
+      - --pretty
+    volumes:
+      - type: bind
+        source: ./config/riverboat.config.yaml
+        target: /config/.config.yaml
+        read_only: true
+    restart: unless-stopped
+
+  dex:
+    image: ghcr.io/dexidp/dex:v2.45.1
+    command: ["dex", "serve", "/etc/dex/config.yaml"]
+    volumes:
+      - ./config/dex.yaml:/etc/dex/config.yaml:ro
+    ports:
+      - "5556:5556"
+    restart: unless-stopped
+
+  app:
+    build:
+      context: ../../app
+      dockerfile: Dockerfile
+    image: celestia/api:dev
+    depends_on:
+      core:
+        condition: service_started
+    environment:
+      - CELESTIA_OPENLANE_GRAPHQL_URL=http://core:17608/query
+      - CELESTIA_OPENFGA_URL=http://openfga:8080
+      - CELESTIA_OIDC_ISSUER_URL=http://dex:5556/dex
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+volumes:
+  pg_data:
+  redis_data:
