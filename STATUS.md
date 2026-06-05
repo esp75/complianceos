@@ -1,7 +1,7 @@
 # STATUS — ComplianceOS v0.2
 
 **Date**: 2026-06-05
-**Phase**: 1 (L1 substrate) — M0–M3 DONE
+**Phase**: 1 (L1 substrate) — M0–M4 DONE
 **Working dir**: `/Users/esponsor/Documents/Github/complianceOSv0.2/`
 **Scope**: Phase 0 scaffolding complete. Phase 1 underway: the L1 substrate now boots
 locally and the Celestia BFF proves connectivity to it.
@@ -30,8 +30,14 @@ Repo is now git-initialized (branch `phase1-l1-substrate-first-slice`). Docker r
   `mappedCategories`). Loaded all 3 frameworks (13 controls, 22 subcontrols), idempotent.
   theopenlane's `@externalReadOnly(source:FRAMEWORK)` skips creates, so title/refCode/etc.
   set fine on create. Evidence types are a BFF tag vocabulary (not pushed). 15 tests green.
-- ⏳ **Next**: M4 BFF domain endpoints (org/evidence/frameworks, with FGA enforcement; `/cso`)
-  → M5 smoke test + regulator stub.
+- ✅ **M4** — BFF domain endpoints with tetrad enforcement (ADR-0012): `GET /frameworks`,
+  `GET /organizations`, `POST /evidence`, `GET /evidence?org_id=`, `GET /evidence/{id}/history`.
+  Each gates on an OpenFGA `assert_can` check at the boundary (fail-closed), then forwards the
+  user token for defense-in-depth. Verified live: operator creates evidence linked to a control
+  (201), insurer blocked (403), regulator lists + reads audit history (200), operator denied
+  history (403). Seed now mints per-role PATs. 20 tests; mypy/ruff clean. `/cso`: 0 findings.
+- ⏳ **Next**: M5 — end-to-end smoke test (`tests/test_smoke_e2e.py`) + minimal regulator portal
+  stub (login → evidence list → download audit history). M6 (optional): KG Postgres for Phase 3.
 
 ## What was scaffolded
 

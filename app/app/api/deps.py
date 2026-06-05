@@ -11,7 +11,7 @@ from typing import Annotated, Any, cast
 
 from fastapi import Depends, Header, HTTPException, Request, status
 
-from app.clients.openfga import OpenFGAClient
+from app.clients.openfga import OpenFGAClient, OpenFGAError
 from app.clients.openlane import OpenlaneClient, OpenlaneError
 
 
@@ -51,3 +51,26 @@ async def current_user(
             headers={"WWW-Authenticate": "Bearer"},
         )
     return {**user, "_token": token}
+
+
+async def assert_can(
+    openfga: OpenFGAClient, user: dict[str, Any], relation: str, obj: str
+) -> None:
+    """BFF-boundary authorization (ADR-0012). Raise 403 unless the user has ``relation``
+    on ``obj``. Fail-closed: an OpenFGA error denies. Supplies the user's email domain as
+    condition context (the org ``access`` relation is gated by ``email_domains_allowed``).
+    """
+    email = user.get("email", "")
+    domain = email.split("@", 1)[1] if "@" in email else ""
+    try:
+        allowed = await openfga.check(
+            f"user:{user['id']}", relation, obj,
+            context={"email_domain": domain} if domain else None,
+        )
+    except OpenFGAError:
+        allowed = False
+    if not allowed:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"forbidden: requires '{relation}' on {obj}",
+        )

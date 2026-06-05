@@ -104,6 +104,21 @@ async def ensure_user(email: str, first: str, last: str) -> str:
         return uid
 
 
+async def mint_user_pat(email: str, first: str, last: str, org_id: str) -> str:
+    """Log the user in and mint a Personal Access Token scoped to the demo org,
+    so the BFF (M4) can be exercised as this role with a standalone bearer.
+    """
+    async with httpx.AsyncClient(timeout=20.0) as http:
+        token, _uid = await authenticate(http, email, first, last)
+        data = await gql(
+            http, token,
+            "mutation($i:CreatePersonalAccessTokenInput!)"
+            "{ createPersonalAccessToken(input:$i){ personalAccessToken{ token } } }",
+            {"i": {"name": f"celestia-demo-{email.split('@')[0]}", "organizationIDs": [org_id]}},
+        )
+        return str(data["createPersonalAccessToken"]["personalAccessToken"]["token"])
+
+
 async def find_or_create_org(http: httpx.AsyncClient, token: str) -> str:
     data = await gql(
         http,
@@ -272,13 +287,16 @@ async def main() -> int:
 
     print(f"\norg: {org}")
     if pat:
-        print("owner PAT (for BFF demo on host port 8001):")
-        print(f"  PAT={pat}")
-        print('  curl -s localhost:8001/auth/me -H "Authorization: Bearer $PAT"')
-        print(
-            "  curl -s 'localhost:8001/auth/can?relation=can_create_evidence"
-            f"&object={org}' -H \"Authorization: Bearer $PAT\""
-        )
+        print(f"PAT owner {pat}")
+
+    # 9. Mint a PAT per demo role (scoped to the org) for M4 BFF role testing.
+    print("\ndemo PATs (BFF on :8001) — format: PAT <role> <token>")
+    for role, info in DEMO_USERS.items():
+        try:
+            upat = await mint_user_pat(*info, org_id)
+            print(f"PAT {role} {upat}")
+        except SeedError as exc:
+            print(f"  ! PAT mint failed for {role}: {exc}", file=sys.stderr)
 
     await fga._http.aclose()
     return 0 if all_ok else 1
