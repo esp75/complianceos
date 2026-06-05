@@ -1,9 +1,26 @@
 # STATUS — ComplianceOS v0.2
 
-**Date**: 2026-05-15
-**Phase**: 0 (Bootstrap)
+**Date**: 2026-06-05
+**Phase**: 1 (L1 substrate) — first slice (M0–M1) DONE
 **Working dir**: `/Users/esponsor/Documents/Github/complianceOSv0.2/`
-**Scope**: Scaffolding + plan + dependency vendoring + agent-memory ingest. **Not yet a functioning system** — no Phase 1 code written.
+**Scope**: Phase 0 scaffolding complete. Phase 1 underway: the L1 substrate now boots
+locally and the Celestia BFF proves connectivity to it.
+
+## Phase 1 progress (L1 substrate)
+
+Repo is now git-initialized (branch `phase1-l1-substrate-first-slice`). Docker runtime:
+**colima** (local dev).
+
+- ✅ **M0** — prerequisites: colima + Docker, git init, `app/` (uv, Python 3.12), **ADR-0012**
+  (FastAPI↔theopenlane GraphQL contract).
+- ✅ **M1** — infra up + BFF health proxy: `cross-cutting/deploy/docker-compose.yml`
+  (postgres, openfga, redis, core@v1.20.6, riverboat, dex) + Celestia FastAPI BFF (`app/`).
+  Verified: core `/ready` 200 (all subsystems OK), BFF `/readyz` 200 (503 when core down),
+  pytest green. See [docs/upstream-watch.md](./docs/upstream-watch.md) for image pins +
+  dev-only deviations (core-as-root for key gen, riverboat placeholder token).
+- ⏳ **Next**: M2 auth/tetrad (Dex login + OpenFGA groups) → M3 framework loader
+  (EU Space Act / ISO 24113 / ITU YAML → GraphQL) → M4 BFF domain endpoints → M5 smoke
+  test + regulator stub. `/cso` is mandatory at M2 and M4.
 
 ## What was scaffolded
 
