@@ -1,0 +1,65 @@
+# ITU RR Article 11 — Notification and recording of frequency assignments
+# Source: ITU Radio Regulations (2020) — DRAFT (paraphrased; review against official text)
+
+apiVersion: openlane.io/v1
+kind: Control
+metadata:
+  name: itu-rr-art-11
+  framework: itu
+  citation: "ITU RR Art.11"
+  display_name: "Notification and recording in the Master Register"
+  validation_status: draft
+
+spec:
+  description: |
+    Frequency assignments to stations shall be notified to the Radiocommunication
+    Bureau for examination and recording in the Master International Frequency
+    Register (MIFR). An assignment must be brought into use within the regulatory
+    period and notified, or the filing lapses.
+
+  rase:
+    requirement: |
+      The administration SHALL notify the assignment to the Bureau, bring it into
+      use within the regulatory time limit, and obtain a favourable finding for
+      recording in the MIFR.
+    applicability: |
+      All satellite-network frequency assignments intended for international
+      recognition and protection.
+    selection: |
+      Notification follows successful coordination (Art.9) where coordination is
+      required; bring-into-use deadlines apply per the RR (commonly 7 years from
+      advance publication).
+    exception: |
+      Assignments not brought into use within the regulatory period are cancelled
+      by the Bureau.
+
+  deontic_modality: SHALL
+
+  controls:
+    - id: itu-rr-art-11-notified-recorded
+      description: "Operator/administration must notify the assignment and achieve recording in the MIFR."
+      severity: high
+      evidence_required:
+        - itu-snl-filing
+      assessment_frequency: per-filing
+      verification_method: mifr-recording-confirmation
+
+    - id: itu-rr-art-11-brought-into-use
+      description: "Operator must bring the assignment into use within the regulatory time limit and evidence it."
+      severity: critical
+      evidence_required:
+        - itu-snl-filing
+        - propagation-snapshot
+      assessment_frequency: per-filing-milestone
+      verification_method: bring-into-use-confirmation-with-orbital-position
+      breach_consequence: "Filing lapses; spectrum/orbit rights are lost."
+
+  cross_references:
+    - "ITU RR Art.9"
+    - "ITU RR Art.22"
+
+  entity_links:
+    - entity: Operator
+      relation: subject_to
+    - entity: FrequencyAssignment
+      relation: applies_to

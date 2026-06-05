@@ -1,0 +1,53 @@
+# ISO 24113 — Openlane Framework manifest
+# Authoritative source: ISO 24113:2023 "Space systems — Space debris mitigation requirements"
+# Status: DRAFT — Celestia machine-actionable representation; clause text paraphrased
+#         from the public standard summary and must be reviewed against the purchased
+#         ISO text before validation_status flips to 'accepted' (Phase 1 week 3).
+
+apiVersion: openlane.io/v1
+kind: Framework
+metadata:
+  name: iso-24113
+  display_name: "ISO 24113 — Space Debris Mitigation Requirements"
+  short_name: "ISO-24113"
+  version: "2023"
+  jurisdiction: "International (ISO)"
+  governing_body: "International Organization for Standardization"
+  citation_pattern: "ISO 24113 §<clause>"
+
+spec:
+  description: |
+    Top-level space debris mitigation requirements applicable to all elements of
+    unmanned systems launched into, or passing through, near-Earth space. Covers
+    limitation of debris released during normal operations, prevention of on-orbit
+    break-ups, post-mission disposal of spacecraft and orbital stages, and
+    prevention of on-orbit collisions. Incorporated by reference by EU Space Act
+    Articles 5 and 6.
+
+  category: space-debris-mitigation
+  scope:
+    territory: "Global (near-Earth space: LEO, MEO, GEO, and protected regions)"
+    activity_types:
+      - operating_space_objects
+      - re-entry
+      - disposal
+    actor_types:
+      - operator
+      - launch_service_provider
+
+  controls_path: ./articles/
+
+  cross_references:
+    - framework: eu-space-act
+      relation: "incorporated_by"
+      context: "EU-SA Art.5/Art.6 incorporate ISO 24113 disposal + debris-mitigation requirements"
+    - framework: itu
+      relation: "complements"
+      context: "GEO disposal (graveyard orbit) interacts with ITU GSO slot vacation"
+
+  evidence_types_path: ./evidence-types.yaml
+
+  default_severity: high
+  validation_status: draft
+  last_reviewed: "2026-06-05"
+  next_review: "Phase 1 week 3 (review against purchased ISO 24113:2023 text)"

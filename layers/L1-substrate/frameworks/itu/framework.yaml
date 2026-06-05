@@ -1,0 +1,48 @@
+# ITU Radio Regulations — Openlane Framework manifest
+# Authoritative source: ITU Radio Regulations (Edition of 2020), Articles 9, 11, 21, 22
+# Status: DRAFT — Celestia machine-actionable representation; article text paraphrased
+#         and must be reviewed against the official ITU RR text before validation_status
+#         flips to 'accepted' (Phase 1 week 3).
+
+apiVersion: openlane.io/v1
+kind: Framework
+metadata:
+  name: itu
+  display_name: "ITU Radio Regulations (selected Articles)"
+  short_name: "ITU-RR"
+  version: "2020"
+  jurisdiction: "International (ITU)"
+  governing_body: "International Telecommunication Union"
+  citation_pattern: "ITU RR Art.<N>"
+
+spec:
+  description: |
+    Selected Articles of the ITU Radio Regulations governing the international
+    use of the radio-frequency spectrum and satellite orbits: coordination
+    (Art.9), notification and recording in the Master International Frequency
+    Register (Art.11), frequency sharing and power limits (Art.21), and
+    protection of space services including EPFD limits for non-GSO systems
+    (Art.22). Referenced as a prerequisite for EU Space Act authorisation.
+
+  category: spectrum-and-orbit-regulation
+  scope:
+    territory: "Global (ITU Member States and notifying administrations)"
+    activity_types:
+      - operating_space_objects
+    actor_types:
+      - operator
+      - notifying_administration
+
+  controls_path: ./articles/
+
+  cross_references:
+    - framework: eu-space-act
+      relation: "prerequisite_for"
+      context: "EU-SA references ITU filings as a precondition for authorisation"
+
+  evidence_types_path: ./evidence-types.yaml
+
+  default_severity: high
+  validation_status: draft
+  last_reviewed: "2026-06-05"
+  next_review: "Phase 1 week 3 (review against official ITU RR text)"

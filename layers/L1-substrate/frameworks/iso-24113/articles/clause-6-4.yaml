@@ -1,0 +1,65 @@
+# ISO 24113 §6.4 — Prevention of on-orbit collisions
+# Source: ISO 24113:2023 — DRAFT (paraphrased; review against purchased text)
+
+apiVersion: openlane.io/v1
+kind: Control
+metadata:
+  name: iso-24113-clause-6-4
+  framework: iso-24113
+  citation: "ISO 24113 §6.4"
+  display_name: "Prevention of on-orbit collisions"
+  validation_status: draft
+
+spec:
+  description: |
+    During all orbital phases the operator shall estimate and limit the
+    probability of accidental collision with known objects, in particular with
+    catalogued tracked objects and with manned/operational spacecraft, performing
+    collision-avoidance manoeuvres when a conjunction exceeds the agreed risk
+    threshold.
+
+  rase:
+    requirement: |
+      The operator SHALL screen for conjunctions against catalogued objects and
+      execute collision-avoidance manoeuvres when the predicted collision
+      probability exceeds the operator's risk threshold.
+    applicability: |
+      All manoeuvrable spacecraft operating in the LEO/GEO protected regions.
+    selection: |
+      Conjunction screening cadence and Pc threshold scale with orbital regime and
+      traffic density; manoeuvre when Pc exceeds threshold (commonly 1e-4).
+    exception: |
+      Non-manoeuvrable spacecraft cannot avoid; they remain subject to disposal
+      and lifetime limits to reduce exposure.
+
+  deontic_modality: SHALL
+
+  controls:
+    - id: iso-24113-6-4-conjunction-screening
+      description: "Operator must screen for conjunctions against catalogued objects on a defined cadence."
+      severity: high
+      evidence_required:
+        - conjunction-report
+      assessment_frequency: continuous
+      verification_method: conjunction-screening-logs-with-pc-estimates
+
+    - id: iso-24113-6-4-avoidance-maneuver
+      description: "Operator must execute and evidence collision-avoidance manoeuvres when Pc exceeds threshold."
+      severity: critical
+      evidence_required:
+        - conjunction-report
+        - disposal-telemetry
+      assessment_frequency: per-conjunction-event
+      verification_method: maneuver-telemetry-with-pre-post-conjunction-geometry
+
+  cross_references:
+    - "ISO 24113 §6.2"
+    - "EU-SA Art.5"
+
+  entity_links:
+    - entity: SpaceObject
+      relation: applies_to
+    - entity: ConjunctionEvent
+      relation: triggers
+    - entity: Operator
+      relation: must_screen

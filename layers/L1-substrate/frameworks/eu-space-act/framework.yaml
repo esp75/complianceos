@@ -10,6 +10,7 @@ metadata:
   short_name: "EU-SA"
   version: "0.1.0-draft"
   jurisdiction: "EU"
+  governing_body: "European Commission"
   citation_pattern: "EU-SA Art.<N>(<sub>)"
 
 spec:

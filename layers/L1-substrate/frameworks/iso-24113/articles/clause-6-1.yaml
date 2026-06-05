@@ -1,0 +1,53 @@
+# ISO 24113 §6.1 — Limitation of debris released during normal operations
+# Source: ISO 24113:2023 — DRAFT (paraphrased; review against purchased text)
+
+apiVersion: openlane.io/v1
+kind: Control
+metadata:
+  name: iso-24113-clause-6-1
+  framework: iso-24113
+  citation: "ISO 24113 §6.1"
+  display_name: "Limitation of debris released during normal operations"
+  validation_status: draft
+
+spec:
+  description: |
+    A space system shall be designed, operated and disposed of so as not to
+    release debris during normal operations. Where release of mission-related
+    objects is unavoidable, it shall be limited and justified, and the released
+    objects assessed against the disposal and lifetime requirements.
+
+  rase:
+    requirement: |
+      The operator SHALL ensure no debris is intentionally released during normal
+      operations; any unavoidable mission-related object release shall be
+      minimised, documented, and assessed for orbital lifetime.
+    applicability: |
+      All spacecraft and orbital stages operating in LEO, MEO, GEO or transiting
+      the LEO/GEO protected regions.
+    selection: |
+      Applies continuously from launch through end of mission.
+    exception: |
+      None for intentional debris release. Justified, assessed mission-related
+      releases (e.g. deployment hardware) are permitted if documented.
+
+  deontic_modality: SHALL
+
+  controls:
+    - id: iso-24113-6-1-no-intentional-release
+      description: "Operator must document that no debris is intentionally released during normal operations."
+      severity: high
+      evidence_required:
+        - debris-mitigation-plan
+      assessment_frequency: per-mission-design-review
+      verification_method: documented-debris-assessment-reviewed-by-operator
+
+  cross_references:
+    - "ISO 24113 §6.2"
+    - "EU-SA Art.5"
+
+  entity_links:
+    - entity: SpaceObject
+      relation: applies_to
+    - entity: Operator
+      relation: subject_to

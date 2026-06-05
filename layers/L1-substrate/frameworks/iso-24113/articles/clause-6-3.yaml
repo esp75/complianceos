@@ -1,0 +1,52 @@
+# ISO 24113 §6.3 — Passivation (prevention of on-orbit break-ups)
+# Source: ISO 24113:2023 — DRAFT (paraphrased; review against purchased text)
+
+apiVersion: openlane.io/v1
+kind: Control
+metadata:
+  name: iso-24113-clause-6-3
+  framework: iso-24113
+  citation: "ISO 24113 §6.3"
+  display_name: "Passivation to prevent on-orbit break-ups"
+  validation_status: draft
+
+spec:
+  description: |
+    To prevent on-orbit break-ups, all on-board sources of stored energy
+    (residual propellant, pressurised systems, batteries, flywheels) shall be
+    depleted or made safe (passivated) at end of mission, once they are no longer
+    required for disposal or post-disposal operations.
+
+  rase:
+    requirement: |
+      The operator SHALL passivate all stored-energy sources at end of mission,
+      after disposal manoeuvres are complete, to eliminate break-up risk.
+    applicability: |
+      All spacecraft and orbital stages with stored energy sources (propellant,
+      pressurant, batteries).
+    selection: |
+      Passivation sequence executed after the final disposal manoeuvre and before
+      decommissioning the platform.
+    exception: |
+      Energy required for continued post-disposal collision avoidance may be
+      retained until no longer needed, then passivated.
+
+  deontic_modality: SHALL
+
+  controls:
+    - id: iso-24113-6-3-passivation-executed
+      description: "Operator must execute and evidence passivation of all stored-energy sources at end of mission."
+      severity: high
+      evidence_required:
+        - disposal-telemetry
+      assessment_frequency: end-of-mission
+      verification_method: passivation-telemetry-confirming-energy-depletion
+
+  cross_references:
+    - "ISO 24113 §6.2"
+
+  entity_links:
+    - entity: SpaceObject
+      relation: applies_to
+    - entity: Operator
+      relation: must_execute

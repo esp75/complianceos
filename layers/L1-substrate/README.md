@@ -29,12 +29,18 @@ It does NOT contain:
 
 ## Phase 1 deliverables (see ROADMAP.md)
 
-- [ ] Hand-author the three Framework YAMLs (EU Space Act, ISO 24113, ITU)
-- [ ] OpenFGA model: operator | insurer | regulator | admin × Organization × Framework × Evidence
-- [ ] SSO/OIDC config for Authentik or Keycloak (EU-hosted)
-- [ ] docker-compose dev environment: theopenlane + Postgres + AGE + pgvector
-- [ ] FastAPI orchestration layer scaffold under `app/api/` proxying to GraphQL
-- [ ] End-to-end smoke test (create Org → upload Evidence → Evidence linked to Framework Control)
+- [x] Hand-author the three Framework YAMLs (EU Space Act, ISO 24113, ITU) — loaded into
+      theopenlane via `app/app/loaders/framework_loader.py` (Framework→Standard,
+      Control→Control, `spec.controls[]`→Subcontrol). 13 controls, 22 subcontrols.
+- [x] OpenFGA model: operator | insurer | regulator | admin — via groups + tuples
+      (ADR-0012), see [`../cross-cutting/README.md`](../cross-cutting/README.md) and
+      `cross-cutting/auth/`. (M2)
+- [x] SSO/OIDC: theopenlane built-in auth + Dex for dev; EU IdP (Authentik/Keycloak)
+      deferred to Phase 4 (needs per-org SSO enforcement). (M2)
+- [x] docker-compose dev environment: theopenlane + Postgres + OpenFGA + redis + dex
+      (`cross-cutting/deploy/`). AGE + pgvector are a separate `kg-postgres` (M6, Phase 3).
+- [x] FastAPI orchestration layer scaffold under `app/` proxying to GraphQL. (M1/M2)
+- [ ] End-to-end smoke test (create Org → upload Evidence → Evidence linked to Framework Control) — M5
 
 ## Skills to invoke
 

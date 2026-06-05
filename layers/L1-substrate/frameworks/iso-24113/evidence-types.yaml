@@ -1,0 +1,42 @@
+# ISO 24113 — Celestia-defined evidence types referenced by the clause Controls.
+# Carried as a BFF-side tag vocabulary (theopenlane has no first-class EvidenceType);
+# see ADR-0012 and cross-cutting/auth notes.
+
+apiVersion: openlane.io/v1
+kind: EvidenceTypeSet
+metadata:
+  framework: iso-24113
+
+spec:
+  evidence_types:
+    - name: debris-mitigation-plan
+      display_name: "Space Debris Mitigation Plan"
+      description: "Operator's plan documenting debris-release limitation, disposal strategy, and passivation."
+      file_formats: [pdf, p7s]
+      retention_years: 30
+      mandatory_metadata: [operator_legal_name, mission_id, orbital_regime, disposal_strategy]
+      cross_ref_articles: ["ISO 24113 §6.1", "ISO 24113 §6.2", "ISO 24113 §6.3"]
+
+    - name: disposal-telemetry
+      display_name: "Disposal / Passivation Telemetry"
+      description: "Telemetry evidencing executed disposal manoeuvre and stored-energy passivation."
+      file_formats: [csv, json, pdf]
+      retention_years: 30
+      mandatory_metadata: [norad_id, maneuver_epoch, delta_v, final_orbit]
+      cross_ref_articles: ["ISO 24113 §6.2", "ISO 24113 §6.3"]
+
+    - name: propagation-snapshot
+      display_name: "Orbital Propagation Snapshot"
+      description: "Propagated orbital state / lifetime analysis supporting disposal compliance."
+      file_formats: [json, csv]
+      retention_years: 30
+      mandatory_metadata: [norad_id, epoch, predicted_lifetime_years]
+      cross_ref_articles: ["ISO 24113 §6.2"]
+
+    - name: conjunction-report
+      display_name: "Conjunction Data Report"
+      description: "Conjunction screening result with probability-of-collision estimate."
+      file_formats: [json, pdf]
+      retention_years: 10
+      mandatory_metadata: [primary_norad_id, secondary_norad_id, tca, pc]
+      cross_ref_articles: ["ISO 24113 §6.4"]

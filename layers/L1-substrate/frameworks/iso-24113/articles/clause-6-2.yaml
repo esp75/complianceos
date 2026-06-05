@@ -1,0 +1,74 @@
+# ISO 24113 §6.2 — Post-mission disposal
+# Source: ISO 24113:2023 — DRAFT (paraphrased; review against purchased text)
+
+apiVersion: openlane.io/v1
+kind: Control
+metadata:
+  name: iso-24113-clause-6-2
+  framework: iso-24113
+  citation: "ISO 24113 §6.2"
+  display_name: "Post-mission disposal"
+  validation_status: draft
+
+spec:
+  description: |
+    A space system operating in or passing through the LEO or GEO protected
+    regions shall be disposed of at end of mission so as to clear those regions.
+    LEO objects shall be removed within the post-mission lifetime limit (the
+    25-year rule, with current guidance trending toward shorter limits). GEO
+    objects shall be re-orbited to a graveyard orbit above the GEO protected
+    region with sufficient perigee raise and eccentricity control.
+
+  rase:
+    requirement: |
+      The operator SHALL execute a post-mission disposal that clears the LEO
+      protected region within the maximum post-mission orbital lifetime, OR
+      re-orbits a GEO object to the graveyard region, with a disposal success
+      probability meeting the applicable reliability target.
+    applicability: |
+      All spacecraft and orbital stages whose orbit intersects the LEO protected
+      region (altitude ≤ 2000 km) or the GEO protected region.
+    selection: |
+      - LEO: removal within the post-mission lifetime limit (≤25 years; review for
+        shorter national/EU limits) via controlled or uncontrolled re-entry.
+      - GEO: re-orbit to graveyard (minimum perigee raise per IADC formula) and
+        passivate.
+    exception: |
+      Objects that naturally decay within the lifetime limit need no manoeuvre.
+      Disposal reliability allowances per the applicable national/ISO target.
+
+  deontic_modality: SHALL
+
+  controls:
+    - id: iso-24113-6-2-disposal-executed
+      description: "Operator must execute and evidence post-mission disposal (re-entry or graveyard) within the applicable lifetime/altitude limit."
+      severity: critical
+      evidence_required:
+        - disposal-telemetry
+        - propagation-snapshot
+      assessment_frequency: end-of-mission
+      verification_method: disposal-maneuver-telemetry-with-propagation-confirmation
+      breach_consequence: "Object remains a long-lived debris hazard; operator subject to EU-SA Art.4 enforcement."
+
+    - id: iso-24113-6-2-disposal-plan-filed
+      description: "Operator must file a post-mission disposal plan with predicted lifetime/graveyard parameters before launch."
+      severity: high
+      evidence_required:
+        - debris-mitigation-plan
+        - propagation-snapshot
+      assessment_frequency: pre-launch
+      verification_method: documented-disposal-plan-with-orbital-lifetime-analysis
+
+  cross_references:
+    - "ISO 24113 §6.1"
+    - "ISO 24113 §6.3"
+    - "EU-SA Art.5"
+    - "EU-SA Art.6"
+
+  entity_links:
+    - entity: SpaceObject
+      relation: applies_to
+    - entity: DisposalManeuver
+      relation: required_for
+    - entity: Operator
+      relation: must_execute

@@ -1,0 +1,26 @@
+# ITU RR — Celestia-defined evidence types referenced by the Article Controls.
+# Carried as a BFF-side tag vocabulary (theopenlane has no first-class EvidenceType);
+# see ADR-0012.
+
+apiVersion: openlane.io/v1
+kind: EvidenceTypeSet
+metadata:
+  framework: itu
+
+spec:
+  evidence_types:
+    - name: itu-snl-filing
+      display_name: "ITU Space Network List (SNL) Filing"
+      description: "ITU filing record (advance publication / coordination / notification) for a satellite network."
+      file_formats: [pdf, xml]
+      retention_years: 30
+      mandatory_metadata: [notifying_administration, satellite_network_name, frequency_bands, filing_status, bringing_into_use_date]
+      cross_ref_articles: ["ITU RR Art.9", "ITU RR Art.11", "ITU RR Art.21", "ITU RR Art.22"]
+
+    - name: propagation-snapshot
+      display_name: "Orbital Propagation Snapshot"
+      description: "Propagated orbital state supporting bring-into-use / orbital-position evidence."
+      file_formats: [json, csv]
+      retention_years: 30
+      mandatory_metadata: [norad_id, epoch, sub_satellite_longitude]
+      cross_ref_articles: ["ITU RR Art.11"]
