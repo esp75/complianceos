@@ -8,7 +8,7 @@ Turn regulatory text into machine-actionable obligations with explicit cross-ref
 
 ## Architecture summary
 
-- **Storage**: Postgres 17 with Apache AGE (graph) and pgvector (vector) extensions. Single multi-tenant DB with RLS by Organization.
+- **Storage**: Postgres 17 with Apache AGE (graph) and pgvector (vector) extensions. Single multi-tenant DB with RLS by Organization. The instance exists now (`kg-postgres`, AGE 1.7.0 + pgvector 0.8.2, separate from theopenlane's operational DB) — see `cross-cutting/deploy/Dockerfile.kg-postgres`; start with `docker compose --profile kg up -d kg-postgres`. Built in L1 M6 to de-risk this layer; not yet populated.
 - **Extractor pipeline**: LEGAL-BERT encoder + three joint heads (NER, deontic modality, cross-reference). Per ComplianceNLP architecture (Guo et al., arXiv:2604.23585).
 - **Annotation schema**: RASE (Requirement, Applicability, Selection, Exception) from accord-nlp, extended with space-specific entity types.
 - **Ingest flow**: regulation PDF → parser → extractor → AGE graph + pgvector chunks → human-in-loop review queue → published obligations.

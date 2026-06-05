@@ -1,0 +1,15 @@
+# Celestia KG Postgres — Postgres 17 + pgvector + Apache AGE (ADR-0007).
+# Separate instance from theopenlane's operational DB (never mix the migration-managed
+# operational schema with the L2 knowledge graph). Multi-arch base (pgvector ships built);
+# AGE is compiled on top from its PG17 release branch, so this builds natively on arm64.
+FROM pgvector/pgvector:pg17
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      build-essential git flex bison postgresql-server-dev-17 ca-certificates \
+ && git clone --depth 1 --branch release/PG17/1.7.0 https://github.com/apache/age.git /tmp/age \
+ && make -C /tmp/age && make -C /tmp/age install \
+ && rm -rf /tmp/age \
+ && apt-get purge -y --auto-remove build-essential git flex bison postgresql-server-dev-17 \
+ && rm -rf /var/lib/apt/lists/*
+
+COPY kg-init/ /docker-entrypoint-initdb.d/

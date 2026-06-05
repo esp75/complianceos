@@ -12,6 +12,8 @@ container image tags we deploy, plus schema-break risks to watch on upgrade.
 | redis | n/a | `7.4.9-alpine` | ✅ from upstream `docker-compose-redis.yml` |
 | dexidp/dex | n/a | `v2.45.1` | ✅ from upstream `docker-compose.yml` |
 | theopenlane/riverboat | n/a | `arm64-latest` (`RIVERBOAT_TAG`) | ⚠️ arch-floating tag — pin a digest for reproducibility |
+| kg-postgres base (pgvector) | n/a | `pgvector/pgvector:pg17` | ✅ multi-arch; pgvector 0.8.2 ships built |
+| Apache AGE (in kg-postgres) | n/a | source `release/PG17/1.7.0` | ✅ compiled from source on the pgvector base; PG17 supported as of AGE 1.7.0. Pin a tag/commit when AGE cuts a PG17 release tag (currently only a release branch). |
 
 ## Schema-break risk on core upgrade
 

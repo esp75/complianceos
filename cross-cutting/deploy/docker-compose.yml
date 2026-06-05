@@ -163,6 +163,32 @@ services:
       - "8001:8000"
     restart: unless-stopped
 
+  # Celestia L2 knowledge-graph Postgres (Postgres 17 + AGE + pgvector), ADR-0007.
+  # SEPARATE from theopenlane's operational DB. Gated behind the `kg` profile — not used
+  # in Phase 1; start it with: docker compose --profile kg up -d kg-postgres
+  kg-postgres:
+    profiles: ["kg"]
+    build:
+      context: .
+      dockerfile: Dockerfile.kg-postgres
+    image: celestia/kg-postgres:dev
+    # AGE wants its lib preloaded for full functionality.
+    command: postgres -c shared_preload_libraries=age
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=kg
+    ports:
+      - "5433:5432"   # 5432 is theopenlane's operational Postgres
+    volumes:
+      - kg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d kg"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
 volumes:
   pg_data:
   redis_data:
+  kg_data:

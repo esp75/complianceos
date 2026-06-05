@@ -1,7 +1,7 @@
 # STATUS — ComplianceOS v0.2
 
 **Date**: 2026-06-05
-**Phase**: 1 (L1 substrate) — M0–M5 DONE (core complete; M6 KG-Postgres optional)
+**Phase**: 1 (L1 substrate) — M0–M6 DONE (Phase 1 complete)
 **Working dir**: `/Users/esponsor/Documents/Github/complianceOSv0.2/`
 **Scope**: Phase 0 scaffolding complete. Phase 1 underway: the L1 substrate now boots
 locally and the Celestia BFF proves connectivity to it.
@@ -43,8 +43,15 @@ Repo is now git-initialized (branch `phase1-l1-substrate-first-slice`). Docker r
   a browser end to end.
 - **Phase 1 DoD met**: a regulator authenticates, sees an Organization's evidence list, and
   downloads an Evidence record's audit history (createdBy = the operator who created it).
-- ⏳ **Optional next**: M6 — `kg-postgres` (apache/age + pgvector) under a compose `profiles:[kg]`
-  to de-risk Phase 3 (L2 knowledge graph). Not required for Phase 1.
+- ✅ **M6** — `kg-postgres`: Postgres 17 + **Apache AGE 1.7.0** + **pgvector 0.8.2** in one image
+  (`cross-cutting/deploy/Dockerfile.kg-postgres`, pgvector base + AGE compiled from source), gated
+  behind compose `profiles:[kg]`, separate from theopenlane's operational DB. Verified both
+  extensions load and a starter graph `celestia_kg` + a vector both work. De-risks Phase 3;
+  validates ADR-0007 on PG17/arm64. Not yet populated.
+
+**Phase 1 (L1 substrate) is complete.** Next milestone is Phase 2 — L3 SDER engine (Orekit
+JVM microservice + ITU SNL ingestion); see ROADMAP.md. Carry-forward items for Phase 4 are in
+`docs/upstream-watch.md` (dev-only deviations, EU IdP, Next.js portal, secret injection).
 
 ## What was scaffolded
 
