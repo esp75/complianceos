@@ -1,0 +1,99 @@
+# EU Space Act — Article 5: Insurance and financial guarantees
+# Source: European Commission proposal COM(2025) — DRAFT until OJ-final review
+
+apiVersion: openlane.io/v1
+kind: Control
+metadata:
+  name: eu-sa-art-05
+  framework: eu-space-act
+  citation: "EU-SA Art.5"
+  display_name: "Insurance and financial guarantees"
+  validation_status: draft
+
+spec:
+  description: |
+    Operators must hold valid third-party liability insurance or an equivalent
+    financial guarantee covering damage that may be caused by their space
+    activity. The coverage amount is set per the risk class of the activity
+    and the value of the assets involved, in accordance with delegated acts
+    to be adopted under this Article.
+
+  rase:
+    requirement: |
+      Operators SHALL hold continuously valid third-party liability insurance
+      or an equivalent financial guarantee that covers, at minimum, the
+      damages reasonably attributable to the space activity in scope. The
+      insurance or guarantee SHALL be effective from the commencement of the
+      activity and SHALL remain in force until 30 years after the end of the
+      activity or such other period as defined by the competent authority.
+    applicability: |
+      All Operators in scope per Article 1, except those exempt under
+      Art.1 (defence/intelligence).
+    selection: |
+      Coverage amount thresholds scale with:
+        - Risk class of activity (Class A/B/C per Art.3 risk classification)
+        - Mass and orbital regime of the space object
+        - Re-entry profile (controlled vs uncontrolled)
+        - In-orbit servicing operations (additional coverage required for ADR)
+      Specific thresholds will be set in delegated acts (placeholder until
+      adopted): Class A €60M, Class B €240M, Class C TBD.
+    exception: |
+      A financial guarantee (bank guarantee, surety bond, or equivalent)
+      may substitute for insurance where:
+        - The Operator is a State or State-controlled entity, OR
+        - The competent authority has assessed and approved the substitute
+          instrument as equivalent in protection.
+      Self-insurance is permissible only with explicit competent-authority approval.
+
+  deontic_modality: SHALL
+
+  controls:
+    - id: eu-sa-art-05-insurance-active
+      description: "Operator must hold continuously valid third-party liability insurance covering the in-scope space activity, with coverage amount matching the activity's risk class."
+      severity: critical
+      evidence_required:
+        - insurance-policy
+      assessment_frequency: continuous
+      verification_method: signed-insurance-policy-with-active-effective-dates
+      breach_consequence: "Authorisation suspended per Art.3; activity may not continue."
+
+    - id: eu-sa-art-05-financial-guarantee-equivalence
+      description: "If using a financial guarantee in lieu of insurance, the Operator must hold competent-authority approval of equivalence."
+      severity: critical
+      evidence_required:
+        - financial-guarantee
+        - authorisation-certificate  # must reference the equivalence approval
+      assessment_frequency: continuous
+      verification_method: signed-financial-guarantee-with-authority-approval-letter
+
+    - id: eu-sa-art-05-coverage-amount-adequate
+      description: "Coverage amount must meet the threshold defined by the delegated act for the activity's risk class."
+      severity: critical
+      evidence_required:
+        - insurance-policy
+        - financial-guarantee  # whichever applies
+      assessment_frequency: annual-and-on-material-change
+      verification_method: amount-comparison-with-delegated-act-threshold
+
+    - id: eu-sa-art-05-coverage-duration
+      description: "Coverage must remain in force for the full duration of the activity plus the post-activity tail period defined by the competent authority (default: 30 years post end-of-activity)."
+      severity: high
+      evidence_required:
+        - insurance-policy
+        - financial-guarantee
+      assessment_frequency: annual
+      verification_method: coverage-effective-dates-cross-checked-against-activity-end-date
+
+  cross_references:
+    - "EU-SA Art.1"   # scope determines which activities require coverage
+    - "EU-SA Art.3"   # authorisation conditional on coverage
+    - "EU-SA Art.4"   # competent authority verifies and approves
+    - "ISO 24113"     # ISO 24113 disposal compliance reduces required residual-debris coverage
+
+  entity_links:
+    - entity: Operator
+      relation: must_hold_coverage
+    - entity: InsurancePolicy
+      relation: covers_activity
+    - entity: FinancialGuarantee
+      relation: substitutes_for_insurance

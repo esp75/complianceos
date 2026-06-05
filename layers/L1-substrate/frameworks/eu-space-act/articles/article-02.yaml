@@ -1,0 +1,102 @@
+# EU Space Act — Article 2: Definitions
+# Source: European Commission proposal COM(2025) — DRAFT until OJ-final review
+
+apiVersion: openlane.io/v1
+kind: Control
+metadata:
+  name: eu-sa-art-02
+  framework: eu-space-act
+  citation: "EU-SA Art.2"
+  display_name: "Definitions"
+  validation_status: draft
+
+spec:
+  description: |
+    Defines key terms used throughout the Regulation. Definitions establish
+    the scope-determining vocabulary used by Article 1 and the authorisation
+    obligations in Articles 3–5.
+
+  rase:
+    requirement: |
+      Operators must apply the EU-SA Article 2 definitions when interpreting
+      any other Article of the Regulation. Internal operator vocabularies
+      may differ but must map back to EU-SA Article 2 terms in any filed
+      evidence.
+    applicability: |
+      All Operators in scope per Article 1.
+    selection: |
+      Definitions apply uniformly across all activity types and operator
+      classes. No conditional selection.
+    exception: |
+      Where a definition explicitly references EU sectoral law (e.g.,
+      directive references for "satellite communications service"),
+      the sectoral definition governs unless EU-SA Art.2 explicitly overrides.
+
+  deontic_modality: SHALL
+
+  defined_terms:
+    - term: space-activity
+      definition: |
+        Any activity carried out in or directed towards outer space, including
+        launching, operating or controlling a space object, in-orbit
+        servicing, and re-entry of a space object.
+
+    - term: space-object
+      definition: |
+        Any object launched or intended to be launched into outer space,
+        including its component parts, payload, launch vehicle and its
+        parts; including objects already in orbit.
+
+    - term: operator
+      definition: |
+        A natural or legal person carrying out, or intending to carry out,
+        a space activity, including the launch service provider where the
+        latter is responsible for the space activity.
+
+    - term: launch-service-provider
+      definition: |
+        An operator that provides launch services, regardless of whether
+        the launch is from EU or non-EU territory, where the launch is
+        within the scope of Article 1.
+
+    - term: in-orbit-servicing
+      definition: |
+        Operations carried out on a space object after deployment, including
+        but not limited to refuelling, repair, relocation, de-orbiting
+        assistance, and active debris removal.
+
+    - term: re-entry
+      definition: |
+        The descent of a space object into the Earth's atmosphere, whether
+        controlled or uncontrolled, including any pieces or fragments
+        thereof.
+
+    - term: competent-authority
+      definition: |
+        The national authority designated by each Member State to perform
+        authorisation, supervision, and enforcement functions under this
+        Regulation. See Article 4.
+
+    - term: authorisation
+      definition: |
+        The administrative act by which a competent authority permits an
+        operator to carry out a defined space activity for a defined
+        period and subject to defined conditions.
+
+  controls:
+    - id: eu-sa-art-02-definitions-acknowledgement
+      description: "Operator must acknowledge and apply EU-SA Article 2 definitions in all filed evidence."
+      severity: medium
+      evidence_required:
+        - operator-eligibility-evidence
+      assessment_frequency: per-onboarding
+      verification_method: signed-declaration
+
+  cross_references:
+    - "EU-SA Art.1"   # scope determination consumes these definitions
+    - "EU-SA Art.3"   # authorisation regime consumes these definitions
+    - "EU-SA Art.4"   # competent-authority defined here
+
+  entity_links:
+    - entity: Term
+      relation: defines

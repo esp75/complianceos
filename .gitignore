@@ -1,0 +1,56 @@
+# Vendored upstream code — reconstitute via scripts/bootstrap.sh per external/VENDOR.md
+external/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Node / Next.js
+node_modules/
+.next/
+dist/
+build/
+out/
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*~
+
+# Secrets — never commit
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Logs
+*.log
+
+# Coverage
+coverage/
+htmlcov/
+.coverage
+
+# Local databases / data
+*.db
+*.sqlite
+data/local/
+
+# Claude / gstack agent memory (PGLite stays local)
+.claude/local/
+.gbrain/
+
+# Models / weights — too large for git, store separately
+models/
+weights/
+*.safetensors
+*.bin

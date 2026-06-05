@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "project": {
+    "name": "complianceOSv0.2",
+    "description": "EU-sovereign regulatory compliance SaaS for satellite operators",
+    "version": "0.2.0"
+  },
+  "skills": {
+    "include": [
+      "rag-architect",
+      "prompt-engineer",
+      "postgres-pro",
+      "database-optimizer",
+      "mcp-developer",
+      "fastapi-expert",
+      "nextjs-developer",
+      "kubernetes-specialist"
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git status:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(uv:*)",
+      "Bash(bun:*)",
+      "Bash(ruff:*)",
+      "Bash(mypy:*)",
+      "Bash(pytest:*)",
+      "Bash(eslint:*)",
+      "Bash(prettier:*)",
+      "Bash(tsc:*)"
+    ],
+    "deny": [
+      "Bash(rm -rf /:*)",
+      "Bash(git push --force:*)",
+      "Bash(git reset --hard:*)"
+    ]
+  },
+  "guard": {
+    "no-codex-on": [
+      "app/api/trust/**",
+      "app/api/rls/**",
+      "app/api/bundle/sign*.py",
+      "layers/L4-drafting-agent/provenance/**"
+    ],
+    "external-review-marker": "# MARKED-FOR-EXTERNAL-REVIEW",
+    "destructive-warn": true
+  },
+  "gbrain": {
+    "sync-on-session-start": true,
+    "memory-path": ".claude/local/gbrain/"
+  }
+}

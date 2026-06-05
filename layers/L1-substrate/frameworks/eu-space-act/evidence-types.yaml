@@ -1,0 +1,74 @@
+# EU Space Act — Celestia-defined evidence types referenced by Articles 1–5 Controls
+# Each entry registers a new EvidenceType in theopenlane/core's data model.
+
+apiVersion: openlane.io/v1
+kind: EvidenceTypeSet
+metadata:
+  framework: eu-space-act
+
+spec:
+  evidence_types:
+
+    - name: authorisation-certificate
+      display_name: "National Authorisation Certificate"
+      description: "Signed authorisation issued by an EU Member State competent authority permitting a specific space activity."
+      file_formats: [pdf, p7s, asice]
+      retention_years: 30
+      mandatory_metadata:
+        - issuing_authority
+        - issue_date
+        - expiry_date
+        - activity_scope
+        - operator_legal_name
+      cross_ref_articles: ["EU-SA Art.3", "EU-SA Art.4"]
+
+    - name: insurance-policy
+      display_name: "Third-Party Liability Insurance Policy"
+      description: "Active insurance policy or equivalent financial guarantee covering third-party liability for the space activity."
+      file_formats: [pdf, p7s]
+      retention_years: 30
+      mandatory_metadata:
+        - insurer_legal_name
+        - policy_number
+        - coverage_amount_eur
+        - effective_date
+        - expiry_date
+        - covered_activities
+      cross_ref_articles: ["EU-SA Art.5"]
+
+    - name: financial-guarantee
+      display_name: "Financial Guarantee Instrument"
+      description: "Bank guarantee, surety bond, or equivalent financial instrument substituting for insurance per EU-SA Art.5."
+      file_formats: [pdf, p7s, asice]
+      retention_years: 30
+      mandatory_metadata:
+        - guarantor_legal_name
+        - instrument_type
+        - coverage_amount_eur
+        - effective_date
+        - expiry_date
+      cross_ref_articles: ["EU-SA Art.5"]
+
+    - name: activity-declaration
+      display_name: "Activity Declaration / Notification"
+      description: "Pre-launch or pre-operation declaration filed with the competent authority describing the planned activity."
+      file_formats: [pdf, xml, json]
+      retention_years: 30
+      mandatory_metadata:
+        - declarant_legal_name
+        - declaration_date
+        - activity_type
+        - planned_date_range
+        - satellite_norad_ids
+      cross_ref_articles: ["EU-SA Art.3"]
+
+    - name: operator-eligibility-evidence
+      display_name: "Operator Eligibility Evidence"
+      description: "Documentation demonstrating an operator meets EU-SA scope and definitions (legal status, technical capability, financial standing)."
+      file_formats: [pdf, p7s]
+      retention_years: 30
+      mandatory_metadata:
+        - operator_legal_name
+        - jurisdiction_of_incorporation
+        - last_audit_date
+      cross_ref_articles: ["EU-SA Art.1", "EU-SA Art.2"]

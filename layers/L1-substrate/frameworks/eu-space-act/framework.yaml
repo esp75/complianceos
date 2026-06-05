@@ -1,0 +1,54 @@
+# EU Space Act — Openlane Framework manifest
+# Authoritative source: European Commission proposal COM(2025)
+# Status: DRAFT — pending OJ-final review (Phase 1 week 3 validation)
+
+apiVersion: openlane.io/v1
+kind: Framework
+metadata:
+  name: eu-space-act
+  display_name: "EU Space Act"
+  short_name: "EU-SA"
+  version: "0.1.0-draft"
+  jurisdiction: "EU"
+  citation_pattern: "EU-SA Art.<N>(<sub>)"
+
+spec:
+  description: |
+    Regulation establishing harmonised rules for safety, resilience and
+    sustainability of space activities in the Union. Celestia's machine-
+    actionable representation as of the European Commission's 2025 proposal.
+
+    Until the EU Space Act is published in the Official Journal, this
+    Framework targets the proposal text. The validation_status on every
+    Control will flip to 'accepted' once OJ-final text is reviewed
+    (Phase 1 week 3 milestone).
+
+  category: space-regulation
+  scope:
+    territory: "EU + EEA"
+    activity_types:
+      - launching
+      - operating_space_objects
+      - in_orbit_servicing
+      - re-entry
+    actor_types:
+      - operator
+      - launch_service_provider
+      - in_orbit_service_provider
+
+  controls_path: ./articles/
+
+  cross_references:
+    - framework: iso-24113
+      relation: "incorporates"
+      context: "EU-SA Art.5 + Art.6 explicitly incorporate ISO 24113 debris mitigation requirements"
+    - framework: itu
+      relation: "complements"
+      context: "EU-SA does not duplicate ITU Radio Regulations but references them as prerequisites for authorisation"
+
+  evidence_types_path: ./evidence-types.yaml
+
+  default_severity: high
+  validation_status: draft
+  last_reviewed: "2026-05-15"
+  next_review: "Phase 1 week 3 (after OJ-final review)"

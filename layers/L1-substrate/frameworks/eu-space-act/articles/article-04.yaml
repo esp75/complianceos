@@ -1,0 +1,90 @@
+# EU Space Act — Article 4: Competent authorities
+# Source: European Commission proposal COM(2025) — DRAFT until OJ-final review
+
+apiVersion: openlane.io/v1
+kind: Control
+metadata:
+  name: eu-sa-art-04
+  framework: eu-space-act
+  citation: "EU-SA Art.4"
+  display_name: "Competent authorities"
+  validation_status: draft
+
+spec:
+  description: |
+    Each Member State designates one or more competent authorities responsible
+    for authorisation, supervision, enforcement, and cooperation with other
+    Member States and the Commission. Competent authorities are independent
+    in their decision-making and adequately resourced.
+
+  rase:
+    requirement: |
+      Operators SHALL identify the competent authority of the Member State
+      with jurisdiction over their activity and engage exclusively with that
+      authority for authorisation, supervisory reporting, and enforcement
+      proceedings, unless multiple jurisdictions apply per Art.1 scope
+      criteria.
+    applicability: |
+      All Operators in scope per Article 1.
+    selection: |
+      Jurisdiction is determined by Article 1 scope criteria:
+        - territorial activity → Member State of activity
+        - legal establishment → Member State of incorporation
+        - registration → Member State of space-object registration
+        - effects-on-EU → Member State whose interests are primarily affected
+          (escalated to Commission if inter-State dispute)
+      Where multiple criteria apply, the Operator engages with each affected
+      competent authority but a lead authority may be designated.
+    exception: |
+      In cases of cross-border activities affecting multiple Member States,
+      the lead competent authority may be designated by mutual agreement
+      between the affected Member States or, failing that, by the
+      Commission.
+
+  deontic_modality: SHALL
+
+  controls:
+    - id: eu-sa-art-04-authority-identification
+      description: "Operator must identify and document the competent authority with jurisdiction over each space activity."
+      severity: high
+      evidence_required:
+        - operator-eligibility-evidence
+        - activity-declaration  # confirms which authority the declaration was filed with
+      assessment_frequency: per-activity-onset
+      verification_method: documented-determination
+
+    - id: eu-sa-art-04-supervisory-cooperation
+      description: "Operator must cooperate with supervisory inspections and information requests from the competent authority."
+      severity: critical
+      evidence_required:
+        - operator-eligibility-evidence  # demonstrates standing
+      assessment_frequency: on-request
+      verification_method: response-log-with-timestamps
+      breach_consequence: "Suspension or revocation of authorisation per Art.3."
+
+  competent_authority_registry:
+    note: |
+      The list of competent authorities per Member State is maintained by
+      the European Commission and is required to be machine-readable per
+      Art.4(3) (proposal). Celestia's L2 KG ingests this registry into the
+      'CompetentAuthority' entity table once the OJ-final list is published.
+    placeholder_authorities:
+      - jurisdiction: FR
+        candidate_body: "CNES — Centre National d'Études Spatiales (subject to OJ-final designation)"
+      - jurisdiction: DE
+        candidate_body: "DLR — Deutsches Zentrum für Luft- und Raumfahrt (subject to OJ-final designation)"
+      - jurisdiction: IT
+        candidate_body: "ASI — Agenzia Spaziale Italiana (subject to OJ-final designation)"
+      - jurisdiction: ES
+        candidate_body: "AEE — Agencia Espacial Española (subject to OJ-final designation)"
+
+  cross_references:
+    - "EU-SA Art.1"
+    - "EU-SA Art.3"   # authority issues authorisations
+    - "EU-SA Art.5"   # authority verifies financial guarantees
+
+  entity_links:
+    - entity: CompetentAuthority
+      relation: defined_by
+    - entity: Operator
+      relation: reports_to

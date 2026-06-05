@@ -1,0 +1,65 @@
+# EU Space Act — Article 1: Subject matter and scope
+# Source: European Commission proposal COM(2025) — DRAFT until OJ-final review
+
+apiVersion: openlane.io/v1
+kind: Control
+metadata:
+  name: eu-sa-art-01
+  framework: eu-space-act
+  citation: "EU-SA Art.1"
+  display_name: "Subject matter and scope"
+  validation_status: draft
+
+spec:
+  description: |
+    This Regulation lays down harmonised rules for the safety, resilience and
+    sustainability of space activities carried out in the Union, including
+    rules concerning the authorisation, supervision, and registration of such
+    activities, and the obligations of operators thereof.
+
+    Applies to space activities carried out: (a) from the territory of a
+    Member State; (b) by a person legally established in a Member State;
+    (c) using a space object registered by a Member State; or (d) producing
+    effects in the Union territory regardless of where the activity is
+    physically performed.
+
+  rase:
+    requirement: |
+      Operators conducting space activities within the EU territorial or
+      legal scope must comply with the Regulation in its entirety.
+    applicability: |
+      All space activities listed in Article 2(a)–(d) when conducted by:
+        - operators legally established in any EU Member State, OR
+        - using space objects registered by any EU Member State, OR
+        - launched from EU territory, OR
+        - producing effects within EU territory regardless of physical location.
+    selection: |
+      Scope triggers on EITHER physical-territory OR legal-establishment OR
+      space-object-registration OR effects-on-EU criteria — any one is
+      sufficient to bring the activity into scope.
+    exception: |
+      Activities of Member State armed forces and intelligence services are
+      excluded per the proposal (subject to OJ-final review).
+
+  deontic_modality: SHALL
+
+  controls:
+    - id: eu-sa-art-01-scope-determination
+      description: "Operator must determine and document the EU-SA scope trigger applicable to each space activity."
+      severity: high
+      evidence_required:
+        - operator-eligibility-evidence
+      assessment_frequency: per-activity-onset
+      verification_method: documented-self-assessment-reviewed-by-competent-authority
+
+  cross_references:
+    - "EU-SA Art.2"  # definitions feed scope-trigger evaluation
+    - "EU-SA Art.3"  # authorisation regime kicks in once scope is determined
+
+  entity_links:
+    - entity: Operator
+      relation: subject_to
+    - entity: SpaceActivity
+      relation: regulates
+    - entity: SpaceObject
+      relation: applies_to

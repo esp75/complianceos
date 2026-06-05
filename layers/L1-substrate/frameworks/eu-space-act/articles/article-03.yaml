@@ -1,0 +1,83 @@
+# EU Space Act — Article 3: Authorisation regime
+# Source: European Commission proposal COM(2025) — DRAFT until OJ-final review
+
+apiVersion: openlane.io/v1
+kind: Control
+metadata:
+  name: eu-sa-art-03
+  framework: eu-space-act
+  citation: "EU-SA Art.3"
+  display_name: "Authorisation regime"
+  validation_status: draft
+
+spec:
+  description: |
+    Establishes the mandatory authorisation regime for any space activity
+    falling within the scope of Article 1. Operators must obtain a valid
+    authorisation from the competent authority of the relevant Member State
+    before commencing any in-scope activity.
+
+  rase:
+    requirement: |
+      Operators SHALL hold a valid authorisation from the competent authority
+      of the relevant EU Member State before commencing any space activity
+      within the scope of Article 1. Authorisation may be subject to
+      operational conditions, may be limited in duration, and may be revoked
+      by the competent authority upon material non-compliance.
+    applicability: |
+      All Operators in scope per Article 1, conducting any of the activity
+      types defined in Article 2 (launching, operating, in-orbit servicing,
+      re-entry).
+    selection: |
+      Authorisation procedure scales with activity risk class:
+        - Class A (small LEO operator, mass ≤ TBD kg, single-satellite) → simplified procedure
+        - Class B (constellation, multi-satellite, GEO, BTNs) → full procedure
+        - Class C (in-orbit servicing, debris removal, novel operations) → enhanced procedure
+      (Note: risk classes are placeholders; OJ-final text will specify.)
+    exception: |
+      Activities exempt under EU-SA Art.1 (defence/intelligence) do not require authorisation.
+      Authorisations issued by non-EU jurisdictions may be recognised under
+      bilateral agreements (subject to Art.7 future provisions).
+
+  deontic_modality: SHALL
+
+  controls:
+    - id: eu-sa-art-03-authorisation-held
+      description: "Operator must hold a valid, in-date authorisation from a competent authority for the in-scope activity."
+      severity: critical
+      evidence_required:
+        - authorisation-certificate
+      assessment_frequency: continuous
+      verification_method: signed-authorisation-certificate
+      breach_consequence: "Activity ceases; operator subject to enforcement per Art.4."
+
+    - id: eu-sa-art-03-activity-declaration-filed
+      description: "Operator must file a pre-activity declaration with the competent authority before commencing any in-scope activity."
+      severity: high
+      evidence_required:
+        - activity-declaration
+      assessment_frequency: per-activity-onset
+      verification_method: timestamped-declaration-with-authority-acknowledgement
+
+    - id: eu-sa-art-03-conditions-compliance
+      description: "Operator must comply with all operational conditions attached to the authorisation."
+      severity: critical
+      evidence_required:
+        - authorisation-certificate  # for stipulated conditions
+        - activity-declaration
+      assessment_frequency: continuous
+      verification_method: ongoing-supervision-by-competent-authority
+
+  cross_references:
+    - "EU-SA Art.1"   # scope feeds authorisation requirement
+    - "EU-SA Art.2"   # definitions feed authorisation interpretation
+    - "EU-SA Art.4"   # competent authority issues and supervises
+    - "EU-SA Art.5"   # authorisation conditional on financial guarantees
+
+  entity_links:
+    - entity: Operator
+      relation: must_hold
+    - entity: Authorisation
+      relation: required_for
+    - entity: SpaceActivity
+      relation: scope_of
