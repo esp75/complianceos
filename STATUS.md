@@ -1,7 +1,7 @@
 # STATUS — ComplianceOS v0.2
 
 **Date**: 2026-06-05
-**Phase**: 1 (L1 substrate) — first slice (M0–M1) DONE
+**Phase**: 1 (L1 substrate) — M0–M2 DONE
 **Working dir**: `/Users/esponsor/Documents/Github/complianceOSv0.2/`
 **Scope**: Phase 0 scaffolding complete. Phase 1 underway: the L1 substrate now boots
 locally and the Celestia BFF proves connectivity to it.
@@ -18,9 +18,14 @@ Repo is now git-initialized (branch `phase1-l1-substrate-first-slice`). Docker r
   Verified: core `/ready` 200 (all subsystems OK), BFF `/readyz` 200 (503 when core down),
   pytest green. See [docs/upstream-watch.md](./docs/upstream-watch.md) for image pins +
   dev-only deviations (core-as-root for key gen, riverboat placeholder token).
-- ⏳ **Next**: M2 auth/tetrad (Dex login + OpenFGA groups) → M3 framework loader
-  (EU Space Act / ISO 24113 / ITU YAML → GraphQL) → M4 BFF domain endpoints → M5 smoke
-  test + regulator stub. `/cso` is mandatory at M2 and M4.
+- ✅ **M2** — auth + OpenFGA tetrad: email/password auth (Dex SSO deferred to Phase 4 —
+  needs per-org enforcement), BFF `/auth/me` + `/auth/can`, and the operator/insurer/
+  regulator/admin tetrad via OpenFGA groups + tuples (ADR-0012). `seed_tetrad.py` verifies
+  8/8 role checks. `/cso` daily: 0 critical/high, 1 medium (committed dev session keys —
+  inject before prod). Env: core is amd64-only → colima must run VZ+Rosetta. BFF on :8001.
+- ⏳ **Next**: M3 framework loader (EU Space Act / ISO 24113 / ITU YAML → GraphQL) → M4 BFF
+  domain endpoints (org/evidence/frameworks, with FGA enforcement; `/cso`) → M5 smoke test +
+  regulator stub.
 
 ## What was scaffolded
 
