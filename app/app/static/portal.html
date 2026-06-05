@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Celestia — Regulator Portal (DEV STUB)</title>
+  <style>
+    :root { --bg:#0b1020; --panel:#141b30; --ink:#e7ecf5; --muted:#8b97b3; --line:#27304b;
+            --accent:#5b8cff; --ok:#3fb27f; --bad:#e2557b; }
+    * { box-sizing: border-box; }
+    body { margin:0; font:14px/1.5 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+           background:var(--bg); color:var(--ink); }
+    header { background:linear-gradient(90deg,#0b1020,#141b30); border-bottom:1px solid var(--line);
+             padding:18px 24px; display:flex; align-items:baseline; gap:12px; }
+    header h1 { font-size:18px; margin:0; font-weight:650; letter-spacing:.2px; }
+    .stub { font-size:11px; color:#0b1020; background:#f2c14e; padding:2px 8px; border-radius:999px; font-weight:700; }
+    main { max-width:980px; margin:0 auto; padding:24px; }
+    .card { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:18px; margin-bottom:18px; }
+    label { display:block; font-size:12px; color:var(--muted); margin:10px 0 4px; }
+    input { width:100%; padding:9px 11px; background:#0e1426; border:1px solid var(--line); border-radius:8px;
+            color:var(--ink); font:13px ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .row { display:flex; gap:14px; } .row > div { flex:1; }
+    button { background:var(--accent); color:#fff; border:0; border-radius:8px; padding:9px 16px; font-weight:600;
+             cursor:pointer; margin-top:12px; } button:hover { filter:brightness(1.08); }
+    button.ghost { background:transparent; border:1px solid var(--line); color:var(--ink); padding:5px 10px; margin:0; font-size:12px; }
+    table { width:100%; border-collapse:collapse; margin-top:6px; }
+    th,td { text-align:left; padding:9px 10px; border-bottom:1px solid var(--line); font-size:13px; vertical-align:top; }
+    th { color:var(--muted); font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:.4px; }
+    .muted { color:var(--muted); } .mono { font-family:ui-monospace,Menlo,monospace; }
+    pre { background:#0e1426; border:1px solid var(--line); border-radius:8px; padding:12px; overflow:auto; font-size:12px; }
+    .msg { padding:10px 12px; border-radius:8px; margin-top:10px; font-size:13px; display:none; }
+    .msg.err { background:rgba(226,85,123,.12); border:1px solid var(--bad); color:#ffc7d6; display:block; }
+    .msg.ok  { background:rgba(63,178,127,.12); border:1px solid var(--ok); color:#bdf0d8; display:block; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Celestia — Regulator Portal</h1><span class="stub">DEV STUB</span>
+    <span class="muted" style="margin-left:auto">L1 substrate · BFF demo</span>
+  </header>
+  <main>
+    <div class="card">
+      <p class="muted" style="margin-top:0">
+        Phase-1 stub for the audit flow: paste a regulator Personal Access Token (from
+        <code class="mono">python -m app.auth.seed_tetrad</code>) and an organization id, load its
+        evidence, and download a record's audit history. The production portal is Next.js 14 (Phase 4).
+      </p>
+      <div class="row">
+        <div><label>Organization id</label><input id="org" placeholder="organization ULID" /></div>
+        <div><label>API base</label><input id="base" /></div>
+      </div>
+      <label>Bearer token (regulator PAT)</label>
+      <input id="pat" placeholder="tolp_…" />
+      <button onclick="loadEvidence()">Load evidence</button>
+      <div id="msg" class="msg"></div>
+    </div>
+
+    <div class="card" id="evcard" style="display:none">
+      <h3 style="margin-top:0">Evidence</h3>
+      <table><thead><tr><th>Display ID</th><th>Name</th><th>Status</th><th></th></tr></thead>
+        <tbody id="evrows"></tbody></table>
+    </div>
+
+    <div class="card" id="histcard" style="display:none">
+      <h3 style="margin-top:0">Audit history</h3>
+      <pre id="hist"></pre>
+    </div>
+  </main>
+
+  <script>
+    document.getElementById('base').value = window.location.origin;
+    const $ = (id) => document.getElementById(id);
+    function show(kind, text){ const m=$('msg'); m.className='msg '+kind; m.textContent=text; }
+
+    function auth(){ return { 'Authorization': 'Bearer ' + $('pat').value.trim() }; }
+
+    async function loadEvidence(){
+      const base=$('base').value.replace(/\/$/,''), org=$('org').value.trim();
+      if(!org || !$('pat').value.trim()){ show('err','Enter an organization id and a token.'); return; }
+      try {
+        const r = await fetch(`${base}/evidence?org_id=${encodeURIComponent(org)}`, { headers: auth() });
+        if(!r.ok){ show('err', `Evidence list denied (HTTP ${r.status}) — token lacks can_view on this org.`); $('evcard').style.display='none'; return; }
+        const rows = await r.json();
+        show('ok', `Loaded ${rows.length} evidence record(s).`);
+        $('evrows').innerHTML = rows.map(e => `<tr>
+          <td class="mono">${e.displayID||''}</td><td>${e.name||''}</td>
+          <td class="muted">${e.status||''}</td>
+          <td><button class="ghost" onclick="history_('${e.id}')">View audit history</button></td>
+        </tr>`).join('') || `<tr><td colspan="4" class="muted">No evidence for this org.</td></tr>`;
+        $('evcard').style.display='block';
+      } catch(e){ show('err','Network error: '+e); }
+    }
+
+    async function history_(id){
+      const base=$('base').value.replace(/\/$/,'');
+      try {
+        const r = await fetch(`${base}/evidence/${id}/history`, { headers: auth() });
+        if(r.status===403){ show('err','Audit history denied (HTTP 403) — token lacks audit_log_viewer (regulator/admin only).'); $('histcard').style.display='none'; return; }
+        if(!r.ok){ show('err',`Audit history error (HTTP ${r.status}).`); return; }
+        $('hist').textContent = JSON.stringify(await r.json(), null, 2);
+        $('histcard').style.display='block';
+        show('ok','Audit history loaded.');
+        $('histcard').scrollIntoView({behavior:'smooth'});
+      } catch(e){ show('err','Network error: '+e); }
+    }
+  </script>
+</body>
+</html>

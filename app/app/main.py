@@ -12,7 +12,7 @@ from contextlib import asynccontextmanager
 import httpx
 from fastapi import FastAPI
 
-from app.api import auth, evidence, frameworks, health, organizations
+from app.api import auth, evidence, frameworks, health, organizations, portal
 from app.clients.openfga import OpenFGAClient
 from app.clients.openlane import OpenlaneClient
 from app.config import get_settings
@@ -39,3 +39,4 @@ app.include_router(auth.router)
 app.include_router(organizations.router)
 app.include_router(frameworks.router)
 app.include_router(evidence.router)
+app.include_router(portal.router)

@@ -1,7 +1,7 @@
 # STATUS — ComplianceOS v0.2
 
 **Date**: 2026-06-05
-**Phase**: 1 (L1 substrate) — M0–M4 DONE
+**Phase**: 1 (L1 substrate) — M0–M5 DONE (core complete; M6 KG-Postgres optional)
 **Working dir**: `/Users/esponsor/Documents/Github/complianceOSv0.2/`
 **Scope**: Phase 0 scaffolding complete. Phase 1 underway: the L1 substrate now boots
 locally and the Celestia BFF proves connectivity to it.
@@ -36,8 +36,15 @@ Repo is now git-initialized (branch `phase1-l1-substrate-first-slice`). Docker r
   user token for defense-in-depth. Verified live: operator creates evidence linked to a control
   (201), insurer blocked (403), regulator lists + reads audit history (200), operator denied
   history (403). Seed now mints per-role PATs. 20 tests; mypy/ruff clean. `/cso`: 0 findings.
-- ⏳ **Next**: M5 — end-to-end smoke test (`tests/test_smoke_e2e.py`) + minimal regulator portal
-  stub (login → evidence list → download audit history). M6 (optional): KG Postgres for Phase 3.
+- ✅ **M5** — DoD smoke test + regulator portal stub. `tests/test_smoke_e2e.py` (opt-in,
+  `CELESTIA_E2E=1`) drives the BFF as all four roles and asserts the DoD; passes against the
+  live stack. `GET /portal` serves a self-contained dev stub (real portal = Next.js, Phase 4):
+  paste a regulator PAT + org → load evidence → download a record's audit history. Verified in
+  a browser end to end.
+- **Phase 1 DoD met**: a regulator authenticates, sees an Organization's evidence list, and
+  downloads an Evidence record's audit history (createdBy = the operator who created it).
+- ⏳ **Optional next**: M6 — `kg-postgres` (apache/age + pgvector) under a compose `profiles:[kg]`
+  to de-risk Phase 3 (L2 knowledge graph). Not required for Phase 1.
 
 ## What was scaffolded
 

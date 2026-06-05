@@ -40,7 +40,9 @@ It does NOT contain:
 - [x] docker-compose dev environment: theopenlane + Postgres + OpenFGA + redis + dex
       (`cross-cutting/deploy/`). AGE + pgvector are a separate `kg-postgres` (M6, Phase 3).
 - [x] FastAPI orchestration layer scaffold under `app/` proxying to GraphQL. (M1/M2)
-- [ ] End-to-end smoke test (create Org → upload Evidence → Evidence linked to Framework Control) — M5
+- [x] End-to-end smoke test (operator creates Evidence linked to a Framework Control →
+      regulator lists it + downloads audit history) — `app/tests/test_smoke_e2e.py` (opt-in)
+      + regulator portal stub at `GET /portal`. (M5)
 
 ## Skills to invoke
 
