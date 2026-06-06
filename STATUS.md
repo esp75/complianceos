@@ -1,10 +1,23 @@
 # STATUS — ComplianceOS v0.2
 
-**Date**: 2026-06-05
-**Phase**: 1 (L1 substrate) — M0–M6 DONE (Phase 1 complete)
+**Date**: 2026-06-06
+**Phase**: 2 (L3 SDER engine) — underway (Phase 1 complete: M0–M6 DONE)
 **Working dir**: `/Users/esponsor/Documents/Github/complianceOSv0.2/`
-**Scope**: Phase 0 scaffolding complete. Phase 1 underway: the L1 substrate now boots
-locally and the Celestia BFF proves connectivity to it.
+**Scope**: Phase 0 scaffolding + Phase 1 (L1 substrate) complete. Phase 2 underway: the
+Orekit JVM microservice, ITU SNL port, and risk-scoring v0, closing the L3 DoD as a
+vertical slice on branch `phase2-l3-sder-first-slice`.
+
+## Phase 2 progress (L3 SDER engine)
+
+Branch `phase2-l3-sder-first-slice`. Plan: full DoD vertical slice M0–M7 (Orekit REST
+service → Python client → ITU GEO proximity port → risk-scoring v0 → conjunction Evidence
+write-back → portal panel + e2e). Transport decision: **REST/JSON** (ADR-0013).
+
+- ✅ **M0** — **ADR-0013** (Orekit service contract: REST/JSON for v0, gRPC deferred behind a
+  Phase-3 benchmark; resolves ADR-0002's open question) + `layers/L3-sder-engine/orekit-service/CONTRACT.md`
+  (endpoint JSON shapes, units km/km·s⁻¹, frames EME2000/ITRF/TEME, error envelope). Pinned the
+  running jar to released `org.orekit:orekit:13.1.5` (vendored source is 14.0-SNAPSHOT on develop);
+  skew recorded in `docs/upstream-watch.md`. Conjunction v0 = sampled min-miss-distance (no Pc).
 
 ## Phase 1 progress (L1 substrate)
 

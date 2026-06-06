@@ -14,6 +14,7 @@ container image tags we deploy, plus schema-break risks to watch on upgrade.
 | theopenlane/riverboat | n/a | `arm64-latest` (`RIVERBOAT_TAG`) | ⚠️ arch-floating tag — pin a digest for reproducibility |
 | kg-postgres base (pgvector) | n/a | `pgvector/pgvector:pg17` | ✅ multi-arch; pgvector 0.8.2 ships built |
 | Apache AGE (in kg-postgres) | n/a | source `release/PG17/1.7.0` | ✅ compiled from source on the pgvector base; PG17 supported as of AGE 1.7.0. Pin a tag/commit when AGE cuts a PG17 release tag (currently only a release branch). |
+| orekit (L3 service jar) | `fb3a845c` (14.0-SNAPSHOT, develop) | Maven `org.orekit:orekit:13.1.5` | ⚠️ **intentional skew** (ADR-0013) — vendored source tracks the 14.x develop line, but the running service depends on the latest **released** coordinate (13.1.5, 2026-05-03) for reproducible builds. Bump the coordinate in a follow-up ADR when 14.x releases. orekit-data is mounted at runtime, not baked into the image. |
 
 ## Schema-break risk on core upgrade
 
