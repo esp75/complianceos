@@ -128,3 +128,39 @@ async def test_sder_conjunction_dod_flow(env: dict[str, str]) -> None:
         r = await c.get(f"/evidence/{evid}/history", headers=_bearer(env["regulator"]))
         assert r.status_code == 200
         assert r.json()["audit"]["createdBy"]
+
+
+@pytest.mark.asyncio
+async def test_l4_drafting_dod_flow(env: dict[str, str]) -> None:
+    """Phase-3 DoD: given an obligation question, the drafting agent returns a compliance
+    paragraph citing >=2 L2 obligations + >=1 L1 evidence record, each backed by a Context
+    Core. Requires the `kg` profile (kg-postgres) up + the SDER e2e having created evidence;
+    skips if the KG is unavailable."""
+    org = env["org_id"]
+    async with httpx.AsyncClient(base_url=BFF, timeout=30.0) as c:
+        # populate the L2 KG from the loaded frameworks (idempotent)
+        r = await c.post("/kg/ingest", headers=_bearer(env["operator"]))
+        if r.status_code == 503:
+            pytest.skip("knowledge graph unavailable; start the `kg` profile")
+        assert r.status_code == 200, r.text
+        assert r.json()["obligations"] > 0
+
+        # regulator asks a compliance question -> cited, grounded paragraph
+        r = await c.post(
+            "/draft/obligation",
+            json={"org_id": org, "query": "is the operator compliant with collision-avoidance duties"},
+            headers=_bearer(env["regulator"]),
+        )
+        assert r.status_code == 200, r.text
+        out = r.json()
+        assert len(out["citations"]["obligations"]) >= 2
+        assert len(out["citations"]["evidence"]) >= 1
+        cored = {(cc["source_type"], cc["source_ref"]) for cc in out["context_cores"]}
+        for o in out["citations"]["obligations"]:
+            assert ("obligation", o["ref_code"]) in cored  # every claim has a Context Core
+        assert out["draft"]
+
+        # insurer with view can also draft; an unauthenticated caller cannot
+        r = await c.post("/draft/obligation", json={"org_id": org, "query": "x"},
+                         headers={"Authorization": "Bearer not-a-real-token"})
+        assert r.status_code == 401
