@@ -13,9 +13,9 @@ DEFAULT_TARGET="$SCRIPT_DIR/../../../../cross-cutting/deploy/orekit-data"
 TARGET_DIR="${1:-$DEFAULT_TARGET}"
 
 # Canonical Orekit physical-data repository (GitLab, CS GROUP / FR — ADR-0002).
-# Pin to the maintained master archive; revisit vendoring a frozen snapshot for
+# Pin to the maintained `main` archive; revisit vendoring a frozen snapshot for
 # fully reproducible regulator-facing runs in Phase 4 (CONTRACT.md open question).
-DATA_URL="https://gitlab.orekit.org/orekit/orekit-data/-/archive/master/orekit-data-master.zip"
+DATA_URL="https://gitlab.orekit.org/orekit/orekit-data/-/archive/main/orekit-data-main.zip"
 
 echo "Fetching orekit-data -> $TARGET_DIR"
 mkdir -p "$TARGET_DIR"
