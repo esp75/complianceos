@@ -30,15 +30,18 @@ async def readyz(request: Request, response: Response) -> dict[str, object]:
     except OpenlaneError:
         reachable = False
 
-    # Informational only — orekit being down must not fail BFF readiness.
+    # Informational only — orekit/kg being down must not fail BFF readiness (both are
+    # behind optional compose profiles).
     orekit: OrekitClient = request.app.state.orekit
     try:
         orekit_ready = await orekit.ping()
     except OrekitError:
         orekit_ready = False
 
+    kg_ready = await request.app.state.kg.ping()
+
     if not reachable:
         response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
-        return {"status": "unavailable", "openlane": False, "orekit": orekit_ready}
+        return {"status": "unavailable", "openlane": False, "orekit": orekit_ready, "kg": kg_ready}
 
-    return {"status": "ready", "openlane": True, "orekit": orekit_ready}
+    return {"status": "ready", "openlane": True, "orekit": orekit_ready, "kg": kg_ready}

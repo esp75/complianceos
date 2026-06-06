@@ -19,10 +19,11 @@ class _StubPingable:
         return self._reachable
 
 
-def _make_app(*, reachable: bool, orekit_ready: bool = True) -> FastAPI:
+def _make_app(*, reachable: bool, orekit_ready: bool = True, kg_ready: bool = True) -> FastAPI:
     app = FastAPI()
     app.state.openlane = _StubPingable(reachable=reachable)
     app.state.orekit = _StubPingable(reachable=orekit_ready)
+    app.state.kg = _StubPingable(reachable=kg_ready)
     app.include_router(health.router)
     return app
 
@@ -44,14 +45,14 @@ async def test_readyz_ok_when_openlane_reachable() -> None:
     async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
         resp = await client.get("/readyz")
     assert resp.status_code == 200
-    assert resp.json() == {"status": "ready", "openlane": True, "orekit": True}
+    assert resp.json() == {"status": "ready", "openlane": True, "orekit": True, "kg": True}
 
 
 @pytest.mark.asyncio
 async def test_readyz_503_when_openlane_unreachable() -> None:
-    app = _make_app(reachable=False, orekit_ready=False)
+    app = _make_app(reachable=False, orekit_ready=False, kg_ready=False)
     transport = httpx.ASGITransport(app=app)
     async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
         resp = await client.get("/readyz")
     assert resp.status_code == 503
-    assert resp.json() == {"status": "unavailable", "openlane": False, "orekit": False}
+    assert resp.json() == {"status": "unavailable", "openlane": False, "orekit": False, "kg": False}

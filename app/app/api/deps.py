@@ -11,6 +11,7 @@ from typing import Annotated, Any, cast
 
 from fastapi import Depends, Header, HTTPException, Request, status
 
+from app.clients.kg import KGClient
 from app.clients.openfga import OpenFGAClient, OpenFGAError
 from app.clients.openlane import OpenlaneClient, OpenlaneError
 from app.clients.orekit import OrekitClient
@@ -26,6 +27,10 @@ def get_openfga(request: Request) -> OpenFGAClient:
 
 def get_orekit(request: Request) -> OrekitClient:
     return cast(OrekitClient, request.app.state.orekit)
+
+
+def get_kg(request: Request) -> KGClient:
+    return cast(KGClient, request.app.state.kg)
 
 
 def bearer_token(authorization: Annotated[str | None, Header()] = None) -> str:

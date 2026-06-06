@@ -33,6 +33,11 @@ class Settings(BaseSettings):
     # Default reporting threshold for conjunction events (km).
     orekit_conjunction_threshold_km: float = 10.0
 
+    # --- L2 knowledge graph (kg-postgres: Postgres 17 + AGE + pgvector, ADR-0007/0014) ---
+    # In-network DSN; the kg-postgres service listens on 5432 (host 5433). Behind the `kg`
+    # compose profile — L2/L4 endpoints 503 when it is not running.
+    kg_dsn: str = "postgresql://postgres:password@kg-postgres:5432/kg"
+
     # --- HTTP client tuning ---
     upstream_timeout_seconds: float = 10.0
 

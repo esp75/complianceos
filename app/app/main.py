@@ -13,10 +13,12 @@ import httpx
 from fastapi import FastAPI
 
 from app.api import auth, evidence, frameworks, health, organizations, portal, sder
+from app.clients.kg import KGClient
 from app.clients.openfga import OpenFGAClient
 from app.clients.openlane import OpenlaneClient
 from app.clients.orekit import OrekitClient
 from app.config import get_settings
+from app.kg.schema import SCHEMA_SQL
 
 
 @asynccontextmanager
@@ -27,7 +29,18 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         app.state.openfga = OpenFGAClient(settings, http)
         # L3 SDER engine — same shared transport (one httpx client, ADR-0013).
         app.state.orekit = OrekitClient(settings, http)
-        yield
+        # L2 knowledge graph (kg-postgres). Behind the `kg` compose profile, so connect
+        # tolerantly — L2/L4 endpoints 503 when it is unreachable (ADR-0014).
+        app.state.kg = KGClient(settings.kg_dsn)
+        try:
+            await app.state.kg.connect()
+            await app.state.kg.apply_schema(SCHEMA_SQL)
+        except Exception:  # noqa: BLE001 - kg is optional; never block app startup
+            pass
+        try:
+            yield
+        finally:
+            await app.state.kg.close()
 
 
 app = FastAPI(

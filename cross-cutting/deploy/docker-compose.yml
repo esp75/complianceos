@@ -162,6 +162,9 @@ services:
       # L3 SDER engine (optional; only running under the `sder` profile). The BFF tolerates
       # it being absent — /readyz reports orekit informationally and the SDER router 503s.
       - CELESTIA_OREKIT_BASE_URL=http://orekit:8090
+      # L2 knowledge graph (optional; only under the `kg` profile). kg-postgres listens on
+      # 5432 in-network. L2/L4 endpoints 503 when it is not running (ADR-0014).
+      - CELESTIA_KG_DSN=postgresql://postgres:password@kg-postgres:5432/kg
     ports:
       # Host 8001 (8000 is commonly taken by other local dev servers); container stays 8000.
       - "8001:8000"
