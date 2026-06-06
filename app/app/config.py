@@ -37,6 +37,16 @@ class Settings(BaseSettings):
     # In-network DSN; the kg-postgres service listens on 5432 (host 5433). Behind the `kg`
     # compose profile — L2/L4 endpoints 503 when it is not running.
     kg_dsn: str = "postgresql://postgres:password@kg-postgres:5432/kg"
+    # Directory of the L1 framework YAMLs that L2 ingest reads (ADR-0014). Defaults to the
+    # repo path for local dev; the app image sets CELESTIA_FRAMEWORKS_DIR=/srv/frameworks.
+    frameworks_dir: str = ""
+
+    # --- L4 LLM (Anthropic EU, ADR-0010) ---
+    # When the key is empty, drafting/extraction use deterministic offline paths (no US LLM
+    # call). Set CELESTIA_ANTHROPIC_API_KEY (env only, never committed) to wire live Claude.
+    anthropic_api_key: str = ""
+    anthropic_model: str = "claude-opus-4-7"
+    anthropic_base_url: str = "https://api.anthropic.com"
 
     # --- HTTP client tuning ---
     upstream_timeout_seconds: float = 10.0

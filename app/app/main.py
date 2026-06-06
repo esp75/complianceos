@@ -12,13 +12,15 @@ from contextlib import asynccontextmanager
 import httpx
 from fastapi import FastAPI
 
-from app.api import auth, evidence, frameworks, health, organizations, portal, sder
+from app.api import auth, evidence, frameworks, health, kg, organizations, portal, sder
 from app.clients.kg import KGClient
 from app.clients.openfga import OpenFGAClient
 from app.clients.openlane import OpenlaneClient
 from app.clients.orekit import OrekitClient
 from app.config import get_settings
+from app.kg.embeddings import HashingEmbedding
 from app.kg.schema import SCHEMA_SQL
+from app.llm.anthropic_eu import AnthropicEUClient
 
 
 @asynccontextmanager
@@ -37,6 +39,15 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
             await app.state.kg.apply_schema(SCHEMA_SQL)
         except Exception:  # noqa: BLE001 - kg is optional; never block app startup
             pass
+        # L2 embedding provider (deterministic v0; bge-m3 swap behind the interface).
+        app.state.embed = HashingEmbedding()
+        # L4 LLM provider (ADR-0010). No key -> None; callers use deterministic offline paths.
+        app.state.llm = (
+            AnthropicEUClient(settings.anthropic_api_key, settings.anthropic_model, http,
+                              base_url=settings.anthropic_base_url)
+            if settings.anthropic_api_key
+            else None
+        )
         try:
             yield
         finally:
@@ -56,4 +67,5 @@ app.include_router(organizations.router)
 app.include_router(frameworks.router)
 app.include_router(evidence.router)
 app.include_router(sder.router)
+app.include_router(kg.router)
 app.include_router(portal.router)

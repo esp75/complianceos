@@ -19,10 +19,14 @@ COPY layers/L3-sder-engine/risk-scoring /layers/L3-sder-engine/risk-scoring
 COPY app/pyproject.toml app/uv.lock ./
 RUN uv sync --no-dev --no-install-project
 
+# L1 framework YAMLs that L2 ingest reads (ADR-0014). CELESTIA_FRAMEWORKS_DIR points here.
+COPY layers/L1-substrate/frameworks ./frameworks
+
 # App source last.
 COPY app/app ./app
 
 ENV PATH="/srv/.venv/bin:$PATH"
+ENV CELESTIA_FRAMEWORKS_DIR=/srv/frameworks
 EXPOSE 8000
 
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

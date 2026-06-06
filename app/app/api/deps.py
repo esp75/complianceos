@@ -15,6 +15,8 @@ from app.clients.kg import KGClient
 from app.clients.openfga import OpenFGAClient, OpenFGAError
 from app.clients.openlane import OpenlaneClient, OpenlaneError
 from app.clients.orekit import OrekitClient
+from app.kg.embeddings import EmbeddingProvider
+from app.llm.base import LLMProvider
 
 
 def get_openlane(request: Request) -> OpenlaneClient:
@@ -31,6 +33,24 @@ def get_orekit(request: Request) -> OrekitClient:
 
 def get_kg(request: Request) -> KGClient:
     return cast(KGClient, request.app.state.kg)
+
+
+def get_embed(request: Request) -> EmbeddingProvider:
+    return cast(EmbeddingProvider, request.app.state.embed)
+
+
+def get_llm(request: Request) -> LLMProvider | None:
+    return cast("LLMProvider | None", request.app.state.llm)
+
+
+async def require_kg(kg: Annotated[KGClient, Depends(get_kg)]) -> KGClient:
+    """503 unless the L2 KG (kg-postgres, `kg` profile) is reachable."""
+    if not await kg.ping():
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="knowledge graph unavailable (start the `kg` compose profile)",
+        )
+    return kg
 
 
 def bearer_token(authorization: Annotated[str | None, Header()] = None) -> str:
