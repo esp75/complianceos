@@ -25,6 +25,9 @@ class RiskInputs(BaseModel):
     filing_maturity: str
     itu_compliant: bool
     disposal_compliant: bool = True
+    # Relative speed at closest approach (km/s). Optional; unknown → no consequence
+    # discount applied (see scoring.py). Higher speed = higher-consequence conjunction.
+    relative_speed_km_s: float | None = Field(default=None, ge=0.0)
 
 
 class RiskScore(BaseModel):

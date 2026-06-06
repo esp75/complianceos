@@ -99,6 +99,9 @@ async def conjunction_check(
     )
     min_miss = float(conj["minMissDistanceKm"])
     events = conj.get("events", [])
+    # Relative speed at the closest flagged approach, if any (consequence input to the
+    # risk score). None when no local minimum dipped below the reporting threshold.
+    rel_speed = float(events[0]["relativeSpeedKmS"]) if events else None
 
     itu_compliant, maturity, itu_summary = _itu_assessment(body.satellite_longitude_deg, body.filings)
 
@@ -108,6 +111,7 @@ async def conjunction_check(
             filing_maturity=maturity,
             itu_compliant=itu_compliant,
             disposal_compliant=body.disposal_compliant,
+            relative_speed_km_s=rel_speed,
         )
     )
 
@@ -153,6 +157,7 @@ async def risk_score(
     filing_maturity: str = "brought_into_use",
     itu_compliant: bool = True,
     disposal_compliant: bool = True,
+    relative_speed_km_s: Annotated[float | None, Query(ge=0.0)] = None,
 ) -> dict[str, Any]:
     """Pure recompute-on-demand score for the portal — no Orekit call, no write."""
     score = score_satellite(
@@ -161,6 +166,7 @@ async def risk_score(
             filing_maturity=filing_maturity,
             itu_compliant=itu_compliant,
             disposal_compliant=disposal_compliant,
+            relative_speed_km_s=relative_speed_km_s,
         )
     )
     return {"score": score.score, "band": score.band.value, "breakdown": score.breakdown}

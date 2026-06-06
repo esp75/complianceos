@@ -1,16 +1,28 @@
-"""Risk-scoring v0 — a deterministic, pure-function single-satellite score.
+"""Risk-scoring v0.1 — a deterministic, pure-function single-satellite score.
 
 STUB methodology (see METHODOLOGY.md): not insurer-grade, pending actuarial review.
 No I/O; deterministic in its inputs so it is trivially testable and reproducible for
 regulator-facing runs.
+
+v0.1 (post-review): the conjunction component now decays exponentially with miss
+distance (collision risk is not linear in separation) at a realistic characteristic
+distance, and folds in relative speed as a consequence multiplier.
 """
 
 from __future__ import annotations
 
+import math
+
 from .models import RiskBand, RiskInputs, RiskScore
 
-# Component tuning (METHODOLOGY.md).
-SAFE_KM = 50.0  # separation at/above which conjunction risk is zero
+# Conjunction tuning (METHODOLOGY.md). Geometry risk = 100 * exp(-miss / CHAR_KM):
+# 100 at a direct hit, ~37 at CHAR_KM, ~0 by ~5x CHAR_KM. CHAR_KM ~ a few km matches
+# operational screening volumes (km-scale), unlike the old 50 km linear cutoff.
+CHAR_KM = 2.0
+# Relative-speed consequence multiplier: a fast (head-on LEO) pass is worse than a slow
+# co-planar one. Scales geometry by [MIN_SPEED_FACTOR, 1.0] around a reference speed.
+REF_SPEED_KMS = 10.0
+MIN_SPEED_FACTOR = 0.3
 
 _MATURITY_RISK: dict[str, float] = {
     "brought_into_use": 0.0,
@@ -34,8 +46,17 @@ def _clamp(value: float, low: float, high: float) -> float:
     return max(low, min(high, value))
 
 
-def _conjunction_risk(min_miss_distance_km: float) -> float:
-    return _clamp(100.0 * (1.0 - min_miss_distance_km / SAFE_KM), 0.0, 100.0)
+def _speed_factor(relative_speed_km_s: float | None) -> float:
+    """Consequence multiplier in [MIN_SPEED_FACTOR, 1.0]. Unknown speed → 1.0 (no
+    discount, conservative)."""
+    if relative_speed_km_s is None:
+        return 1.0
+    return _clamp(relative_speed_km_s / REF_SPEED_KMS, MIN_SPEED_FACTOR, 1.0)
+
+
+def _conjunction_risk(min_miss_distance_km: float, relative_speed_km_s: float | None) -> float:
+    geometry = 100.0 * math.exp(-min_miss_distance_km / CHAR_KM)
+    return geometry * _speed_factor(relative_speed_km_s)
 
 
 def _band(score: float) -> RiskBand:
@@ -47,8 +68,8 @@ def _band(score: float) -> RiskBand:
 
 
 def score_satellite(inputs: RiskInputs) -> RiskScore:
-    """Compute the v0 risk score and its weighted component breakdown."""
-    conjunction = _conjunction_risk(inputs.min_miss_distance_km)
+    """Compute the v0.1 risk score and its weighted component breakdown."""
+    conjunction = _conjunction_risk(inputs.min_miss_distance_km, inputs.relative_speed_km_s)
     maturity = _MATURITY_RISK.get(inputs.filing_maturity, _UNKNOWN_MATURITY_RISK)
     compliance = 0.0 if inputs.itu_compliant else 50.0
     disposal = 0.0 if inputs.disposal_compliant else 100.0
