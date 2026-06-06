@@ -102,6 +102,18 @@ class KGClient:
         async with self._require_pool().acquire() as conn:
             return cast("int", await conn.fetchval("SELECT count(*) FROM obligation_embedding"))
 
+    async def fetch_obligations(self, ref_codes: list[str]) -> list[dict[str, Any]]:
+        """Fetch obligation rows by ref_code (used to hydrate graph-expanded neighbors)."""
+        if not ref_codes:
+            return []
+        async with self._require_pool().acquire() as conn:
+            rows = await conn.fetch(
+                "SELECT ref_code, framework, content FROM obligation_embedding WHERE ref_code = ANY($1)",
+                ref_codes,
+            )
+        result: list[dict[str, Any]] = [dict(r) for r in rows]
+        return result
+
     # --- L2 graph (AGE) ---
 
     async def _cypher(self, query: str, *, columns: str = "(r ag_catalog.agtype)") -> list[Any]:
