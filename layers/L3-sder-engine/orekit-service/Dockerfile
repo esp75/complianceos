@@ -10,6 +10,9 @@ COPY src ./src
 RUN mvn -q -ntp package -DskipTests
 
 FROM eclipse-temurin:21-jre
+# curl for the compose healthcheck (and ad-hoc debugging of /readyz).
+RUN apt-get update && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
 WORKDIR /srv
 COPY --from=build /build/target/orekit-service.jar app.jar
 # orekit-data is mounted read-only at runtime, NOT baked in (ADR-0013 decision 5).

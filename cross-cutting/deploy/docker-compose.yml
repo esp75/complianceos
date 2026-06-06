@@ -148,8 +148,9 @@ services:
 
   app:
     build:
-      context: ../../app
-      dockerfile: Dockerfile
+      # Repo root: the BFF image needs the L3 packages under layers/ (uv path deps).
+      context: ../..
+      dockerfile: app/Dockerfile
     image: celestia/api:dev
     depends_on:
       core:
@@ -158,9 +159,36 @@ services:
       - CELESTIA_OPENLANE_GRAPHQL_URL=http://core:17608/query
       - CELESTIA_OPENFGA_URL=http://openfga:8080
       - CELESTIA_OIDC_ISSUER_URL=http://dex:5556/dex
+      # L3 SDER engine (optional; only running under the `sder` profile). The BFF tolerates
+      # it being absent — /readyz reports orekit informationally and the SDER router 503s.
+      - CELESTIA_OREKIT_BASE_URL=http://orekit:8090
     ports:
       # Host 8001 (8000 is commonly taken by other local dev servers); container stays 8000.
       - "8001:8000"
+    restart: unless-stopped
+
+  # Celestia L3 Orekit microservice (Java 21 / Spring Boot, REST). ADR-0002 / ADR-0013.
+  # Gated behind the `sder` profile — not in the default Phase-1 stack. Start with:
+  #   ./../../layers/L3-sder-engine/orekit-service/scripts/fetch-orekit-data.sh ./orekit-data
+  #   docker compose --profile sder up -d orekit
+  orekit:
+    profiles: ["sder"]
+    build:
+      context: ../../layers/L3-sder-engine/orekit-service
+      dockerfile: Dockerfile
+    image: celestia/orekit:dev
+    environment:
+      - OREKIT_DATA_PATH=/orekit-data
+    volumes:
+      # orekit-data is mounted at runtime, never baked into the image (ADR-0013).
+      - ./orekit-data:/orekit-data:ro
+    ports:
+      - "8090:8090"   # dev curl access; in-network the BFF reaches http://orekit:8090
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8090/readyz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
     restart: unless-stopped
 
   # Celestia L2 knowledge-graph Postgres (Postgres 17 + AGE + pgvector), ADR-0007.

@@ -1,0 +1,5 @@
+# orekit-data is fetched at runtime, not committed (ADR-0013).
+# Populate before running the sder profile:
+#   ../../layers/L3-sder-engine/orekit-service/scripts/fetch-orekit-data.sh ./orekit-data
+*
+!.gitignore

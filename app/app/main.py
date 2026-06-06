@@ -12,9 +12,10 @@ from contextlib import asynccontextmanager
 import httpx
 from fastapi import FastAPI
 
-from app.api import auth, evidence, frameworks, health, organizations, portal
+from app.api import auth, evidence, frameworks, health, organizations, portal, sder
 from app.clients.openfga import OpenFGAClient
 from app.clients.openlane import OpenlaneClient
+from app.clients.orekit import OrekitClient
 from app.config import get_settings
 
 
@@ -24,6 +25,8 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     async with httpx.AsyncClient(timeout=settings.upstream_timeout_seconds) as http:
         app.state.openlane = OpenlaneClient(settings, http)
         app.state.openfga = OpenFGAClient(settings, http)
+        # L3 SDER engine — same shared transport (one httpx client, ADR-0013).
+        app.state.orekit = OrekitClient(settings, http)
         yield
 
 
@@ -39,4 +42,5 @@ app.include_router(auth.router)
 app.include_router(organizations.router)
 app.include_router(frameworks.router)
 app.include_router(evidence.router)
+app.include_router(sder.router)
 app.include_router(portal.router)

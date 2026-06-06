@@ -80,3 +80,51 @@ async def test_dod_audit_flow(env: dict[str, str]) -> None:
         # operator is NOT an audit_log_viewer -> denied
         r = await c.get(f"/evidence/{evid}/history", headers=_bearer(env["operator"]))
         assert r.status_code == 403
+
+
+# Canonical ISS TLE (CelesTrak/Orekit example).
+_ISS_TLE = {
+    "line1": "1 25544U 98067A   08264.51782528 -.00002182  00000-0 -11606-4 0  2927",
+    "line2": "2 25544  51.6416 247.4627 0006703 130.5360 325.0288 15.72125391563537",
+}
+
+
+@pytest.mark.asyncio
+async def test_sder_conjunction_dod_flow(env: dict[str, str]) -> None:
+    """Phase-2 DoD: operator TLE -> Orekit conjunction -> ITU proximity -> risk score ->
+    conjunction_report Evidence visible to the regulator with audit history. Requires the
+    `sder` compose profile (Orekit container) up; skips if it is not reachable."""
+    org = env["org_id"]
+    body = {
+        "org_id": org,
+        "tle1": _ISS_TLE,
+        "tle2": _ISS_TLE,
+        "window": {"start": "2008-09-20T12:00:00Z", "end": "2008-09-20T12:30:00Z", "stepSeconds": 60},
+        "satellite_longitude_deg": 10.0,
+        "filings": [
+            {"network_name": "ALPHA", "longitude_deg": 10.0, "itu_administration": "F",
+             "planned": False, "maturity": "brought_into_use"}
+        ],
+    }
+    async with httpx.AsyncClient(base_url=BFF, timeout=30.0) as c:
+        r = await c.post("/sder/conjunction-check", json=body, headers=_bearer(env["operator"]))
+        if r.status_code >= 500:
+            pytest.skip(f"orekit service not reachable ({r.status_code}); start the `sder` profile")
+        assert r.status_code == 201, r.text
+        out = r.json()
+        evid = out["evidence_id"]
+        assert out["min_miss_distance_km"] == 0.0  # ISS screened against itself
+        assert out["band"] in {"low", "medium", "high"}
+        assert out["itu_compliant"] is True
+
+        # insurer cannot run an operator action
+        r = await c.post("/sder/conjunction-check", json=body, headers=_bearer(env["insurer"]))
+        assert r.status_code == 403
+
+        # regulator sees the conjunction_report evidence and its audit history (the DoD)
+        r = await c.get("/evidence", params={"org_id": org}, headers=_bearer(env["regulator"]))
+        assert r.status_code == 200
+        assert any(e["id"] == evid for e in r.json())
+        r = await c.get(f"/evidence/{evid}/history", headers=_bearer(env["regulator"]))
+        assert r.status_code == 200
+        assert r.json()["audit"]["createdBy"]

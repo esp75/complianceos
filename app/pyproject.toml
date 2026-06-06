@@ -10,6 +10,9 @@ dependencies = [
     "pydantic-settings>=2.6",
     "httpx>=0.27",
     "pyyaml>=6.0",
+    # L3 SDER packages consumed by the /sder router (M7). Path deps — see [tool.uv.sources].
+    "itu-compliance",
+    "risk-scoring",
 ]
 
 [dependency-groups]
@@ -23,6 +26,13 @@ dev = [
 
 [tool.uv]
 package = true
+
+# L3 packages live under layers/ (ADR-0009); the BFF imports them as editable path
+# deps. The Docker image mounts the same relative layout so these resolve in-container
+# (../layers from the app project root) — see app/Dockerfile.
+[tool.uv.sources]
+itu-compliance = { path = "../layers/L3-sder-engine/itu-compliance", editable = true }
+risk-scoring = { path = "../layers/L3-sder-engine/risk-scoring", editable = true }
 
 [build-system]
 requires = ["hatchling"]

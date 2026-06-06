@@ -65,6 +65,29 @@
       <h3 style="margin-top:0">Audit history</h3>
       <pre id="hist"></pre>
     </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">SDER — conjunction risk <span class="stub">L3</span></h3>
+      <p class="muted" style="margin-top:0">
+        Operator action: screen a TLE for conjunctions (Orekit), score the risk, and record a
+        <code class="mono">conjunction_report</code> as evidence linked to ISO 24113 §6.4. Needs an
+        operator PAT and the <code class="mono">sder</code> compose profile running.
+      </p>
+      <label>Operator PAT</label>
+      <input id="opat" placeholder="tolp_…" />
+      <label>TLE line 1</label>
+      <input id="l1" value="1 25544U 98067A   08264.51782528 -.00002182  00000-0 -11606-4 0  2927" />
+      <label>TLE line 2</label>
+      <input id="l2" value="2 25544  51.6416 247.4627 0006703 130.5360 325.0288 15.72125391563537" />
+      <div class="row">
+        <div><label>Window start</label><input id="wstart" value="2008-09-20T12:00:00Z" /></div>
+        <div><label>Window end</label><input id="wend" value="2008-09-20T12:30:00Z" /></div>
+        <div><label>Step (s)</label><input id="wstep" value="60" /></div>
+      </div>
+      <button onclick="runConjunction()">Run conjunction check</button>
+      <div id="smsg" class="msg"></div>
+      <div id="riskout" style="display:none;margin-top:14px"></div>
+    </div>
   </main>
 
   <script>
@@ -102,6 +125,30 @@
         show('ok','Audit history loaded.');
         $('histcard').scrollIntoView({behavior:'smooth'});
       } catch(e){ show('err','Network error: '+e); }
+    }
+
+    function smsg(kind, text){ const m=$('smsg'); m.className='msg '+kind; m.textContent=text; }
+
+    async function runConjunction(){
+      const base=$('base').value.replace(/\/$/,''), org=$('org').value.trim(), opat=$('opat').value.trim();
+      if(!org || !opat){ smsg('err','Enter an organization id (above) and an operator PAT.'); return; }
+      const tle = { line1:$('l1').value, line2:$('l2').value };
+      const body = { org_id:org, tle1:tle, tle2:tle,
+        window:{ start:$('wstart').value, end:$('wend').value, stepSeconds:parseFloat($('wstep').value)||60 } };
+      try {
+        const r = await fetch(`${base}/sder/conjunction-check`, {
+          method:'POST', headers:{ 'Authorization':'Bearer '+opat, 'Content-Type':'application/json' },
+          body: JSON.stringify(body) });
+        const data = await r.json();
+        if(!r.ok){ smsg('err',`Conjunction check failed (HTTP ${r.status}): ${JSON.stringify(data)}`); $('riskout').style.display='none'; return; }
+        smsg('ok',`Evidence ${data.display_id||data.evidence_id} recorded.`);
+        const band=data.band, color = band==='high'?'var(--bad)':(band==='medium'?'#f2c14e':'var(--ok)');
+        $('riskout').innerHTML = `<div style="display:flex;gap:18px;align-items:center">
+          <div style="font-size:34px;font-weight:700;color:${color};line-height:1">${data.risk_score}</div>
+          <div><div style="text-transform:uppercase;letter-spacing:.5px;color:${color};font-weight:700">${band} risk</div>
+          <div class="muted">min miss distance ${data.min_miss_distance_km} km · ITU ${data.itu_compliant?'compliant':'not compliant'} · evidence <span class="mono">${data.evidence_id}</span></div></div></div>`;
+        $('riskout').style.display='block';
+      } catch(e){ smsg('err','Network error: '+e); }
     }
   </script>
 </body>

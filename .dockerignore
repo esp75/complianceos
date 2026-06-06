@@ -1,0 +1,14 @@
+# Applies to the app image build (context = repo root, see cross-cutting/deploy
+# docker-compose.yml). Keep the context small: exclude vendored upstreams and build
+# artifacts. Other services build from their own (smaller) contexts.
+.git
+.gitignore
+.context/
+.claude/
+external/
+**/.venv/
+**/__pycache__/
+**/*.pyc
+**/target/
+**/orekit-data/
+**/node_modules/

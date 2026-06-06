@@ -27,6 +27,12 @@ class Settings(BaseSettings):
     oidc_issuer_url: str = "http://dex:5556/dex"
     oidc_client_id: str = "local-client"
 
+    # --- L3 SDER engine (Orekit microservice, ADR-0013) ---
+    # REST base URL of the Orekit JVM service; resolves by compose service name.
+    orekit_base_url: str = "http://orekit:8090"
+    # Default reporting threshold for conjunction events (km).
+    orekit_conjunction_threshold_km: float = 10.0
+
     # --- HTTP client tuning ---
     upstream_timeout_seconds: float = 10.0
 

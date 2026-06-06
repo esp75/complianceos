@@ -13,6 +13,7 @@ from fastapi import Depends, Header, HTTPException, Request, status
 
 from app.clients.openfga import OpenFGAClient, OpenFGAError
 from app.clients.openlane import OpenlaneClient, OpenlaneError
+from app.clients.orekit import OrekitClient
 
 
 def get_openlane(request: Request) -> OpenlaneClient:
@@ -21,6 +22,10 @@ def get_openlane(request: Request) -> OpenlaneClient:
 
 def get_openfga(request: Request) -> OpenFGAClient:
     return cast(OpenFGAClient, request.app.state.openfga)
+
+
+def get_orekit(request: Request) -> OrekitClient:
+    return cast(OrekitClient, request.app.state.orekit)
 
 
 def bearer_token(authorization: Annotated[str | None, Header()] = None) -> str:
