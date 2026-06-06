@@ -18,6 +18,40 @@ write-back → portal panel + e2e). Transport decision: **REST/JSON** (ADR-0013)
   (endpoint JSON shapes, units km/km·s⁻¹, frames EME2000/ITRF/TEME, error envelope). Pinned the
   running jar to released `org.orekit:orekit:13.1.5` (vendored source is 14.0-SNAPSHOT on develop);
   skew recorded in `docs/upstream-watch.md`. Conjunction v0 = sampled min-miss-distance (no Pc).
+- ✅ **M1** — Orekit service skeleton: Java 21 / Spring Boot under
+  `layers/L3-sder-engine/orekit-service/` (the only Java in the repo). `OrekitDataConfig` loads
+  runtime-mounted `/orekit-data` and gates `/readyz`; `/healthz` is liveness-only; uniform error
+  envelope; multi-stage JRE-only Dockerfile; `fetch-orekit-data.sh` (data mounted, not baked in).
+  Verified in-container: 3/3 health tests, orekit 13.1.5 + Spring Boot 3.3.5 resolve.
+- ✅ **M2** — Endpoints `propagate` / `conjunction` / `frame_convert` (logic in services, out of
+  controllers). Conjunction = sampled minimum-miss-distance (local minima below threshold; not Pc).
+  Verified with real orekit-data: 11/11 tests, 0 skipped — ISS radius ~6780 km, self-conjunction
+  miss ~0, frame rotation preserves position magnitude. Fixed data-fetch URL (branch is `main`).
+- ✅ **M3** — `orekit` service in `docker-compose.yml` behind `profiles:[sder]` (orekit-data volume,
+  curl healthcheck, on `celestia-l1`). Verified live: container healthy, `/readyz` ready, ISS
+  `/propagate` ~6720 km, self-`/conjunction` 0.0 km, bad TLE → 400 envelope.
+- ✅ **M4** — `app/app/clients/orekit.py` (`OrekitClient` on the shared httpx transport, mirrors
+  `openlane.py`) + `CELESTIA_OREKIT_BASE_URL` config + lifespan/deps wiring; `/readyz` reports
+  orekit informationally (does not gate). 6 client unit tests (httpx MockTransport).
+- ✅ **M5** — ITU compliance port (`layers/L3-sder-engine/itu-compliance/`, ADR-0009): typed
+  filing-maturity FSM (early/late/brought-into-use/suspended + Postgres ENUM DDL), stdlib-csv SNL
+  parse + httpx fetch (refactored off the upstream `os.system`/pandas), GEO longitudinal proximity
+  with antimeridian wraparound; LEO/MEO/HEO raise `RegimeNotSupportedError` (deferred). 21 tests.
+- ✅ **M6** — Risk-scoring v0 (`layers/L3-sder-engine/risk-scoring/`): `METHODOLOGY.md` (stub, "not
+  insurer-grade" disclaimer) + deterministic `score_satellite` → 0–100 score + band + weighted
+  breakdown. Decoupled from itu-compliance. 7 tests (boundary, monotonicity, bands).
+- ✅ **M7** — `/sder/conjunction-check` (tetrad-gated, operator/admin) wires Orekit conjunction +
+  ITU proximity + risk score and writes a `conjunction_report` Evidence via the L1 `createEvidence`
+  path (ADR-0012) linked to ISO 24113 §6.4; `/sder/risk-score` calculator; operator risk panel on
+  `portal.html`. App image now builds from repo root to install the L3 packages as uv path deps
+  (py.typed added); root `.dockerignore`. 6 router unit tests; **Phase-2 DoD e2e (2/2) passes**:
+  operator TLE → Orekit (live JVM) → ITU proximity → risk 50/medium → Evidence linked to ISO 24113
+  §6.4, regulator sees it + audit history, insurer blocked. mypy --strict + ruff clean throughout.
+
+**Phase 2 (L3 SDER engine) first slice complete.** The L3 DoD is demonstrated end to end. Next per
+ROADMAP: Phase 3 (L2 knowledge graph + L4 drafting agent). Deferred from this slice: OSTk notebooks,
+LEO/MEO/HEO ITU logic, probability-of-collision, gRPC transport (Phase-3 benchmark), external TLE
+feed auto-fetch, real openmct operator portal (Phase 4), risk-score actuarial review.
 
 ## Phase 1 progress (L1 substrate)
 

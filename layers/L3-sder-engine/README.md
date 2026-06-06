@@ -26,12 +26,15 @@ Defensible orbital math powering insurer scoring and regulator-facing compliance
 
 ## Phase 2 deliverables (see ROADMAP.md)
 
-- [ ] Orekit service: `propagate`, `conjunction`, `frame_convert` endpoints
-- [ ] Python client library for FastAPI-side consumers
-- [ ] OSTk integrated for `ostk-explore/` notebooks
-- [ ] Port `snl_client.py`, `compliance.py`, `filing_maturity.py` from upstream
-- [ ] LEO/MEO/HEO extensions to proximity check (Celestia-original)
-- [ ] Risk-scoring v0: methodology doc + single-satellite scoring path
+First slice complete (REST/JSON, ADR-0013). See `STATUS.md` for the M0–M7 log.
+
+- [x] Orekit service: `propagate`, `conjunction`, `frame_convert` endpoints (REST/JSON)
+- [x] Python client library for FastAPI-side consumers (`app/app/clients/orekit.py`)
+- [ ] OSTk integrated for `ostk-explore/` notebooks — deferred (research surface)
+- [x] Port `snl_client.py`, `compliance.py`, `filing_maturity.py` from upstream (GEO)
+- [ ] LEO/MEO/HEO extensions to proximity check — deferred (no authoritative source yet; stubbed)
+- [x] Risk-scoring v0: methodology doc + single-satellite scoring path
+- [x] Conjunction events written to L1 as `conjunction_report` Evidence (ADR-0012), risk on portal
 
 ## Skills to invoke
 
@@ -48,6 +51,7 @@ Defensible orbital math powering insurer scoring and regulator-facing compliance
 
 ## Open questions
 
-- gRPC vs REST for the Orekit service interface. Default: gRPC. Benchmark in Phase 2.
+- ~~gRPC vs REST for the Orekit service interface.~~ **Resolved (ADR-0013): REST/JSON for v0; gRPC
+  deferred behind a Phase-3 benchmark.**
 - LEO mega-constellation filing data source — ITU SNL is GEO-centric; investigate operator-specific feeds (Space-Track, EUSST).
 - Risk-scoring methodology peer review path — consider engaging an aerospace insurance broker for a non-trivial review before insurer pitches.
