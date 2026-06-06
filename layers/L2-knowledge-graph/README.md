@@ -22,12 +22,15 @@ Turn regulatory text into machine-actionable obligations with explicit cross-ref
 
 ## Phase 3 deliverables (see ROADMAP.md)
 
-- [ ] Doccano annotation environment deployed on Hetzner
-- [ ] RASE-celestia schema document
-- [ ] 200–500 annotated provisions across EU Space Act + ISO 24113 (corpus seed)
-- [ ] LEGAL-BERT LoRA adapters: NER, modality, cross-ref
-- [ ] Ingest pipeline: PDF → parser → extractor → AGE + pgvector
-- [ ] Held-out evaluation: F1 ≥ 0.75 on each head before production use; human-in-loop until 0.85
+First slice complete via Claude-as-extractor (ADR-0014); the LEGAL-BERT/corpus path is deferred.
+
+- [x] RASE-celestia schema document (`ontology/RASE-celestia.md`)
+- [x] Ingest pipeline: framework YAML → extractor → AGE + pgvector (`app/app/kg/ingest.py`);
+      Claude-extractor for raw text (`app/app/kg/extract.py`)
+- [ ] Doccano annotation environment on Hetzner — deferred (post-MVP)
+- [ ] 200–500 annotated provisions corpus — deferred (post-MVP)
+- [ ] LEGAL-BERT LoRA adapters (NER, modality, cross-ref) — deferred (ADR-0006/0014)
+- [ ] Held-out F1 ≥ 0.75 / human-in-loop until 0.85 — applies to the deferred ML path
 
 ## Skills to invoke
 

@@ -1,11 +1,42 @@
 # STATUS — ComplianceOS v0.2
 
 **Date**: 2026-06-06
-**Phase**: 2 (L3 SDER engine) — underway (Phase 1 complete: M0–M6 DONE)
+**Phase**: 3 (L2 KG + L4 drafting) — first slice DONE (Phases 1 + 2 complete)
 **Working dir**: `/Users/esponsor/Documents/Github/complianceOSv0.2/`
-**Scope**: Phase 0 scaffolding + Phase 1 (L1 substrate) complete. Phase 2 underway: the
-Orekit JVM microservice, ITU SNL port, and risk-scoring v0, closing the L3 DoD as a
-vertical slice on branch `phase2-l3-sder-first-slice`.
+**Scope**: Phase 0 + Phase 1 (L1) + Phase 2 (L3 SDER) complete. Phase 3 first slice complete:
+the L2 knowledge graph is populated and the L4 drafting agent returns citation-grounded
+compliance paragraphs with Context Cores. All on branch `phase2-l3-sder-first-slice`.
+
+## Phase 3 progress (L2 knowledge graph + L4 drafting agent)
+
+First slice (ADR-0014): Claude-as-extractor MVP — deterministic ingest of the loaded
+frameworks for the DoD, LEGAL-BERT/Doccano corpus deferred; v0 hashing embeddings (bge-m3
+swap behind the interface); LightRAG retrieval minus the reranker; drafting behind a
+provider-router LLM interface with a deterministic offline path (no key, no US LLM call).
+
+- ✅ **P0** — **ADR-0014** (Claude-as-extractor scope, deferrals, offline-by-default) +
+  `RASE-celestia.md` ontology + KG schema (Obligation/EvidenceType nodes, CITES/REQUIRES_EVIDENCE
+  edges, `obligation_embedding` vector(384), `context_core` table).
+- ✅ **P1** — KG client (`app/app/clients/kg.py`): pgvector ANN + AGE Cypher traversal +
+  Context Core tables; deterministic dim-384 hashing embedding. Fixed the AGE-under-asyncpg
+  search_path-reset gotcha. Lifespan connects tolerantly (`kg` profile); `/readyz` reports kg.
+- ✅ **P2** — L2 ingest (`app/app/kg/ingest.py`) materializes the loaded ISO 24113 / ITU /
+  EU Space Act YAMLs into the KG (13 obligations / 3 frameworks, verified live). LLM
+  provider-router (`app/app/llm/`, Anthropic EU, ADR-0010) + Claude-extractor for raw text.
+  Endpoints `POST /kg/ingest`, `POST /kg/extract`, `GET /kg/obligations` (pgvector ANN).
+- ✅ **P3** — L4 dual-level retrieval (`app/app/l4/retrieval.py`): pgvector ANN (local) + AGE
+  CITES traversal (global) + fusion; reranker deferred. Context Core provenance
+  (`app/app/l4/provenance.py`): one core per cited source.
+- ✅ **P4** — L4 drafting (`app/app/l4/drafting.py`) + citation enforcer (`citations.py`,
+  >=2 obligations + >=1 evidence, each Context-Core-backed; ungrounded draft 422s) + `POST
+  /draft/obligation`. **Phase-3 DoD met live**: a regulator question returns a paragraph citing
+  4 obligations (incl. EU-SA Art.3 via the global CITES traversal) + 3 evidence records (the
+  Phase-2 conjunction_report + Phase-1 disposal telemetry), each with a Context Core. e2e 3/3.
+
+**Phase 3 first slice complete.** Deferred (post-MVP): LEGAL-BERT 3-head pipeline + Doccano
+corpus (ADR-0006/0008), bge-m3 embeddings + bge-reranker, live Anthropic EU drafting, PAdES
+signing + trust-marking the drafting code. Next per ROADMAP: Phase 4 (L5 dashboards, EU IdP,
+production hardening) — see `docs/upstream-watch.md`.
 
 ## Phase 2 progress (L3 SDER engine)
 

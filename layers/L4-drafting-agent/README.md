@@ -26,11 +26,16 @@ L4 drafting code lives in `app/api/trust/draft/**` (future). Files marked `# MAR
 
 ## Phase 3 deliverables (see ROADMAP.md)
 
-- [ ] Dual-level retriever: local pgvector ANN + global AGE Cypher + bge-reranker-v2-m3
-- [ ] Provenance tables + edges; every retrieved chunk has a source manifest
-- [ ] Drafting agent v0: obligation Q → 1-paragraph compliance assertion with ≥2 obligation citations + ≥1 evidence citation
-- [ ] Citation enforcer: any unsupported claim fails validation and never reaches output
-- [ ] Held-out eval: retrieval P@5 ≥ 0.8 on a Celestia-built test set; drafting coverage ≥ 90%
+First slice complete (ADR-0014); reranker and held-out eval deferred.
+
+- [x] Dual-level retriever: local pgvector ANN + global AGE Cypher (`app/app/l4/retrieval.py`);
+      bge-reranker-v2-m3 deferred
+- [x] Provenance: Context Core per cited source (`app/app/l4/provenance.py`)
+- [x] Drafting agent v0: obligation Q → 1-paragraph assertion with ≥2 obligation + ≥1 evidence
+      citations (`app/app/l4/drafting.py`, `app/app/api/draft.py`)
+- [x] Citation enforcer: ungrounded draft 422s and never reaches output (`app/app/l4/citations.py`)
+- [ ] Held-out eval: retrieval P@5 ≥ 0.8 / drafting coverage ≥ 90% — deferred (needs a test set)
+- [ ] Live Anthropic EU drafting + PAdES signing + trust-marking — deferred (ADR-0014, Phase 4/5)
 
 ## Skills to invoke
 
