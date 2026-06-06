@@ -1,0 +1,4 @@
+target/
+orekit-data/
+*.md
+.gitignore

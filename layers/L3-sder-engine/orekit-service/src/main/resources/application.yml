@@ -1,0 +1,16 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: orekit-service
+
+# Path to the runtime-mounted orekit-data directory (ADR-0013). Overridable via
+# the OREKIT_DATA_PATH env var in compose/k8s.
+orekit:
+  data:
+    path: ${OREKIT_DATA_PATH:/orekit-data}
+
+logging:
+  level:
+    com.celestia.orekit: INFO

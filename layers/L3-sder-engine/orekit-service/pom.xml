@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!--
+    Celestia L3 — Orekit microservice.
+    Java 21, Spring Boot, REST/JSON (ADR-0013). The ONLY Java in the codebase
+    (CLAUDE.md). Depends on a RELEASED Orekit coordinate (13.1.5), not the
+    vendored 14.0-SNAPSHOT — see docs/upstream-watch.md.
+  -->
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.3.5</version>
+    <relativePath/>
+  </parent>
+
+  <groupId>com.celestia</groupId>
+  <artifactId>orekit-service</artifactId>
+  <version>0.2.0</version>
+  <name>orekit-service</name>
+  <description>Celestia L3 defensible orbital math (Orekit) over REST</description>
+
+  <properties>
+    <java.version>21</java.version>
+    <orekit.version>13.1.5</orekit.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
+    <!-- Orekit pulls Hipparchus transitively via its published POM. -->
+    <dependency>
+      <groupId>org.orekit</groupId>
+      <artifactId>orekit</artifactId>
+      <version>${orekit.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>orekit-service</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+</project>
