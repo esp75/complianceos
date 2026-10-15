@@ -48,6 +48,15 @@ class Settings(BaseSettings):
     anthropic_model: str = "claude-opus-4-7"
     anthropic_base_url: str = "https://api.anthropic.com"
 
+    # --- Trust layer (Phase 4, ADR-0016) ---
+    # Master seed for per-Organization Ed25519 key derivation (HKDF-SHA256, info=org_id). Env-only
+    # (CELESTIA_TRUST_SIGNING_SEED), never committed, EU-side. Production target is an EU KMS behind
+    # the KeyStore interface. When empty the /bundle/sign endpoint 503s (no signing with a zero key).
+    trust_signing_seed: str = ""
+    # DSN for the trust store (tamper-evident bundle/audit chain). Defaults to the L2 KG DSN so the
+    # trust tables share the same Postgres; set CELESTIA_TRUST_DSN to separate them later.
+    trust_dsn: str = ""
+
     # --- HTTP client tuning ---
     upstream_timeout_seconds: float = 10.0
 

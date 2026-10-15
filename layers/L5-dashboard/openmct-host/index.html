@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Celestia — Operator Dashboard</title>
+    <!-- Vendored openmct (external/openmct, ADR-0003). The deployment slice serves the built
+         openmct.js + assets; this tag documents the runtime contract the host bundle expects. -->
+    <script src="./node_modules/openmct/dist/openmct.js"></script>
+    <script>
+      // Runtime config — injected per environment by the deployment slice (no rebuild needed).
+      window.CELESTIA = {
+        baseUrl: '/api',
+        orgId: '', // set per operator session
+        token: '', // bearer forwarded to the BFF
+        openmctAssetPath: './node_modules/openmct/dist'
+      };
+    </script>
+  </head>
+  <body>
+    <script type="module" src="./dist/index.js"></script>
+  </body>
+</html>

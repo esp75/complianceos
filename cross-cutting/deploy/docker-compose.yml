@@ -26,7 +26,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - ./pg-init:/docker-entrypoint-initdb.d:ro
       - pg_data:/var/lib/postgresql/data
@@ -61,9 +61,9 @@ services:
       - OPENFGA_LOG_FORMAT=json
       - OPENFGA_PLAYGROUND_ENABLED=true
     ports:
-      - "8080:8080"   # HTTP API (BFF authorization checks)
-      - "8081:8081"   # gRPC
-      - "3000:3000"   # playground (dev only)
+      - "127.0.0.1:8080:8080"   # HTTP API (BFF authorization checks)
+      - "127.0.0.1:8081:8081"   # gRPC
+      - "127.0.0.1:3000:3000"   # playground (dev only)
     healthcheck:
       test: ["CMD", "/usr/local/bin/grpc_health_probe", "-addr=openfga:8081"]
       interval: 5s
@@ -74,7 +74,7 @@ services:
     image: redis:7.4.9-alpine
     command: redis-server --save 20 1 --loglevel warning
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
     volumes:
       - redis_data:/data
 
@@ -114,7 +114,7 @@ services:
         target: /config/.config.yaml
         read_only: true
     ports:
-      - "17608:17608"   # GraphQL /query + /ready + /.well-known
+      - "127.0.0.1:17608:17608"   # GraphQL /query + /ready + /.well-known
     restart: unless-stopped
 
   riverboat:
@@ -143,7 +143,7 @@ services:
     volumes:
       - ./config/dex.yaml:/etc/dex/config.yaml:ro
     ports:
-      - "5556:5556"
+      - "127.0.0.1:5556:5556"
     restart: unless-stopped
 
   app:
@@ -167,7 +167,7 @@ services:
       - CELESTIA_KG_DSN=postgresql://postgres:password@kg-postgres:5432/kg
     ports:
       # Host 8001 (8000 is commonly taken by other local dev servers); container stays 8000.
-      - "8001:8000"
+      - "127.0.0.1:8001:8000"
     restart: unless-stopped
 
   # Celestia L3 Orekit microservice (Java 21 / Spring Boot, REST). ADR-0002 / ADR-0013.
@@ -186,7 +186,7 @@ services:
       # orekit-data is mounted at runtime, never baked into the image (ADR-0013).
       - ./orekit-data:/orekit-data:ro
     ports:
-      - "8090:8090"   # dev curl access; in-network the BFF reaches http://orekit:8090
+      - "127.0.0.1:8090:8090"   # dev curl access; in-network the BFF reaches http://orekit:8090
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://localhost:8090/readyz || exit 1"]
       interval: 10s
@@ -210,7 +210,7 @@ services:
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=kg
     ports:
-      - "5433:5432"   # 5432 is theopenlane's operational Postgres
+      - "127.0.0.1:5433:5432"   # 5432 is theopenlane's operational Postgres
     volumes:
       - kg_data:/var/lib/postgresql/data
     healthcheck:

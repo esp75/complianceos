@@ -21,8 +21,11 @@ Two frontends, one auth surface. See [ADR-0003](../../adr/0003-openmct-for-opera
 
 ## Phase 4 deliverables (see ROADMAP.md)
 
-- [ ] openmct host running locally, serving the Celestia plugin bundle
-- [ ] Compliance Status plugin: per-Framework, per-Control status with drill-down to L1 evidence
+First slice = openmct host + Compliance Status panel only (ADR-0015); the rest is later Phase-4 slices.
+
+- [x] openmct host scaffold (`openmct-host/`), builds the Celestia plugin bundle (`bun run build`) — first slice
+- [x] Compliance Status plugin (`plugins/compliance-status/`): per-Framework, per-Control status over the
+  BFF rollup `GET /compliance/status` — first slice (control→evidence drill-down deferred)
 - [ ] Evidence Submission plugin: drag-drop evidence files, prepopulate metadata from filename/EXIF, push to L1
 - [ ] ITU Filing-Maturity plugin: state-machine visualization, alert on degradations
 - [ ] Conjunction Alarm strip: realtime updates from L3 conjunction events

@@ -11,6 +11,9 @@ from typing import Annotated, Any, cast
 
 from fastapi import Depends, Header, HTTPException, Request, status
 
+from app.api.bundle.sign_pdf import BundleSigner
+from app.api.trust.keystore import KeyStore
+from app.api.trust.store import TrustStore
 from app.clients.kg import KGClient
 from app.clients.openfga import OpenFGAClient, OpenFGAError
 from app.clients.openlane import OpenlaneClient, OpenlaneError
@@ -51,6 +54,29 @@ async def require_kg(kg: Annotated[KGClient, Depends(get_kg)]) -> KGClient:
             detail="knowledge graph unavailable (start the `kg` compose profile)",
         )
     return kg
+
+
+def get_trust(request: Request) -> TrustStore:
+    return cast(TrustStore, request.app.state.trust)
+
+
+def get_keystore(request: Request) -> KeyStore:
+    return cast(KeyStore, request.app.state.trust_keystore)
+
+
+def get_bundle_signer(request: Request) -> BundleSigner:
+    return cast(BundleSigner, request.app.state.bundle_signer)
+
+
+async def require_trust(trust: Annotated[TrustStore, Depends(get_trust)]) -> TrustStore:
+    """503 unless the trust store (bundle/audit chain Postgres) is reachable."""
+    if not await trust.ping():
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="trust store unavailable (start the `kg` compose profile and set "
+                   "CELESTIA_TRUST_SIGNING_SEED)",
+        )
+    return trust
 
 
 def bearer_token(authorization: Annotated[str | None, Header()] = None) -> str:

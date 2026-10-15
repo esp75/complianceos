@@ -1,0 +1,16 @@
+{
+  "name": "@celestia/openmct-host",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "openmct host for the Celestia operator dashboard — installs vendored openmct + Celestia plugins (ADR-0003, ADR-0015).",
+  "scripts": {
+    "build": "bun build src/index.js --target=browser --external=openmct --outdir=dist"
+  },
+  "dependencies": {
+    "@celestia/openmct-compliance-status": "file:../plugins/compliance-status"
+  },
+  "devDependencies": {
+    "vue": "3.4.24"
+  }
+}

@@ -12,7 +12,22 @@ from contextlib import asynccontextmanager
 import httpx
 from fastapi import FastAPI
 
-from app.api import auth, draft, evidence, frameworks, health, kg, organizations, portal, sder
+from app.api import (
+    auth,
+    compliance,
+    draft,
+    evidence,
+    frameworks,
+    health,
+    kg,
+    organizations,
+    portal,
+    sder,
+)
+from app.api.bundle import sign as bundle_sign
+from app.api.bundle.sign_pdf import DetachedEd25519PdfSigner
+from app.api.trust.keystore import DerivedKeyStore
+from app.api.trust.store import TrustStore
 from app.clients.kg import KGClient
 from app.clients.openfga import OpenFGAClient
 from app.clients.openlane import OpenlaneClient
@@ -48,10 +63,21 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
             if settings.anthropic_api_key
             else None
         )
+        # Trust layer (Phase 4, ADR-0016). Shares the kg-postgres unless CELESTIA_TRUST_DSN is set;
+        # connect tolerantly so the app starts without it — /bundle/sign 503s via require_trust.
+        app.state.trust = TrustStore(settings.trust_dsn or settings.kg_dsn)
+        try:
+            await app.state.trust.connect()
+            await app.state.trust.apply_schema()
+        except Exception:  # noqa: BLE001 - trust store is optional; never block app startup
+            pass
+        app.state.trust_keystore = DerivedKeyStore(settings.trust_signing_seed.encode("utf-8"))
+        app.state.bundle_signer = DetachedEd25519PdfSigner()
         try:
             yield
         finally:
             await app.state.kg.close()
+            await app.state.trust.close()
 
 
 app = FastAPI(
@@ -67,6 +93,8 @@ app.include_router(organizations.router)
 app.include_router(frameworks.router)
 app.include_router(evidence.router)
 app.include_router(sder.router)
+app.include_router(compliance.router)
 app.include_router(kg.router)
 app.include_router(draft.router)
 app.include_router(portal.router)
+app.include_router(bundle_sign.router)
