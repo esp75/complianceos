@@ -1,77 +1,97 @@
-# ComplianceOS v0.2 — Design System
+# ComplianceOS — Design
 
-## Identity
+## Who it is for
 
-ComplianceOS is operated by Celestia Dynamics. The product communicates two things first:
+The planner's main user is whoever owns licensing at a satellite operator: a founder, a regulatory
+lead, a programme manager. Many work at small operators with no regulatory department. They know
+their mission well and the law less well. The product has to make three things easy:
 
-1. **Defensibility**. Regulators and insurers trust the math. Designed surfaces never let "AI feel" undermine that — no glowing gradients, no playful microcopy in evidence views.
-2. **Mission-ops literacy**. Operators are space engineers. The product respects their idioms (TLE, conjunction probability, ascending node, frequency assignment) and never dumbs them down.
+1. **What do I need, and why?** Every requirement says why it applies to this mission, in plain
+   language, with the article of law one click away.
+2. **What do I do next, and by when?** Dates are worked back from the launch date, and the next
+   action is always visible.
+3. **Can I trust this?** Sources, retrieval dates, and how certain each number is are always shown.
 
-## Audience-specific surfaces
+## Principles
 
-| Audience | Surface | Primary frontend | Design idiom |
+- **Defensibility first.** No claim without a source. Citations are chips that open the quoted text,
+  the official URL and the date it was checked. If something is uncertain, the UI says so.
+- **Plain language, precise terms.** "Start preparing by 9 Jun 2027", not "T-minus". Use regulators'
+  names for things (advance publication, coordination request, bringing into use), with a short
+  explanation the first time.
+- **One next step.** Every screen answers "what now?": the next-actions strip, the next action on
+  each tracked application, and the first item in the recommended sequence.
+- **Honest about gaps.** Countries without data are named in warnings. Durations are labelled
+  statutory, published practice or estimate. Draft data is labelled as draft.
+- **Quiet and dense.** A document tool, not a dashboard toy. Generous line height and small type for
+  metadata. No decoration that carries no information.
+
+## Surfaces
+
+| Surface | Purpose |
+|---|---|
+| Home | Two ways in: plan a mission, or open the sample. Coverage of the data. |
+| Mission wizard | Four steps: operator, spacecraft and orbit, spectrum and services, markets and launch. A live preview shows which licences each answer brings in. |
+| Mission workspace | Summary strip, warnings, and four tabs: Roadmap (next actions, timeline, per-country lists), Tracker (board), Deadlines (by month, calendar export), Brief. |
+| Licence drawer | Why it applies, timing with certainty, quoted legal basis, documents and fees, local presence, obligations, who to contact, outside help, a drafted first email. |
+| Application drawer | Allowed status changes only, dates, reference and notes, conversation log with next steps, full history. |
+| Directory | Authorities with the contact channels they publish, and firms in their own words. |
+| Data & sources | Coverage, how the data is checked, licences, how to contribute. |
+
+The openmct operator dashboard (ADR-0003/0015) is parked under ADR-0017. Its mission-control idiom
+(dark, 2px radii, telemetry strips) remains documented in the ADRs for when it returns.
+
+## Tokens
+
+Defined once as CSS variables in `web/src/app/globals.css` (HSL triplets) and mapped in
+`web/tailwind.config.ts`. Light is the default; dark follows the system or the header toggle.
+
+| Token | Light | Dark | Use |
 |---|---|---|---|
-| Operator | Operator Dashboard | openmct (Vue 3) | Mission-control — time conductors, telemetry strips, plan timelines, alarm panels |
-| Insurer | Insurer Portal | Next.js 14 (shadcn/ui) | Underwriter portfolio — tables, drill-downs, exportable reports, risk heatmaps |
-| Regulator | Regulator Portal | Next.js 14 (shadcn/ui) | Audit-grade document UI — evidence trees, citation graphs, PAdES-signed PDF download |
-| Admin (Celestia internal) | Admin console | Next.js 14 | Configuration + tenant + role management |
+| `background` | warm paper `hsl(40 20% 98%)` | `#0B0E14` | page |
+| `surface` | white | `#11151D` | cards, drawers |
+| `foreground` | slate-900 | slate-200 | text |
+| `muted-foreground` | slate-600 | slate-400 | metadata |
+| `border` | warm grey | slate-800 | dividers |
+| `accent` | indigo-600 | indigo-300 | primary actions, citations, critical path |
+| `ok` | emerald | emerald | on track, granted |
+| `warn` | amber | amber | tight slack, information requested, warnings |
+| `alarm` | red | red | **late and overdue only** |
+| `info` | sky | sky | submitted, under review |
 
-## Tokens (shared across both frontends)
+- **Type:** Inter (variable) for UI; JetBrains Mono for citation ids, codes and counts. Base 15px.
+  Both self-hosted through Fontsource, with no third-party font requests.
+- **Radius:** 6px controls, 8–10px cards.
+- **Status is never colour alone.** Every coloured state also has a word (On track, Tight, Late,
+  Overdue, Granted…).
+- **Certainty styling:** statutory durations get a solid outline badge, published practice a filled
+  neutral badge, estimates a dashed badge.
 
-```
-Color
-  --bg              #0B0E14   slate-950 — operator-mode background
-  --bg-paper        #11151D   one-step lighter — surfaces, panels
-  --bg-portal       #F8FAFC   slate-50 — insurer/regulator light-mode default
-  --fg              #E5E7EB   slate-200 — operator text
-  --fg-portal       #0F172A   slate-900 — portal text
-  --accent          #4F46E5   indigo-600 — primary action
-  --accent-warm     #F59E0B   amber-500 — caution (do not flash; never red unless alarm)
-  --alarm           #EF4444   red-500 — conjunction or noncompliance alarms only
-  --success         #10B981   emerald-500 — completed evidence
-  --info            #06B6D4   cyan-500 — neutral status (filing in progress, etc.)
+## Interaction
 
-Type
-  Inter (UI), JetBrains Mono (telemetry, code, IDs)
-  Operator: 14px base, 12px telemetry monospace
-  Portal: 16px base, 14px tables, 18px section headers
+- Drawers (right-hand sheets) for detail, so the roadmap stays in view. `Esc` closes.
+- Destructive actions use a two-step inline confirm, never a browser dialog.
+- Errors explain the fix ("Can't reach the planner API… start it with `docker compose up`") rather
+  than showing a raw message.
+- Motion is limited to colour transitions and is disabled under `prefers-reduced-motion`.
 
-Spacing
-  4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 — Tailwind defaults; portal uses denser 4/8/12 grid for tables
+## Accessibility
 
-Radius
-  Operator: 2px (mission-control feel — no soft corners)
-  Portal: 6px (professional but not playful)
+Target WCAG 2.2 AA:
+- semantic headings and landmarks, plus a skip link;
+- visible focus rings;
+- `aria-pressed`/`aria-checked` on toggle chips and choice cards;
+- text alternatives on the timeline rows;
+- contrast-checked tokens in both themes.
 
-Motion
-  Operator: 80ms reactions; no decorative animation
-  Portal: 150ms easings; no skeleton-loading shimmer
-```
+Every page is checked at 390px wide for horizontal overflow.
 
-## Anti-patterns (will fail design review)
+## Anti-patterns (fail review)
 
-- Gradient text or backgrounds in compliance assertions
-- Emoji in evidence views, audit logs, or signed PDFs
-- "AI generated" copy tone ("Let me help you with...", "Here are some insights...")
-- Skeleton shimmers in operator-critical views (operators read shimmer as "not connected")
-- Floating animated CTAs
-- Light-mode operator dashboard (mission-control rooms are dim)
-
-## Reference surfaces
-
-For operator dashboard reference, study openmct's NASA-shipped demos (`external/openmct/example/`). Replicate the time conductor + telemetry strip patterns 1:1 for compliance status feeds.
-
-For portal reference, the design language is closer to Vercel's dashboard, Stripe's invoicing surface, and Linear's issue views — quiet, dense, monospace-friendly, no decoration.
-
-## Component library
-
-Two builds from one source-of-truth:
-
-- **Vue 3 build** (`packages/design-vue/`, future) — consumed by openmct plugins.
-- **React + shadcn/ui build** (`packages/design-react/`, future) — consumed by Next.js portal.
-
-Both consume the same Tailwind config and the same SVG icon set. Tokens defined once in `packages/design-tokens/`.
-
-## Future
-
-A formal `/design-consultation` run with `frontend-design` skill loaded should expand this into a full DESIGN_SYSTEM.md once the first openmct plugin lands (Phase 4). Until then, ADRs and these tokens are the source of truth.
+- Gradient text or backgrounds on anything that asserts compliance.
+- Emoji in roadmaps, evidence views, audit logs or exported PDFs.
+- "AI" tone in copy ("Let me help you…", "Here are some insights…"). The brief reads like a
+  regulatory memo.
+- A number or date without its basis: every duration shows statutory / practice / estimate.
+- Red for anything other than late or overdue.
+- Skeleton shimmer for data that failed to load. Say what failed and how to fix it.

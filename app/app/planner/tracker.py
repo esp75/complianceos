@@ -142,8 +142,7 @@ def next_action(item: RoadmapItem, app: Application | None, today: dt.date,
     status = app.status if app else AppStatus.NOT_STARTED
     if status in (AppStatus.NOT_STARTED, AppStatus.PREPARING):
         if status == AppStatus.NOT_STARTED and item.start_by > today:
-            return NextAction(title=f"Start preparing by {item.start_by.isoformat()}",
-                              due=item.start_by, overdue=False)
+            return NextAction(title="Start preparing", due=item.start_by, overdue=False)
         return NextAction(title="Submit the application", due=item.submit_by,
                           overdue=item.submit_by < today)
     if status == AppStatus.INFO_REQUESTED:
@@ -152,8 +151,7 @@ def next_action(item: RoadmapItem, app: Application | None, today: dt.date,
     if status in (AppStatus.SUBMITTED, AppStatus.UNDER_REVIEW):
         expected = (app.submitted_on if app and app.submitted_on else today) + dt.timedelta(
             weeks=item.review.typical_weeks)
-        return NextAction(title=f"Decision expected around {expected.isoformat()}", due=expected,
-                          overdue=False)
+        return NextAction(title="Decision expected (typical review time)", due=expected, overdue=False)
     if status == AppStatus.GRANTED:
         upcoming = sorted((o for o in redate_obligations(item, app) if o.due >= today),
                           key=lambda o: o.due)

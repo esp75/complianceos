@@ -23,7 +23,6 @@ from app.api import (
     kg,
     organizations,
     planner,
-    portal,
     sder,
 )
 from app.api.bundle import sign as bundle_sign
@@ -126,5 +125,4 @@ app.include_router(compliance.router)
 app.include_router(kg.router)
 app.include_router(draft.router)
 app.include_router(planner.router)
-app.include_router(portal.router)
 app.include_router(bundle_sign.router)

@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design tokens (DESIGN.md). HSL triplets so Tailwind can apply opacity. */
+:root {
+  --background: 40 20% 98%;      /* warm paper */
+  --foreground: 222 47% 11%;     /* slate-900 */
+  --surface: 0 0% 100%;
+  --muted: 40 14% 94%;
+  --muted-foreground: 215 16% 40%;
+  --border: 30 10% 87%;
+  --ring: 243 75% 59%;
+  --accent: 243 75% 52%;         /* indigo — primary action, critical path */
+  --accent-foreground: 0 0% 100%;
+  --accent-soft: 243 100% 96%;
+  --ok: 160 84% 30%;
+  --ok-soft: 152 76% 94%;
+  --warn: 32 95% 38%;
+  --warn-soft: 48 100% 93%;
+  --alarm: 0 72% 46%;            /* overdue / late only */
+  --alarm-soft: 0 86% 96%;
+  --info: 199 89% 34%;
+  --info-soft: 199 100% 95%;
+  color-scheme: light;
+}
+
+.dark {
+  --background: 220 27% 6%;      /* #0B0E14 */
+  --foreground: 220 13% 91%;
+  --surface: 220 23% 9%;         /* #11151D */
+  --muted: 220 18% 13%;
+  --muted-foreground: 218 11% 65%;
+  --border: 220 15% 19%;
+  --ring: 239 84% 74%;
+  --accent: 239 84% 72%;
+  --accent-foreground: 230 30% 8%;
+  --accent-soft: 243 40% 18%;
+  --ok: 152 60% 52%;
+  --ok-soft: 158 50% 13%;
+  --warn: 40 92% 58%;
+  --warn-soft: 35 60% 14%;
+  --alarm: 0 84% 66%;
+  --alarm-soft: 0 50% 15%;
+  --info: 196 80% 60%;
+  --info-soft: 200 60% 13%;
+  color-scheme: dark;
+}
+
+@layer base {
+  * { @apply border-border; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { @apply bg-background text-foreground font-sans antialiased; font-feature-settings: "cv11", "ss01"; }
+  :focus-visible { @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background; }
+  ::selection { @apply bg-accent-soft; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

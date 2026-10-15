@@ -1,0 +1,5290 @@
+{
+ "openapi": "3.1.0",
+ "info": {
+  "title": "Celestia ComplianceOS API",
+  "summary": "BFF / orchestration over the theopenlane L1 substrate",
+  "version": "0.2.0"
+ },
+ "paths": {
+  "/healthz": {
+   "get": {
+    "tags": [
+     "health"
+    ],
+    "summary": "Healthz",
+    "operationId": "healthz_healthz_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": {
+          "type": "string"
+         },
+         "type": "object",
+         "title": "Response Healthz Healthz Get"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/readyz": {
+   "get": {
+    "tags": [
+     "health"
+    ],
+    "summary": "Readyz",
+    "operationId": "readyz_readyz_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "type": "object",
+         "title": "Response Readyz Readyz Get"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/auth/me": {
+   "get": {
+    "tags": [
+     "auth"
+    ],
+    "summary": "Me",
+    "operationId": "me_auth_me_get",
+    "parameters": [
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "additionalProperties": true,
+         "title": "Response Me Auth Me Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/auth/can": {
+   "get": {
+    "tags": [
+     "auth"
+    ],
+    "summary": "Can",
+    "operationId": "can_auth_can_get",
+    "parameters": [
+     {
+      "name": "relation",
+      "in": "query",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "description": "FGA relation, e.g. can_create_evidence",
+       "title": "Relation"
+      },
+      "description": "FGA relation, e.g. can_create_evidence"
+     },
+     {
+      "name": "object",
+      "in": "query",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "description": "FGA object, e.g. organization:<ULID>",
+       "title": "Object"
+      },
+      "description": "FGA object, e.g. organization:<ULID>"
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "additionalProperties": true,
+         "title": "Response Can Auth Can Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/organizations": {
+   "get": {
+    "tags": [
+     "organizations"
+    ],
+    "summary": "List Organizations",
+    "operationId": "list_organizations_organizations_get",
+    "parameters": [
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "type": "object",
+          "additionalProperties": true
+         },
+         "title": "Response List Organizations Organizations Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/frameworks": {
+   "get": {
+    "tags": [
+     "frameworks"
+    ],
+    "summary": "List Frameworks",
+    "operationId": "list_frameworks_frameworks_get",
+    "parameters": [
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "type": "object",
+          "additionalProperties": true
+         },
+         "title": "Response List Frameworks Frameworks Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/evidence": {
+   "post": {
+    "tags": [
+     "evidence"
+    ],
+    "summary": "Create Evidence",
+    "operationId": "create_evidence_evidence_post",
+    "parameters": [
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/EvidenceCreate"
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "additionalProperties": true,
+         "title": "Response Create Evidence Evidence Post"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "get": {
+    "tags": [
+     "evidence"
+    ],
+    "summary": "List Evidence",
+    "operationId": "list_evidence_evidence_get",
+    "parameters": [
+     {
+      "name": "org_id",
+      "in": "query",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "description": "organization ULID",
+       "title": "Org Id"
+      },
+      "description": "organization ULID"
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "type": "object",
+          "additionalProperties": true
+         },
+         "title": "Response List Evidence Evidence Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/evidence/{evidence_id}/history": {
+   "get": {
+    "tags": [
+     "evidence"
+    ],
+    "summary": "Evidence History",
+    "operationId": "evidence_history_evidence__evidence_id__history_get",
+    "parameters": [
+     {
+      "name": "evidence_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Evidence Id"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "additionalProperties": true,
+         "title": "Response Evidence History Evidence  Evidence Id  History Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/sder/conjunction-check": {
+   "post": {
+    "tags": [
+     "sder"
+    ],
+    "summary": "Conjunction Check",
+    "operationId": "conjunction_check_sder_conjunction_check_post",
+    "parameters": [
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ConjunctionCheckRequest"
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "additionalProperties": true,
+         "title": "Response Conjunction Check Sder Conjunction Check Post"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/sder/risk-score": {
+   "get": {
+    "tags": [
+     "sder"
+    ],
+    "summary": "Risk Score",
+    "description": "Pure recompute-on-demand score for the portal \u2014 no Orekit call, no write.",
+    "operationId": "risk_score_sder_risk_score_get",
+    "parameters": [
+     {
+      "name": "min_miss_distance_km",
+      "in": "query",
+      "required": true,
+      "schema": {
+       "type": "number",
+       "minimum": 0.0,
+       "title": "Min Miss Distance Km"
+      }
+     },
+     {
+      "name": "filing_maturity",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "default": "brought_into_use",
+       "title": "Filing Maturity"
+      }
+     },
+     {
+      "name": "itu_compliant",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "boolean",
+       "default": true,
+       "title": "Itu Compliant"
+      }
+     },
+     {
+      "name": "disposal_compliant",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "boolean",
+       "default": true,
+       "title": "Disposal Compliant"
+      }
+     },
+     {
+      "name": "relative_speed_km_s",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "number",
+         "minimum": 0.0
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Relative Speed Km S"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "additionalProperties": true,
+         "title": "Response Risk Score Sder Risk Score Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/compliance/status": {
+   "get": {
+    "tags": [
+     "compliance"
+    ],
+    "summary": "Compliance Status",
+    "operationId": "compliance_status_compliance_status_get",
+    "parameters": [
+     {
+      "name": "org_id",
+      "in": "query",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "description": "organization ULID",
+       "title": "Org Id"
+      },
+      "description": "organization ULID"
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "additionalProperties": true,
+         "title": "Response Compliance Status Compliance Status Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/kg/ingest": {
+   "post": {
+    "tags": [
+     "kg"
+    ],
+    "summary": "Ingest",
+    "operationId": "ingest_kg_ingest_post",
+    "parameters": [
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "additionalProperties": true,
+         "title": "Response Ingest Kg Ingest Post"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/kg/extract": {
+   "post": {
+    "tags": [
+     "kg"
+    ],
+    "summary": "Extract",
+    "operationId": "extract_kg_extract_post",
+    "parameters": [
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ExtractRequest"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/ExtractedObligation"
+         },
+         "title": "Response Extract Kg Extract Post"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/kg/obligations": {
+   "get": {
+    "tags": [
+     "kg"
+    ],
+    "summary": "Search Obligations",
+    "operationId": "search_obligations_kg_obligations_get",
+    "parameters": [
+     {
+      "name": "q",
+      "in": "query",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "description": "natural-language query",
+       "title": "Q"
+      },
+      "description": "natural-language query"
+     },
+     {
+      "name": "limit",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "maximum": 20,
+       "minimum": 1,
+       "default": 5,
+       "title": "Limit"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "type": "object",
+          "additionalProperties": true
+         },
+         "title": "Response Search Obligations Kg Obligations Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/draft/obligation": {
+   "post": {
+    "tags": [
+     "draft"
+    ],
+    "summary": "Draft Obligation",
+    "operationId": "draft_obligation_draft_obligation_post",
+    "parameters": [
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/DraftRequest"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "additionalProperties": true,
+         "title": "Response Draft Obligation Draft Obligation Post"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/knowledge/jurisdictions": {
+   "get": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "List Jurisdictions",
+    "operationId": "list_jurisdictions_knowledge_jurisdictions_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/JurisdictionOut"
+         },
+         "type": "array",
+         "title": "Response List Jurisdictions Knowledge Jurisdictions Get"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/knowledge/licenses/{license_id}": {
+   "get": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "Get License",
+    "operationId": "get_license_knowledge_licenses__license_id__get",
+    "parameters": [
+     {
+      "name": "license_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "License Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/License"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/knowledge/facilitators": {
+   "get": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "List Facilitators",
+    "operationId": "list_facilitators_knowledge_facilitators_get",
+    "parameters": [
+     {
+      "name": "jurisdiction",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Jurisdiction"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Facilitator"
+         },
+         "title": "Response List Facilitators Knowledge Facilitators Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/roadmap": {
+   "post": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "Preview Roadmap",
+    "description": "Roadmap for a profile without saving it (for the mission wizard's live preview).",
+    "operationId": "preview_roadmap_roadmap_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/MissionProfile"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Roadmap"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/missions": {
+   "get": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "List Missions",
+    "operationId": "list_missions_missions_get",
+    "parameters": [
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Mission"
+         },
+         "title": "Response List Missions Missions Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "post": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "Create Mission",
+    "operationId": "create_mission_missions_post",
+    "parameters": [
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/MissionProfile"
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Mission"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/missions/sample": {
+   "post": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "Create Sample Mission",
+    "operationId": "create_sample_mission_missions_sample_post",
+    "parameters": [
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "201": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Mission"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/missions/{mission_id}": {
+   "get": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "Get Mission",
+    "operationId": "get_mission_missions__mission_id__get",
+    "parameters": [
+     {
+      "name": "mission_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Mission Id"
+      }
+     },
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Mission"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "put": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "Update Mission",
+    "operationId": "update_mission_missions__mission_id__put",
+    "parameters": [
+     {
+      "name": "mission_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Mission Id"
+      }
+     },
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/MissionProfile"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Mission"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "delete": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "Delete Mission",
+    "operationId": "delete_mission_missions__mission_id__delete",
+    "parameters": [
+     {
+      "name": "mission_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Mission Id"
+      }
+     },
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "204": {
+      "description": "Successful Response"
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/missions/{mission_id}/roadmap": {
+   "get": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "Mission Roadmap",
+    "operationId": "mission_roadmap_missions__mission_id__roadmap_get",
+    "parameters": [
+     {
+      "name": "mission_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Mission Id"
+      }
+     },
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Roadmap"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/missions/{mission_id}/brief": {
+   "post": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "Mission Brief",
+    "operationId": "mission_brief_missions__mission_id__brief_post",
+    "parameters": [
+     {
+      "name": "mission_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Mission Id"
+      }
+     },
+     {
+      "name": "ai",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "boolean",
+       "description": "let Claude write the executive summary",
+       "default": false,
+       "title": "Ai"
+      },
+      "description": "let Claude write the executive summary"
+     },
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Brief"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/missions/{mission_id}/applications": {
+   "get": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "List Applications",
+    "operationId": "list_applications_missions__mission_id__applications_get",
+    "parameters": [
+     {
+      "name": "mission_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Mission Id"
+      }
+     },
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/TrackedApplication"
+         },
+         "title": "Response List Applications Missions  Mission Id  Applications Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "post": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "Create Application",
+    "operationId": "create_application_missions__mission_id__applications_post",
+    "parameters": [
+     {
+      "name": "mission_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Mission Id"
+      }
+     },
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ApplicationCreate"
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/TrackedApplication"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/applications/{app_id}": {
+   "patch": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "Update Application",
+    "operationId": "update_application_applications__app_id__patch",
+    "parameters": [
+     {
+      "name": "app_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "App Id"
+      }
+     },
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ApplicationPatch"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/TrackedApplication"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/applications/{app_id}/events": {
+   "get": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "List Events",
+    "operationId": "list_events_applications__app_id__events_get",
+    "parameters": [
+     {
+      "name": "app_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "App Id"
+      }
+     },
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/ApplicationEvent"
+         },
+         "title": "Response List Events Applications  App Id  Events Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/applications/{app_id}/contacts": {
+   "get": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "List Contacts",
+    "operationId": "list_contacts_applications__app_id__contacts_get",
+    "parameters": [
+     {
+      "name": "app_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "App Id"
+      }
+     },
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Contact"
+         },
+         "title": "Response List Contacts Applications  App Id  Contacts Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "post": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "Add Contact",
+    "operationId": "add_contact_applications__app_id__contacts_post",
+    "parameters": [
+     {
+      "name": "app_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "App Id"
+      }
+     },
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ContactIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Contact"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/missions/{mission_id}/deadlines": {
+   "get": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "Mission Deadlines",
+    "operationId": "mission_deadlines_missions__mission_id__deadlines_get",
+    "parameters": [
+     {
+      "name": "mission_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Mission Id"
+      }
+     },
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/DeadlineOut"
+         },
+         "title": "Response Mission Deadlines Missions  Mission Id  Deadlines Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/missions/{mission_id}/calendar.ics": {
+   "get": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "Mission Calendar",
+    "operationId": "mission_calendar_missions__mission_id__calendar_ics_get",
+    "parameters": [
+     {
+      "name": "mission_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Mission Id"
+      }
+     },
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/missions/{mission_id}/dossier.pdf": {
+   "get": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "Mission Dossier",
+    "operationId": "mission_dossier_missions__mission_id__dossier_pdf_get",
+    "parameters": [
+     {
+      "name": "mission_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Mission Id"
+      }
+     },
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/missions/{mission_id}/intro-email": {
+   "post": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "Draft Intro Email",
+    "operationId": "draft_intro_email_missions__mission_id__intro_email_post",
+    "parameters": [
+     {
+      "name": "mission_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Mission Id"
+      }
+     },
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/EmailRequest"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/EmailDraft"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/bundle/sign": {
+   "post": {
+    "tags": [
+     "bundle"
+    ],
+    "summary": "Sign Bundle",
+    "operationId": "sign_bundle_bundle_sign_post",
+    "parameters": [
+     {
+      "name": "org_id",
+      "in": "query",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "description": "organization ULID",
+       "title": "Org Id"
+      },
+      "description": "organization ULID"
+     },
+     {
+      "name": "framework",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "optional shortName filter",
+       "title": "Framework"
+      },
+      "description": "optional shortName filter"
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "components": {
+  "schemas": {
+   "AppStatus": {
+    "type": "string",
+    "enum": [
+     "not_started",
+     "preparing",
+     "submitted",
+     "under_review",
+     "info_requested",
+     "granted",
+     "refused",
+     "withdrawn"
+    ],
+    "title": "AppStatus"
+   },
+   "Application": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "mission_id": {
+      "type": "string",
+      "title": "Mission Id"
+     },
+     "license_id": {
+      "type": "string",
+      "title": "License Id"
+     },
+     "status": {
+      "$ref": "#/components/schemas/AppStatus",
+      "default": "not_started"
+     },
+     "submitted_on": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Submitted On"
+     },
+     "granted_on": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Granted On"
+     },
+     "reference": {
+      "type": "string",
+      "maxLength": 200,
+      "title": "Reference",
+      "default": ""
+     },
+     "notes": {
+      "type": "string",
+      "maxLength": 5000,
+      "title": "Notes",
+      "default": ""
+     },
+     "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Created At"
+     },
+     "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Updated At"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "mission_id",
+     "license_id",
+     "created_at",
+     "updated_at"
+    ],
+    "title": "Application"
+   },
+   "ApplicationCreate": {
+    "properties": {
+     "license_id": {
+      "type": "string",
+      "title": "License Id"
+     }
+    },
+    "type": "object",
+    "required": [
+     "license_id"
+    ],
+    "title": "ApplicationCreate"
+   },
+   "ApplicationEvent": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "application_id": {
+      "type": "string",
+      "title": "Application Id"
+     },
+     "at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "At"
+     },
+     "kind": {
+      "type": "string",
+      "enum": [
+       "created",
+       "status",
+       "update",
+       "contact"
+      ],
+      "title": "Kind"
+     },
+     "from_status": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/AppStatus"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "to_status": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/AppStatus"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "note": {
+      "type": "string",
+      "title": "Note",
+      "default": ""
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "application_id",
+     "at",
+     "kind"
+    ],
+    "title": "ApplicationEvent"
+   },
+   "ApplicationPatch": {
+    "properties": {
+     "status": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/AppStatus"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "submitted_on": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Submitted On"
+     },
+     "granted_on": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Granted On"
+     },
+     "reference": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 200
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Reference"
+     },
+     "notes": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 5000
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Notes"
+     },
+     "note": {
+      "type": "string",
+      "maxLength": 1000,
+      "title": "Note",
+      "description": "why \u2014 recorded in the event log",
+      "default": ""
+     }
+    },
+    "type": "object",
+    "title": "ApplicationPatch"
+   },
+   "Authority": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "maxLength": 120,
+      "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$",
+      "title": "Id"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "name_en": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Name En"
+     },
+     "roles": {
+      "items": {
+       "$ref": "#/components/schemas/AuthorityRole"
+      },
+      "type": "array",
+      "minItems": 1,
+      "title": "Roles"
+     },
+     "website": {
+      "type": "string",
+      "maxLength": 2083,
+      "minLength": 1,
+      "format": "uri",
+      "title": "Website"
+     },
+     "contacts": {
+      "items": {
+       "$ref": "#/components/schemas/ContactChannel"
+      },
+      "type": "array",
+      "title": "Contacts"
+     },
+     "notes": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Notes"
+     }
+    },
+    "additionalProperties": false,
+    "type": "object",
+    "required": [
+     "id",
+     "name",
+     "roles",
+     "website"
+    ],
+    "title": "Authority"
+   },
+   "AuthorityOut": {
+    "properties": {
+     "jurisdiction": {
+      "type": "string",
+      "title": "Jurisdiction"
+     },
+     "authority": {
+      "$ref": "#/components/schemas/Authority"
+     }
+    },
+    "type": "object",
+    "required": [
+     "jurisdiction",
+     "authority"
+    ],
+    "title": "AuthorityOut"
+   },
+   "AuthorityRole": {
+    "type": "string",
+    "enum": [
+     "space_activity_licensing",
+     "technical_assessment",
+     "spectrum_management",
+     "itu_notifying_administration",
+     "market_access",
+     "earth_station_licensing",
+     "remote_sensing_licensing",
+     "launch_licensing",
+     "registration",
+     "international_coordination"
+    ],
+    "title": "AuthorityRole"
+   },
+   "Brief": {
+    "properties": {
+     "mission_name": {
+      "type": "string",
+      "title": "Mission Name"
+     },
+     "generated_on": {
+      "type": "string",
+      "format": "date",
+      "title": "Generated On"
+     },
+     "mode": {
+      "type": "string",
+      "enum": [
+       "deterministic",
+       "llm"
+      ],
+      "title": "Mode"
+     },
+     "sections": {
+      "items": {
+       "$ref": "#/components/schemas/BriefSection"
+      },
+      "type": "array",
+      "title": "Sections"
+     },
+     "citations": {
+      "additionalProperties": {
+       "$ref": "#/components/schemas/Citation"
+      },
+      "type": "object",
+      "title": "Citations"
+     },
+     "facilitators": {
+      "additionalProperties": {
+       "$ref": "#/components/schemas/Facilitator"
+      },
+      "type": "object",
+      "title": "Facilitators"
+     }
+    },
+    "type": "object",
+    "required": [
+     "mission_name",
+     "generated_on",
+     "mode",
+     "sections",
+     "citations",
+     "facilitators"
+    ],
+    "title": "Brief"
+   },
+   "BriefSection": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "paragraphs": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Paragraphs"
+     },
+     "grounded": {
+      "type": "boolean",
+      "title": "Grounded"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "title",
+     "paragraphs",
+     "grounded"
+    ],
+    "title": "BriefSection"
+   },
+   "Citation": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "maxLength": 120,
+      "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$",
+      "title": "Id"
+     },
+     "instrument": {
+      "type": "string",
+      "title": "Instrument"
+     },
+     "provision": {
+      "type": "string",
+      "title": "Provision"
+     },
+     "url": {
+      "type": "string",
+      "maxLength": 2083,
+      "minLength": 1,
+      "format": "uri",
+      "title": "Url"
+     },
+     "retrieved": {
+      "type": "string",
+      "format": "date",
+      "title": "Retrieved"
+     },
+     "language": {
+      "type": "string",
+      "pattern": "^[a-z]{2}$",
+      "title": "Language"
+     },
+     "excerpt": {
+      "type": "string",
+      "maxLength": 1200,
+      "minLength": 1,
+      "title": "Excerpt"
+     },
+     "excerpt_en": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 1200
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Excerpt En"
+     }
+    },
+    "additionalProperties": false,
+    "type": "object",
+    "required": [
+     "id",
+     "instrument",
+     "provision",
+     "url",
+     "retrieved",
+     "language",
+     "excerpt"
+    ],
+    "title": "Citation",
+    "description": "A pinpoint reference to the text of a legal instrument.\n\n``excerpt`` is quoted verbatim in the instrument's language; ``excerpt_en`` is an unofficial\nEnglish rendering when the original is not English."
+   },
+   "ConjunctionCheckRequest": {
+    "properties": {
+     "org_id": {
+      "type": "string",
+      "title": "Org Id"
+     },
+     "tle1": {
+      "$ref": "#/components/schemas/TleModel"
+     },
+     "tle2": {
+      "$ref": "#/components/schemas/TleModel"
+     },
+     "window": {
+      "$ref": "#/components/schemas/WindowModel"
+     },
+     "satellite_longitude_deg": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Satellite Longitude Deg"
+     },
+     "filings": {
+      "anyOf": [
+       {
+        "items": {
+         "$ref": "#/components/schemas/FilingInput"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Filings"
+     },
+     "disposal_compliant": {
+      "type": "boolean",
+      "title": "Disposal Compliant",
+      "default": true
+     },
+     "control_ref": {
+      "type": "string",
+      "title": "Control Ref",
+      "default": "ISO 24113 \u00a76.4"
+     }
+    },
+    "type": "object",
+    "required": [
+     "org_id",
+     "tle1",
+     "tle2",
+     "window"
+    ],
+    "title": "ConjunctionCheckRequest"
+   },
+   "Contact": {
+    "properties": {
+     "on_date": {
+      "type": "string",
+      "format": "date",
+      "title": "On Date"
+     },
+     "channel": {
+      "type": "string",
+      "enum": [
+       "email",
+       "phone",
+       "meeting",
+       "letter",
+       "web_form",
+       "portal",
+       "other"
+      ],
+      "title": "Channel"
+     },
+     "counterpart": {
+      "type": "string",
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Counterpart"
+     },
+     "summary": {
+      "type": "string",
+      "maxLength": 5000,
+      "minLength": 1,
+      "title": "Summary"
+     },
+     "next_step": {
+      "type": "string",
+      "maxLength": 1000,
+      "title": "Next Step",
+      "default": ""
+     },
+     "next_step_due": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Next Step Due"
+     },
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "application_id": {
+      "type": "string",
+      "title": "Application Id"
+     },
+     "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Created At"
+     }
+    },
+    "type": "object",
+    "required": [
+     "on_date",
+     "channel",
+     "counterpart",
+     "summary",
+     "id",
+     "application_id",
+     "created_at"
+    ],
+    "title": "Contact"
+   },
+   "ContactChannel": {
+    "properties": {
+     "kind": {
+      "type": "string",
+      "enum": [
+       "web",
+       "web_form",
+       "portal",
+       "email",
+       "phone",
+       "postal"
+      ],
+      "title": "Kind"
+     },
+     "value": {
+      "type": "string",
+      "title": "Value"
+     },
+     "purpose": {
+      "type": "string",
+      "title": "Purpose"
+     },
+     "source": {
+      "$ref": "#/components/schemas/Source"
+     }
+    },
+    "additionalProperties": false,
+    "type": "object",
+    "required": [
+     "kind",
+     "value",
+     "purpose",
+     "source"
+    ],
+    "title": "ContactChannel",
+    "description": "An institutional contact channel as published by the authority itself.\n\nNamed individuals are only recorded where the authority publishes them in an official\ncapacity (CONTRIBUTING.md, \"Contacts policy\")."
+   },
+   "ContactIn": {
+    "properties": {
+     "on_date": {
+      "type": "string",
+      "format": "date",
+      "title": "On Date"
+     },
+     "channel": {
+      "type": "string",
+      "enum": [
+       "email",
+       "phone",
+       "meeting",
+       "letter",
+       "web_form",
+       "portal",
+       "other"
+      ],
+      "title": "Channel"
+     },
+     "counterpart": {
+      "type": "string",
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Counterpart"
+     },
+     "summary": {
+      "type": "string",
+      "maxLength": 5000,
+      "minLength": 1,
+      "title": "Summary"
+     },
+     "next_step": {
+      "type": "string",
+      "maxLength": 1000,
+      "title": "Next Step",
+      "default": ""
+     },
+     "next_step_due": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Next Step Due"
+     }
+    },
+    "type": "object",
+    "required": [
+     "on_date",
+     "channel",
+     "counterpart",
+     "summary"
+    ],
+    "title": "ContactIn"
+   },
+   "DatedObligation": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "license_id": {
+      "type": "string",
+      "title": "License Id"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "description": {
+      "type": "string",
+      "title": "Description"
+     },
+     "kind": {
+      "type": "string",
+      "enum": [
+       "hard",
+       "soft"
+      ],
+      "title": "Kind"
+     },
+     "anchor": {
+      "type": "string",
+      "enum": [
+       "submitted",
+       "granted",
+       "launch",
+       "service_start"
+      ],
+      "title": "Anchor"
+     },
+     "when": {
+      "type": "string",
+      "title": "When"
+     },
+     "due": {
+      "type": "string",
+      "format": "date",
+      "title": "Due"
+     },
+     "occurrence": {
+      "type": "integer",
+      "title": "Occurrence"
+     },
+     "recurring": {
+      "type": "boolean",
+      "title": "Recurring"
+     },
+     "cite": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Cite"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "license_id",
+     "name",
+     "description",
+     "kind",
+     "anchor",
+     "when",
+     "due",
+     "occurrence",
+     "recurring",
+     "cite"
+    ],
+    "title": "DatedObligation"
+   },
+   "Deadline": {
+    "properties": {
+     "date": {
+      "type": "string",
+      "format": "date",
+      "title": "Date"
+     },
+     "kind": {
+      "type": "string",
+      "enum": [
+       "start",
+       "submit",
+       "obligation"
+      ],
+      "title": "Kind"
+     },
+     "license_id": {
+      "type": "string",
+      "title": "License Id"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "hard": {
+      "type": "boolean",
+      "title": "Hard"
+     }
+    },
+    "type": "object",
+    "required": [
+     "date",
+     "kind",
+     "license_id",
+     "title",
+     "hard"
+    ],
+    "title": "Deadline"
+   },
+   "DeadlineOut": {
+    "properties": {
+     "date": {
+      "type": "string",
+      "format": "date",
+      "title": "Date"
+     },
+     "kind": {
+      "type": "string",
+      "enum": [
+       "start",
+       "submit",
+       "obligation"
+      ],
+      "title": "Kind"
+     },
+     "license_id": {
+      "type": "string",
+      "title": "License Id"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "hard": {
+      "type": "boolean",
+      "title": "Hard"
+     },
+     "overdue": {
+      "type": "boolean",
+      "title": "Overdue"
+     },
+     "tracked": {
+      "type": "boolean",
+      "title": "Tracked"
+     }
+    },
+    "type": "object",
+    "required": [
+     "date",
+     "kind",
+     "license_id",
+     "title",
+     "hard",
+     "overdue",
+     "tracked"
+    ],
+    "title": "DeadlineOut"
+   },
+   "DraftRequest": {
+    "properties": {
+     "org_id": {
+      "type": "string",
+      "title": "Org Id"
+     },
+     "query": {
+      "type": "string",
+      "title": "Query"
+     }
+    },
+    "type": "object",
+    "required": [
+     "org_id",
+     "query"
+    ],
+    "title": "DraftRequest"
+   },
+   "Duration": {
+    "properties": {
+     "min_weeks": {
+      "type": "integer",
+      "minimum": 0.0,
+      "title": "Min Weeks"
+     },
+     "typical_weeks": {
+      "type": "integer",
+      "minimum": 0.0,
+      "title": "Typical Weeks"
+     },
+     "max_weeks": {
+      "type": "integer",
+      "minimum": 0.0,
+      "title": "Max Weeks"
+     },
+     "basis": {
+      "type": "string",
+      "enum": [
+       "statutory",
+       "practice",
+       "estimate"
+      ],
+      "title": "Basis"
+     },
+     "note": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Note"
+     },
+     "cite": {
+      "items": {
+       "type": "string",
+       "maxLength": 120,
+       "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$"
+      },
+      "type": "array",
+      "title": "Cite"
+     },
+     "source": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/Source"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    },
+    "additionalProperties": false,
+    "type": "object",
+    "required": [
+     "min_weeks",
+     "typical_weeks",
+     "max_weeks",
+     "basis"
+    ],
+    "title": "Duration",
+    "description": "Elapsed time in weeks, with where the numbers come from.\n\n``statutory``: a deadline fixed in law; ``practice``: the authority's published guidance or\nservice standard; ``estimate``: no official figure, judgement from experience."
+   },
+   "EmailDraft": {
+    "properties": {
+     "to": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "To"
+     },
+     "subject": {
+      "type": "string",
+      "title": "Subject"
+     },
+     "body": {
+      "type": "string",
+      "title": "Body"
+     }
+    },
+    "type": "object",
+    "required": [
+     "to",
+     "subject",
+     "body"
+    ],
+    "title": "EmailDraft"
+   },
+   "EmailRequest": {
+    "properties": {
+     "license_id": {
+      "type": "string",
+      "title": "License Id"
+     },
+     "recipient": {
+      "type": "string",
+      "title": "Recipient",
+      "description": "authority id or facilitator id"
+     }
+    },
+    "type": "object",
+    "required": [
+     "license_id",
+     "recipient"
+    ],
+    "title": "EmailRequest"
+   },
+   "EvidenceCreate": {
+    "properties": {
+     "org_id": {
+      "type": "string",
+      "title": "Org Id"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "description": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Description"
+     },
+     "control_ref": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Control Ref"
+     },
+     "source": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Source"
+     }
+    },
+    "type": "object",
+    "required": [
+     "org_id",
+     "name"
+    ],
+    "title": "EvidenceCreate"
+   },
+   "ExtractRequest": {
+    "properties": {
+     "text": {
+      "type": "string",
+      "title": "Text"
+     },
+     "framework": {
+      "type": "string",
+      "title": "Framework",
+      "default": "adhoc"
+     }
+    },
+    "type": "object",
+    "required": [
+     "text"
+    ],
+    "title": "ExtractRequest"
+   },
+   "ExtractedObligation": {
+    "properties": {
+     "ref_code": {
+      "type": "string",
+      "title": "Ref Code"
+     },
+     "framework": {
+      "type": "string",
+      "title": "Framework"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "deontic": {
+      "type": "string",
+      "title": "Deontic",
+      "default": ""
+     },
+     "requirement": {
+      "type": "string",
+      "title": "Requirement",
+      "default": ""
+     },
+     "applicability": {
+      "type": "string",
+      "title": "Applicability",
+      "default": ""
+     },
+     "selection": {
+      "type": "string",
+      "title": "Selection",
+      "default": ""
+     },
+     "exception": {
+      "type": "string",
+      "title": "Exception",
+      "default": ""
+     },
+     "evidence_types": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Evidence Types"
+     }
+    },
+    "type": "object",
+    "required": [
+     "ref_code",
+     "framework",
+     "title"
+    ],
+    "title": "ExtractedObligation"
+   },
+   "Facilitator": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "maxLength": 120,
+      "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$",
+      "title": "Id"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "kind": {
+      "type": "string",
+      "enum": [
+       "consultancy",
+       "law_firm",
+       "engineering",
+       "industry_body"
+      ],
+      "title": "Kind"
+     },
+     "jurisdictions": {
+      "items": {
+       "type": "string",
+       "maxLength": 120,
+       "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$"
+      },
+      "type": "array",
+      "minItems": 1,
+      "title": "Jurisdictions"
+     },
+     "services": {
+      "items": {
+       "$ref": "#/components/schemas/LicenseCategory"
+      },
+      "type": "array",
+      "minItems": 1,
+      "title": "Services"
+     },
+     "hq_country": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}$",
+      "title": "Hq Country"
+     },
+     "website": {
+      "type": "string",
+      "maxLength": 2083,
+      "minLength": 1,
+      "format": "uri",
+      "title": "Website"
+     },
+     "description": {
+      "type": "string",
+      "maxLength": 400,
+      "title": "Description"
+     },
+     "source": {
+      "$ref": "#/components/schemas/Source"
+     },
+     "listed_since": {
+      "type": "string",
+      "format": "date",
+      "title": "Listed Since"
+     }
+    },
+    "additionalProperties": false,
+    "type": "object",
+    "required": [
+     "id",
+     "name",
+     "kind",
+     "jurisdictions",
+     "services",
+     "hq_country",
+     "website",
+     "description",
+     "source",
+     "listed_since"
+    ],
+    "title": "Facilitator",
+    "description": "A third-party firm that helps operators through licensing. Listing is neutral: no ranking,\nno paid placement, firm-level public information only (CONTRIBUTING.md, \"Facilitators\")."
+   },
+   "FilingInput": {
+    "properties": {
+     "network_name": {
+      "type": "string",
+      "title": "Network Name"
+     },
+     "longitude_deg": {
+      "type": "number",
+      "title": "Longitude Deg"
+     },
+     "itu_administration": {
+      "type": "string",
+      "title": "Itu Administration",
+      "default": ""
+     },
+     "planned": {
+      "type": "boolean",
+      "title": "Planned",
+      "default": false
+     },
+     "maturity": {
+      "type": "string",
+      "title": "Maturity",
+      "default": "early_stage"
+     }
+    },
+    "type": "object",
+    "required": [
+     "network_name",
+     "longitude_deg"
+    ],
+    "title": "FilingInput"
+   },
+   "FrequencyBand": {
+    "type": "string",
+    "enum": [
+     "VHF",
+     "UHF",
+     "L",
+     "S",
+     "C",
+     "X",
+     "Ku",
+     "K",
+     "Ka",
+     "Q",
+     "V",
+     "E",
+     "optical"
+    ],
+    "title": "FrequencyBand"
+   },
+   "HTTPValidationError": {
+    "properties": {
+     "detail": {
+      "items": {
+       "$ref": "#/components/schemas/ValidationError"
+      },
+      "type": "array",
+      "title": "Detail"
+     }
+    },
+    "type": "object",
+    "title": "HTTPValidationError"
+   },
+   "Jurisdiction": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "maxLength": 120,
+      "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$",
+      "title": "Id"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "kind": {
+      "type": "string",
+      "enum": [
+       "national",
+       "international"
+      ],
+      "title": "Kind"
+     },
+     "country": {
+      "anyOf": [
+       {
+        "type": "string",
+        "pattern": "^[A-Z]{2}$"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Country"
+     },
+     "summary": {
+      "type": "string",
+      "title": "Summary"
+     },
+     "authorities": {
+      "items": {
+       "$ref": "#/components/schemas/Authority"
+      },
+      "type": "array",
+      "minItems": 1,
+      "title": "Authorities"
+     },
+     "status": {
+      "$ref": "#/components/schemas/ReviewStatus"
+     },
+     "last_verified": {
+      "type": "string",
+      "format": "date",
+      "title": "Last Verified"
+     },
+     "reviewed_by": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Reviewed By"
+     }
+    },
+    "additionalProperties": false,
+    "type": "object",
+    "required": [
+     "id",
+     "name",
+     "kind",
+     "summary",
+     "authorities",
+     "status",
+     "last_verified"
+    ],
+    "title": "Jurisdiction"
+   },
+   "JurisdictionOut": {
+    "properties": {
+     "jurisdiction": {
+      "$ref": "#/components/schemas/Jurisdiction"
+     },
+     "licenses": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Licenses"
+     }
+    },
+    "type": "object",
+    "required": [
+     "jurisdiction",
+     "licenses"
+    ],
+    "title": "JurisdictionOut"
+   },
+   "JurisdictionSummary": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "kind": {
+      "type": "string",
+      "enum": [
+       "national",
+       "international"
+      ],
+      "title": "Kind"
+     },
+     "licence_count": {
+      "type": "integer",
+      "title": "Licence Count"
+     },
+     "earliest_start_by": {
+      "type": "string",
+      "format": "date",
+      "title": "Earliest Start By"
+     },
+     "late_count": {
+      "type": "integer",
+      "title": "Late Count"
+     },
+     "authority_ids": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Authority Ids"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "name",
+     "kind",
+     "licence_count",
+     "earliest_start_by",
+     "late_count",
+     "authority_ids"
+    ],
+    "title": "JurisdictionSummary"
+   },
+   "License": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "maxLength": 120,
+      "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$",
+      "title": "Id"
+     },
+     "jurisdiction": {
+      "type": "string",
+      "maxLength": 120,
+      "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$",
+      "title": "Jurisdiction"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "name_local": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Name Local"
+     },
+     "authority": {
+      "type": "string",
+      "maxLength": 120,
+      "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$",
+      "title": "Authority"
+     },
+     "category": {
+      "$ref": "#/components/schemas/LicenseCategory"
+     },
+     "summary": {
+      "type": "string",
+      "title": "Summary"
+     },
+     "applies_when": {
+      "$ref": "#/components/schemas/Rule"
+     },
+     "legal_basis": {
+      "items": {
+       "$ref": "#/components/schemas/Citation"
+      },
+      "type": "array",
+      "minItems": 1,
+      "title": "Legal Basis"
+     },
+     "prerequisites": {
+      "items": {
+       "$ref": "#/components/schemas/Prerequisite"
+      },
+      "type": "array",
+      "title": "Prerequisites"
+     },
+     "needed_by": {
+      "type": "string",
+      "enum": [
+       "launch",
+       "service_start"
+      ],
+      "title": "Needed By",
+      "default": "launch"
+     },
+     "submission_window": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/SubmissionWindow"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "preparation": {
+      "$ref": "#/components/schemas/Duration"
+     },
+     "review": {
+      "$ref": "#/components/schemas/Duration"
+     },
+     "documents": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Documents"
+     },
+     "fees": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Fees"
+     },
+     "obligations": {
+      "items": {
+       "$ref": "#/components/schemas/Obligation"
+      },
+      "type": "array",
+      "title": "Obligations"
+     },
+     "requires_local_presence": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Requires Local Presence"
+     },
+     "local_presence_note": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Local Presence Note"
+     },
+     "status": {
+      "$ref": "#/components/schemas/ReviewStatus"
+     },
+     "last_verified": {
+      "type": "string",
+      "format": "date",
+      "title": "Last Verified"
+     },
+     "reviewed_by": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Reviewed By"
+     },
+     "sources": {
+      "items": {
+       "$ref": "#/components/schemas/Source"
+      },
+      "type": "array",
+      "title": "Sources"
+     }
+    },
+    "additionalProperties": false,
+    "type": "object",
+    "required": [
+     "id",
+     "jurisdiction",
+     "name",
+     "authority",
+     "category",
+     "summary",
+     "applies_when",
+     "legal_basis",
+     "preparation",
+     "review",
+     "status",
+     "last_verified"
+    ],
+    "title": "License"
+   },
+   "LicenseCategory": {
+    "type": "string",
+    "enum": [
+     "space_activity",
+     "itu_filing",
+     "spectrum",
+     "earth_station",
+     "market_access",
+     "remote_sensing",
+     "launch",
+     "registration"
+    ],
+    "title": "LicenseCategory"
+   },
+   "Mission": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "workspace": {
+      "type": "string",
+      "title": "Workspace"
+     },
+     "profile": {
+      "$ref": "#/components/schemas/MissionProfile"
+     },
+     "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Created At"
+     },
+     "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Updated At"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "workspace",
+     "profile",
+     "created_at",
+     "updated_at"
+    ],
+    "title": "Mission"
+   },
+   "MissionProfile": {
+    "properties": {
+     "name": {
+      "type": "string",
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Name"
+     },
+     "operator_name": {
+      "type": "string",
+      "maxLength": 200,
+      "title": "Operator Name",
+      "default": ""
+     },
+     "operator_country": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}$",
+      "title": "Operator Country"
+     },
+     "filing_administration": {
+      "anyOf": [
+       {
+        "type": "string",
+        "pattern": "^[A-Z]{2}$"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Filing Administration"
+     },
+     "control_country": {
+      "anyOf": [
+       {
+        "type": "string",
+        "pattern": "^[A-Z]{2}$"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Control Country"
+     },
+     "launch_country": {
+      "anyOf": [
+       {
+        "type": "string",
+        "pattern": "^[A-Z]{2}$"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Launch Country"
+     },
+     "ground_station_countries": {
+      "items": {
+       "type": "string",
+       "pattern": "^[A-Z]{2}$"
+      },
+      "type": "array",
+      "title": "Ground Station Countries"
+     },
+     "service_countries": {
+      "items": {
+       "type": "string",
+       "pattern": "^[A-Z]{2}$"
+      },
+      "type": "array",
+      "title": "Service Countries"
+     },
+     "orbit": {
+      "$ref": "#/components/schemas/OrbitRegime"
+     },
+     "altitude_km": {
+      "anyOf": [
+       {
+        "type": "number",
+        "exclusiveMinimum": 0.0
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Altitude Km"
+     },
+     "satellite_count": {
+      "type": "integer",
+      "maximum": 100000.0,
+      "minimum": 1.0,
+      "title": "Satellite Count"
+     },
+     "services": {
+      "items": {
+       "$ref": "#/components/schemas/RadioService"
+      },
+      "type": "array",
+      "minItems": 1,
+      "title": "Services"
+     },
+     "frequency_bands": {
+      "items": {
+       "$ref": "#/components/schemas/FrequencyBand"
+      },
+      "type": "array",
+      "title": "Frequency Bands"
+     },
+     "earth_observation_imaging": {
+      "type": "boolean",
+      "title": "Earth Observation Imaging",
+      "default": false
+     },
+     "user_terminals": {
+      "type": "boolean",
+      "title": "User Terminals",
+      "default": false
+     },
+     "target_launch_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Target Launch Date"
+     },
+     "service_start_date": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Service Start Date"
+     }
+    },
+    "additionalProperties": false,
+    "type": "object",
+    "required": [
+     "name",
+     "operator_country",
+     "orbit",
+     "satellite_count",
+     "services",
+     "target_launch_date"
+    ],
+    "title": "MissionProfile"
+   },
+   "NextAction": {
+    "properties": {
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "due": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Due"
+     },
+     "overdue": {
+      "type": "boolean",
+      "title": "Overdue"
+     }
+    },
+    "type": "object",
+    "required": [
+     "title",
+     "due",
+     "overdue"
+    ],
+    "title": "NextAction"
+   },
+   "Obligation": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "maxLength": 120,
+      "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$",
+      "title": "Id"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "description": {
+      "type": "string",
+      "title": "Description"
+     },
+     "anchor": {
+      "type": "string",
+      "enum": [
+       "submitted",
+       "granted",
+       "launch",
+       "service_start"
+      ],
+      "title": "Anchor"
+     },
+     "offset": {
+      "$ref": "#/components/schemas/Offset",
+      "default": {
+       "years": 0,
+       "months": 0,
+       "weeks": 0,
+       "days": 0
+      }
+     },
+     "repeat_every": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/Offset"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "kind": {
+      "type": "string",
+      "enum": [
+       "hard",
+       "soft"
+      ],
+      "title": "Kind"
+     },
+     "applies_when": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/Rule"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "cite": {
+      "items": {
+       "type": "string",
+       "maxLength": 120,
+       "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$"
+      },
+      "type": "array",
+      "title": "Cite"
+     }
+    },
+    "additionalProperties": false,
+    "type": "object",
+    "required": [
+     "id",
+     "name",
+     "description",
+     "anchor",
+     "kind"
+    ],
+    "title": "Obligation",
+    "description": "A dated duty that follows from a licence: a deadline, a renewal, a recurring report.\n\n``applies_when`` narrows it to some missions (e.g. constellation milestones); omitted means it\nalways comes with the licence."
+   },
+   "Offset": {
+    "properties": {
+     "years": {
+      "type": "integer",
+      "title": "Years",
+      "default": 0
+     },
+     "months": {
+      "type": "integer",
+      "title": "Months",
+      "default": 0
+     },
+     "weeks": {
+      "type": "integer",
+      "title": "Weeks",
+      "default": 0
+     },
+     "days": {
+      "type": "integer",
+      "title": "Days",
+      "default": 0
+     }
+    },
+    "additionalProperties": false,
+    "type": "object",
+    "title": "Offset"
+   },
+   "OrbitRegime": {
+    "type": "string",
+    "enum": [
+     "LEO",
+     "MEO",
+     "GEO",
+     "HEO"
+    ],
+    "title": "OrbitRegime"
+   },
+   "Prerequisite": {
+    "properties": {
+     "license": {
+      "type": "string",
+      "maxLength": 120,
+      "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$",
+      "title": "License"
+     },
+     "stage": {
+      "type": "string",
+      "enum": [
+       "submitted",
+       "granted"
+      ],
+      "title": "Stage",
+      "default": "granted"
+     },
+     "note": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Note"
+     }
+    },
+    "additionalProperties": false,
+    "type": "object",
+    "required": [
+     "license"
+    ],
+    "title": "Prerequisite",
+    "description": "Ordering constraint: this licence's submission waits for ``license`` to reach ``stage``.\n\nOnly applies when both licences are in the plan; a prerequisite that does not apply to the\nmission is dropped, so one licence can list alternatives (e.g. each country's ITU route)."
+   },
+   "PrerequisiteOut": {
+    "properties": {
+     "license_id": {
+      "type": "string",
+      "title": "License Id"
+     },
+     "stage": {
+      "type": "string",
+      "enum": [
+       "submitted",
+       "granted"
+      ],
+      "title": "Stage"
+     }
+    },
+    "type": "object",
+    "required": [
+     "license_id",
+     "stage"
+    ],
+    "title": "PrerequisiteOut"
+   },
+   "RadioService": {
+    "type": "string",
+    "enum": [
+     "earth_exploration_satellite",
+     "fixed_satellite",
+     "mobile_satellite",
+     "broadcasting_satellite",
+     "space_operation",
+     "space_research",
+     "amateur_satellite",
+     "radionavigation_satellite"
+    ],
+    "title": "RadioService",
+    "description": "ITU Radio Regulations space radiocommunication services (RR Article 1)."
+   },
+   "ReasonOut": {
+    "properties": {
+     "text": {
+      "type": "string",
+      "title": "Text"
+     },
+     "cite": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Cite"
+     }
+    },
+    "type": "object",
+    "required": [
+     "text",
+     "cite"
+    ],
+    "title": "ReasonOut"
+   },
+   "ReviewStatus": {
+    "type": "string",
+    "enum": [
+     "draft",
+     "reviewed"
+    ],
+    "title": "ReviewStatus"
+   },
+   "Roadmap": {
+    "properties": {
+     "mission": {
+      "$ref": "#/components/schemas/MissionProfile"
+     },
+     "generated_on": {
+      "type": "string",
+      "format": "date",
+      "title": "Generated On"
+     },
+     "items": {
+      "items": {
+       "$ref": "#/components/schemas/RoadmapItem"
+      },
+      "type": "array",
+      "title": "Items"
+     },
+     "jurisdictions": {
+      "items": {
+       "$ref": "#/components/schemas/JurisdictionSummary"
+      },
+      "type": "array",
+      "title": "Jurisdictions"
+     },
+     "authorities": {
+      "additionalProperties": {
+       "$ref": "#/components/schemas/AuthorityOut"
+      },
+      "type": "object",
+      "title": "Authorities"
+     },
+     "deadlines": {
+      "items": {
+       "$ref": "#/components/schemas/Deadline"
+      },
+      "type": "array",
+      "title": "Deadlines"
+     },
+     "critical_path": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Critical Path"
+     },
+     "citations": {
+      "additionalProperties": {
+       "$ref": "#/components/schemas/Citation"
+      },
+      "type": "object",
+      "title": "Citations"
+     },
+     "facilitators": {
+      "additionalProperties": {
+       "$ref": "#/components/schemas/Facilitator"
+      },
+      "type": "object",
+      "title": "Facilitators"
+     },
+     "warnings": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Warnings"
+     },
+     "data_status": {
+      "additionalProperties": {
+       "type": "integer"
+      },
+      "type": "object",
+      "title": "Data Status"
+     }
+    },
+    "type": "object",
+    "required": [
+     "mission",
+     "generated_on",
+     "items",
+     "jurisdictions",
+     "authorities",
+     "deadlines",
+     "critical_path",
+     "citations",
+     "facilitators",
+     "warnings",
+     "data_status"
+    ],
+    "title": "Roadmap"
+   },
+   "RoadmapItem": {
+    "properties": {
+     "license_id": {
+      "type": "string",
+      "title": "License Id"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "name_local": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Name Local"
+     },
+     "jurisdiction": {
+      "type": "string",
+      "title": "Jurisdiction"
+     },
+     "category": {
+      "type": "string",
+      "title": "Category"
+     },
+     "authority_id": {
+      "type": "string",
+      "title": "Authority Id"
+     },
+     "summary": {
+      "type": "string",
+      "title": "Summary"
+     },
+     "reasons": {
+      "items": {
+       "$ref": "#/components/schemas/ReasonOut"
+      },
+      "type": "array",
+      "title": "Reasons"
+     },
+     "legal_basis": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Legal Basis"
+     },
+     "prerequisites": {
+      "items": {
+       "$ref": "#/components/schemas/PrerequisiteOut"
+      },
+      "type": "array",
+      "title": "Prerequisites"
+     },
+     "needed_by": {
+      "type": "string",
+      "format": "date",
+      "title": "Needed By"
+     },
+     "needed_for": {
+      "type": "string",
+      "enum": [
+       "launch",
+       "service_start"
+      ],
+      "title": "Needed For"
+     },
+     "preparation": {
+      "$ref": "#/components/schemas/Duration"
+     },
+     "review": {
+      "$ref": "#/components/schemas/Duration"
+     },
+     "start_by": {
+      "type": "string",
+      "format": "date",
+      "title": "Start By"
+     },
+     "submit_by": {
+      "type": "string",
+      "format": "date",
+      "title": "Submit By"
+     },
+     "earliest_submit": {
+      "type": "string",
+      "format": "date",
+      "title": "Earliest Submit"
+     },
+     "earliest_grant": {
+      "type": "string",
+      "format": "date",
+      "title": "Earliest Grant"
+     },
+     "slack_days": {
+      "type": "integer",
+      "title": "Slack Days"
+     },
+     "risk": {
+      "type": "string",
+      "enum": [
+       "late",
+       "tight",
+       "ok"
+      ],
+      "title": "Risk"
+     },
+     "critical": {
+      "type": "boolean",
+      "title": "Critical"
+     },
+     "documents": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Documents"
+     },
+     "fees": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Fees"
+     },
+     "requires_local_presence": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Requires Local Presence"
+     },
+     "local_presence_note": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Local Presence Note"
+     },
+     "obligations": {
+      "items": {
+       "$ref": "#/components/schemas/DatedObligation"
+      },
+      "type": "array",
+      "title": "Obligations"
+     },
+     "facilitators": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Facilitators"
+     },
+     "status": {
+      "$ref": "#/components/schemas/ReviewStatus"
+     },
+     "last_verified": {
+      "type": "string",
+      "format": "date",
+      "title": "Last Verified"
+     }
+    },
+    "type": "object",
+    "required": [
+     "license_id",
+     "name",
+     "name_local",
+     "jurisdiction",
+     "category",
+     "authority_id",
+     "summary",
+     "reasons",
+     "legal_basis",
+     "prerequisites",
+     "needed_by",
+     "needed_for",
+     "preparation",
+     "review",
+     "start_by",
+     "submit_by",
+     "earliest_submit",
+     "earliest_grant",
+     "slack_days",
+     "risk",
+     "critical",
+     "documents",
+     "fees",
+     "requires_local_presence",
+     "local_presence_note",
+     "obligations",
+     "facilitators",
+     "status",
+     "last_verified"
+    ],
+    "title": "RoadmapItem"
+   },
+   "Rule": {
+    "properties": {
+     "all": {
+      "anyOf": [
+       {
+        "items": {
+         "$ref": "#/components/schemas/Rule"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "All"
+     },
+     "any": {
+      "anyOf": [
+       {
+        "items": {
+         "$ref": "#/components/schemas/Rule"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Any"
+     },
+     "not": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/Rule"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "always": {
+      "anyOf": [
+       {
+        "type": "boolean",
+        "const": true
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Always"
+     },
+     "field": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Field"
+     },
+     "eq": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "integer"
+       },
+       {
+        "type": "number"
+       },
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Eq"
+     },
+     "in": {
+      "anyOf": [
+       {
+        "items": {
+         "type": "string"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "In"
+     },
+     "contains": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Contains"
+     },
+     "intersects": {
+      "anyOf": [
+       {
+        "items": {
+         "type": "string"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Intersects"
+     },
+     "gte": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Gte"
+     },
+     "lte": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Lte"
+     },
+     "present": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Present"
+     },
+     "because": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Because"
+     },
+     "cite": {
+      "items": {
+       "type": "string",
+       "maxLength": 120,
+       "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$"
+      },
+      "type": "array",
+      "title": "Cite"
+     }
+    },
+    "additionalProperties": false,
+    "type": "object",
+    "title": "Rule",
+    "description": "Applicability rule. Exactly one of: ``all``, ``any``, ``not``, or a ``field`` test.\n\nA field test uses exactly one operator: ``eq``, ``in``, ``contains`` (list fact contains the\nvalue), ``intersects`` (list fact shares a value with the list), ``gte`` / ``lte`` (numbers),\nor ``present`` (fact is set / non-empty). ``because`` and ``cite`` explain a match to the user."
+   },
+   "Source": {
+    "properties": {
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "url": {
+      "type": "string",
+      "maxLength": 2083,
+      "minLength": 1,
+      "format": "uri",
+      "title": "Url"
+     },
+     "retrieved": {
+      "type": "string",
+      "format": "date",
+      "title": "Retrieved"
+     }
+    },
+    "additionalProperties": false,
+    "type": "object",
+    "required": [
+     "title",
+     "url",
+     "retrieved"
+    ],
+    "title": "Source"
+   },
+   "SubmissionWindow": {
+    "properties": {
+     "opens_before_need": {
+      "$ref": "#/components/schemas/Offset"
+     },
+     "note": {
+      "type": "string",
+      "title": "Note"
+     },
+     "cite": {
+      "items": {
+       "type": "string",
+       "maxLength": 120,
+       "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$"
+      },
+      "type": "array",
+      "title": "Cite"
+     }
+    },
+    "additionalProperties": false,
+    "type": "object",
+    "required": [
+     "opens_before_need",
+     "note"
+    ],
+    "title": "SubmissionWindow",
+    "description": "The earliest a submission may be made, counted back from the date the licence is needed\n(e.g. an ITU notice may not reach the Bureau more than three years before bringing into use)."
+   },
+   "TleModel": {
+    "properties": {
+     "line1": {
+      "type": "string",
+      "title": "Line1"
+     },
+     "line2": {
+      "type": "string",
+      "title": "Line2"
+     }
+    },
+    "type": "object",
+    "required": [
+     "line1",
+     "line2"
+    ],
+    "title": "TleModel"
+   },
+   "TrackedApplication": {
+    "properties": {
+     "application": {
+      "$ref": "#/components/schemas/Application"
+     },
+     "item": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/RoadmapItem"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "next_action": {
+      "$ref": "#/components/schemas/NextAction"
+     },
+     "contacts": {
+      "type": "integer",
+      "title": "Contacts"
+     }
+    },
+    "type": "object",
+    "required": [
+     "application",
+     "item",
+     "next_action",
+     "contacts"
+    ],
+    "title": "TrackedApplication"
+   },
+   "ValidationError": {
+    "properties": {
+     "loc": {
+      "items": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "integer"
+        }
+       ]
+      },
+      "type": "array",
+      "title": "Location"
+     },
+     "msg": {
+      "type": "string",
+      "title": "Message"
+     },
+     "type": {
+      "type": "string",
+      "title": "Error Type"
+     },
+     "input": {
+      "title": "Input"
+     },
+     "ctx": {
+      "type": "object",
+      "title": "Context"
+     }
+    },
+    "type": "object",
+    "required": [
+     "loc",
+     "msg",
+     "type"
+    ],
+    "title": "ValidationError"
+   },
+   "WindowModel": {
+    "properties": {
+     "start": {
+      "type": "string",
+      "title": "Start"
+     },
+     "end": {
+      "type": "string",
+      "title": "End"
+     },
+     "stepSeconds": {
+      "type": "number",
+      "title": "Stepseconds",
+      "default": 60.0
+     }
+    },
+    "type": "object",
+    "required": [
+     "start",
+     "end"
+    ],
+    "title": "WindowModel"
+   }
+  }
+ }
+}

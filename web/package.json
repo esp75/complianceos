@@ -1,0 +1,44 @@
+{
+  "name": "complianceos-web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test",
+    "gen:api": "cd ../app && uv run python -c \"import json; from app.main import app; print(json.dumps(app.openapi(), indent=1))\" > ../web/openapi.json && cd ../web && openapi-typescript openapi.json -o src/lib/api-types.ts"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@radix-ui/react-dialog": "^1.3.1",
+    "@radix-ui/react-popover": "^1.3.1",
+    "@radix-ui/react-slot": "^1.5.0",
+    "@radix-ui/react-tabs": "^1.2.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.57.0",
+    "next": "14.2.35",
+    "next-themes": "^0.4.6",
+    "react": "^18",
+    "react-dom": "^18",
+    "swr": "^2.5.1",
+    "tailwind-merge": "2.6.0"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.3",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.35",
+    "openapi-typescript": "7",
+    "postcss": "^8",
+    "prettier": "^3.9.10",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}
