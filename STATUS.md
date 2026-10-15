@@ -1,11 +1,67 @@
 # STATUS — ComplianceOS v0.2
 
-**Date**: 2026-06-06
-**Phase**: 3 (L2 KG + L4 drafting) — first slice DONE (Phases 1 + 2 complete)
+**Date**: 2026-07-23
+**Phase**: STRATEGIC REFOCUS (ADR-0017) → Phase P1 of the new ROADMAP not yet started
 **Working dir**: `/Users/esponsor/Documents/Github/complianceOSv0.2/`
-**Scope**: Phase 0 + Phase 1 (L1) + Phase 2 (L3 SDER) complete. Phase 3 first slice complete:
-the L2 knowledge graph is populated and the L4 drafting agent returns citation-grounded
-compliance paragraphs with Context Cores. All on branch `phase2-l3-sder-first-slice`.
+
+## 2026-07-23 — First-product refocus (ADR-0017)
+
+The first product is now **AI regulatory-affairs for satellite operators** (Market-Access
+Dossier → the Watch → program of record), pilot-first GTM. Full analysis lives outside the
+repo (audit-surface rule): `~/Documents/CLAUDE COWORK/OUTPUTS/celestia-mvp-rebuild-2026-07/STRATEGY_V2.md`.
+
+- **Carries:** L1 substrate + tetrad, L2 KG + ingest (re-targeted at national telecom/space
+  acts), L4 retrieval/drafting/citation-enforcer (becomes the dossier engine), trust layer
+  (signed deliverables + program history; Quarkslab plan unchanged).
+- **Parks:** L3 SDER (Orekit, ITU proximity, risk scoring) and L5 openmct host/plugins —
+  code retained, containers shelved; revisit triggers in ADR-0017.
+- **Next:** ROADMAP Phase P1 (dossier pipeline for first pilot jurisdictions), gated on
+  pilot signups from the sales sprint (assets outside repo).
+- ROADMAP.md rewritten around the new product; sections below this line are the historical
+  record of the pre-refocus build (all foundation slices remain complete and reusable).
+
+---
+
+**Historical scope note (pre-refocus)**: Phase 0 + Phase 1 (L1) + Phase 2 (L3 SDER) + Phase 3 first slice complete. Phase 4
+first slice: the openmct operator dashboard has a host scaffold and a data-backed
+Compliance Status panel fed by a new BFF rollup endpoint. All on branch `phase2-l3-sder-first-slice`.
+
+## Phase 4 progress (L5 operator dashboard)
+
+First slices landed: the openmct host scaffold + the **Compliance Status panel** (ADR-0015), and the
+**trust/bundle first slice** (ADR-0016) — a self-verifying signed compliance bundle over
+`POST /bundle/sign`. The other three plugins (evidence widget, ITU tracker, conjunction strip), the
+Next.js portal, full PAdES + EU-KMS keys, and Hetzner/Coolify deployment are deferred to later
+Phase-4 slices. Headless/offline discipline (ADR-0014): proven by pytest + `bun test` +
+`bun run build`, no browser, no deploy.
+
+- ✅ **P0** — **ADR-0015** (openmct first-slice scope: panel-over-BFF-rollup, headless proof,
+  deferrals).
+- ✅ **P1** — BFF rollup endpoint `GET /compliance/status?org_id=` (`app/app/api/compliance.py`),
+  gated by `can_view` (ADR-0012). The Standards×Evidence join lives server-side in a pure,
+  unit-tested module (`app/app/l5/rollup.py`): per-Framework/per-Control status
+  (compliant / partial / not_assessed by evidence presence) + org summary. 6 tests.
+- ✅ **P2** — openmct host scaffold (`layers/L5-dashboard/openmct-host/`): installs vendored
+  openmct (external at build time, ADR-0003) + the Celestia plugin; runtime config via
+  `window.CELESTIA`. `bun run build` green.
+- ✅ **P3** — Compliance Status plugin (`layers/L5-dashboard/plugins/compliance-status/`):
+  Vue 3 panel (render-function, mission-control idiom) + framework-free `api.js` (BFF adapter)
+  + `transform.js` (rollup→view-model). 11 headless unit tests; `bun run build` green.
+- ✅ **P4** — Trust/bundle first slice (**ADR-0016**): `POST /bundle/sign?org_id=` returns a
+  self-verifying signed compliance bundle PDF. Per-Org Ed25519 keys HKDF-derived from a master
+  seed (`app/app/api/trust/keys.py`, `keystore.py`); pure SHA-256 Merkle seal + cross-bundle
+  tamper-evident chain (`merkle.py`, `store.py`); detached Ed25519 signature over a canonical
+  manifest (`signing.py`, `bundle/manifest.py`); deterministic PDF embedding a verifiable sidecar
+  (`bundle/sign_pdf.py`, fpdf2) behind a `BundleSigner` seam. Marked `MARKED-FOR-EXTERNAL-REVIEW`
+  (Quarkslab, ADR-0011); a header-presence guard test enforces the marking. Headless/offline:
+  ruff + mypy --strict clean, +27 tests (merkle/keys/signing/manifest/endpoint/guard). Threat
+  model: `docs/THREAT_MODEL.md`. Full PAdES-B-LT + EU-KMS keys deferred (pre-audit, same seams).
+
+**Deferred (later Phase-4 slices)**: evidence-submission / ITU-maturity / conjunction-alarm
+plugins, control→evidence drill-down + sub-control `evidence_required` coverage, Next.js
+insurer/regulator portal, full PAdES-B-LT + EU-KMS keys + `can_export_bundle` relation,
+OpenFGA-at-boundary hardening + Postgres RLS (`app/api/rls/**`), Hetzner/Coolify deploy,
+browser/visual QA (`/design-review`, `/qa`).
 
 ## Phase 3 progress (L2 knowledge graph + L4 drafting agent)
 
