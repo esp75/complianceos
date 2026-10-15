@@ -1,0 +1,12 @@
+{
+  "name": "complianceos-demo",
+  "private": true,
+  "type": "module",
+  "description": "Records the product walkthrough video against a running stack (docker compose up).",
+  "scripts": {
+    "record": "node record-demo.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.55.0"
+  }
+}

@@ -321,7 +321,7 @@ function EmailButton({ missionId, licenseId, recipient, label }: { missionId: st
           <Mail /> {label}
         </Button>
       ) : (
-        <div className="fixed inset-x-4 bottom-4 z-[60] mx-auto max-w-xl rounded-lg border bg-surface p-4 text-left shadow-xl sm:absolute sm:inset-x-auto sm:bottom-auto sm:right-6 sm:mt-2 sm:w-[30rem]">
+        <div role="region" aria-label="Email draft" className="fixed inset-x-4 bottom-4 z-[60] mx-auto max-w-xl rounded-lg border bg-surface p-4 text-left shadow-xl sm:inset-x-auto sm:right-6 sm:w-[30rem]">
           <p className="text-xs text-muted-foreground">To: {draft.to ?? "use the authority's website"}</p>
           <p className="mt-1 font-medium">{draft.subject}</p>
           <pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap font-sans text-sm">{draft.body}</pre>
