@@ -1,5 +1,28 @@
 # STATUS — ComplianceOS v0.2
 
+## 2026-10-15 — Regulatory path planner shipped (ADR-0018), open-source ready
+
+- **Knowledge pack** (`knowledge/`, CC BY 4.0): ITU, France, Luxembourg, UK, US. 16 licences and 40
+  citations quoted verbatim from official texts; institutional contacts; 3 facilitators. The
+  verification log records what still needs a human.
+- **Planner engine** (`app/app/planner/`): applicability rules with explanations; a DAG scheduler
+  (forward/backward pass, slack, critical path) with hypothesis property tests; roadmap; brief;
+  tracker state machine; ICS; signed dossier PDF; intro-email drafts.
+- **Citation enforcement now reads the generated text.** Unknown or uncited claims return 422, on
+  `/draft/obligation` and on the optional Claude brief.
+- **Web app** (`web/`, Next.js 14): wizard with live preview, roadmap timeline, licence drawer with
+  quoted law, tracker, deadlines, brief, directory, data page.
+- **One-command run:** `docker compose up --build`. Local mode is hardened: loopback peers and
+  forwarded hops only, local Host names (anti-rebinding), a client header on changes (anti-CSRF).
+- **Open source:** licence, notice, code of conduct, security policy, contributing guide, templates,
+  CI, and a weekly link check. Personal paths and private references were removed.
+- **Open items:**
+  - three `/bundle/sign` findings in `docs/THREAT_MODEL.md` (trust layer, needs `/careful` + PR);
+  - set the conduct contact in `MAINTAINERS.md`;
+  - confirm the copyright holder in `NOTICE`;
+  - rename the `CELESTIA_` env prefix;
+  - practitioner review of the data.
+
 **Date**: 2026-07-23
 **Phase**: STRATEGIC REFOCUS (ADR-0017) → Phase P1 of the new ROADMAP not yet started
 

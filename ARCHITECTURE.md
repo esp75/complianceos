@@ -1,5 +1,28 @@
 # ComplianceOS v0.2 — Architecture
 
+## The regulatory path planner (ADR-0018)
+
+The product surface today is the planner. A mission profile goes through four deterministic stages:
+
+1. rules over the open knowledge pack (`knowledge/`) decide which licences apply and why;
+2. a scheduler over the prerequisite DAG works out the dates, slack and critical path;
+3. the roadmap is assembled;
+4. the brief, tracker, deadlines (ICS) and signed dossier are built from it.
+
+```
+knowledge/*.yaml ─► app/app/planner/knowledge.py (strict schema + cross-reference validator)
+mission profile  ─► rules.py ─► schedule.py ─► plan.py (Roadmap) ─► brief.py / exports.py / tracker.py
+                                                      ▲
+                     LLM (optional) ─► l4/citations.py (text-level citation check) ─┘
+API: app/app/api/planner.py (local mode: loopback-only, no login · team mode: theopenlane + OpenFGA)
+Store: app/app/planner/store.py (Postgres planner_* tables; in-memory fallback)
+Web: web/ (Next.js 14) · one-command run: compose.yaml
+```
+
+The rest of this document describes the platform layers the planner sits on. L3 (orbital mechanics)
+and L5 (the openmct dashboard) are parked per ADR-0017.
+
+
 ## One-page summary
 
 ComplianceOS is a 5-layer + cross-cutting system. v0.2 stands on three Apache-2.0 substrates (theopenlane/core, Orekit, openmct) and adopts patterns (not runtimes) from LightRAG, trustgraph, and ComplianceNLP. Production state is single-substrate (Postgres 17 + Apache AGE + pgvector) for EU sovereignty and Merkle-audit simplicity.

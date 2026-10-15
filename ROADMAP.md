@@ -1,5 +1,13 @@
 # ComplianceOS v0.2 — Roadmap (refocused per ADR-0017, 2026-07-23)
 
+> **Shipped 2026-10-15 (ADR-0018):** the open-source regulatory path planner covers much of P1 and
+> P2 for five jurisdictions:
+> - cited requirements map, sequencing and timeline, and signed deliverable;
+> - client workspace with a program tracker, deadlines, contact log and calendar export.
+>
+> Still open from P1/P2: objection forecast, decision-maker map, the Watch (source monitoring), and
+> corpus ingest beyond the hand-researched knowledge pack.
+
 **First product:** AI regulatory-affairs for satellite operators — Market-Access Dossier → the Watch → program of record. Pilot-first GTM (3 founding pilots). Solo build; the build exists to serve pilot delivery, not the other way around.
 
 **Foundation status:** the original Phase 0–4 first slices are **complete** and recorded in STATUS.md (L1 substrate + tetrad; L2 KG + ingest; L4 retrieval/drafting/citation-enforcer; trust-layer signed bundles; L3 Orekit and L5 openmct slices now **parked** per ADR-0017). ~60–70% of built code carries into the new product.
