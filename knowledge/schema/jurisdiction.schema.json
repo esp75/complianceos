@@ -1,0 +1,239 @@
+{
+  "$defs": {
+    "Authority": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 120,
+          "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "name_en": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name En"
+        },
+        "roles": {
+          "items": {
+            "$ref": "#/$defs/AuthorityRole"
+          },
+          "minItems": 1,
+          "title": "Roles",
+          "type": "array"
+        },
+        "website": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Website",
+          "type": "string"
+        },
+        "contacts": {
+          "items": {
+            "$ref": "#/$defs/ContactChannel"
+          },
+          "title": "Contacts",
+          "type": "array"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "roles",
+        "website"
+      ],
+      "title": "Authority",
+      "type": "object"
+    },
+    "AuthorityRole": {
+      "enum": [
+        "space_activity_licensing",
+        "technical_assessment",
+        "spectrum_management",
+        "itu_notifying_administration",
+        "market_access",
+        "earth_station_licensing",
+        "remote_sensing_licensing",
+        "launch_licensing",
+        "registration",
+        "international_coordination"
+      ],
+      "title": "AuthorityRole",
+      "type": "string"
+    },
+    "ContactChannel": {
+      "additionalProperties": false,
+      "description": "An institutional contact channel as published by the authority itself.\n\nNamed individuals are only recorded where the authority publishes them in an official\ncapacity (CONTRIBUTING.md, \"Contacts policy\").",
+      "properties": {
+        "kind": {
+          "enum": [
+            "web",
+            "web_form",
+            "portal",
+            "email",
+            "phone",
+            "postal"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        },
+        "purpose": {
+          "title": "Purpose",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/Source"
+        }
+      },
+      "required": [
+        "kind",
+        "value",
+        "purpose",
+        "source"
+      ],
+      "title": "ContactChannel",
+      "type": "object"
+    },
+    "ReviewStatus": {
+      "enum": [
+        "draft",
+        "reviewed"
+      ],
+      "title": "ReviewStatus",
+      "type": "string"
+    },
+    "Source": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "url": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "retrieved": {
+          "format": "date",
+          "title": "Retrieved",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "url",
+        "retrieved"
+      ],
+      "title": "Source",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "maxLength": 120,
+      "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$",
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "national",
+        "international"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "country": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Z]{2}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Country"
+    },
+    "summary": {
+      "title": "Summary",
+      "type": "string"
+    },
+    "authorities": {
+      "items": {
+        "$ref": "#/$defs/Authority"
+      },
+      "minItems": 1,
+      "title": "Authorities",
+      "type": "array"
+    },
+    "status": {
+      "$ref": "#/$defs/ReviewStatus"
+    },
+    "last_verified": {
+      "format": "date",
+      "title": "Last Verified",
+      "type": "string"
+    },
+    "reviewed_by": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reviewed By"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "kind",
+    "summary",
+    "authorities",
+    "status",
+    "last_verified"
+  ],
+  "title": "Jurisdiction",
+  "type": "object"
+}

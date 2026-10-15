@@ -1,0 +1,19 @@
+id: itu
+name: International Telecommunication Union (ITU)
+kind: international
+summary: >
+  Every satellite network needs its frequency assignments published, coordinated where required,
+  and recorded in the ITU Master International Frequency Register. Operators do not file with the
+  ITU directly: the national administration that files for them (the "notifying administration")
+  submits the filings. The Radio Regulations set hard time limits, including bringing the
+  assignments into use within seven years of the first filing.
+authorities:
+  - id: itu-br
+    name: ITU Radiocommunication Bureau (BR)
+    roles: [international_coordination]
+    website: https://www.itu.int/en/ITU-R/space/Pages/default.aspx
+    notes: >
+      Operators deal with the Bureau through their notifying administration (for example ANFR,
+      Ofcom, the FCC or the SMC), not directly.
+status: draft
+last_verified: 2026-10-15

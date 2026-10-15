@@ -1,0 +1,67 @@
+id: lu-satellite-system-concession
+jurisdiction: lu
+name: Concession for a Luxembourg satellite system (frequencies and ITU filing)
+name_local: Concession pour un système de satellites luxembourgeois
+authority: lu-smc
+category: itu_filing
+summary: >
+  A satellite system using frequencies Luxembourg is entitled to under international agreements
+  needs a prior concession from the Government, on the joint proposal of the ministers for
+  telecommunications and media. The concession comes with a specification (cahier des charges) and
+  is personal, time-limited and renewable. Luxembourg's ITU filings for the system follow from it.
+applies_when:
+  field: filing_administration
+  eq: LU
+  because: Luxembourg is the administration filing your satellite network with the ITU.
+  cite: [lu.media1991.art-20]
+legal_basis:
+  - id: lu.media1991.art-20
+    instrument: >
+      Loi modifiée du 27 juillet 1991 sur les médias électroniques (texte coordonné, Mémorial A
+      n° 88 du 1er août 2001)
+    provision: Article 20(1)
+    url: https://data.legilux.public.lu/file/eli-etat-leg-memorial-2001-88-fr-pdf.pdf
+    retrieved: 2026-10-15
+    language: fr
+    excerpt: >
+      Nul ne peut établir et exploiter un système de satellites luxembourgeois, sans avoir obtenu
+      préalablement une concession, accordée par le Gouvernement, sur proposition conjointe du
+      ministre ayant dans ses attributions les télécommunications et du ministre ayant dans ses
+      attributions les médias.
+    excerpt_en: >
+      No one may establish and operate a Luxembourg satellite system without first obtaining a
+      concession granted by the Government on the joint proposal of the ministers responsible for
+      telecommunications and for media. (Unofficial translation.)
+needed_by: launch
+preparation:
+  min_weeks: 4
+  typical_weeks: 12
+  max_weeks: 26
+  basis: estimate
+review:
+  min_weeks: 12
+  typical_weeks: 26
+  max_weeks: 52
+  basis: estimate
+  note: No published processing time; agree the schedule with the SMC early.
+documents:
+  - Technical description of the satellite system and requested frequencies
+  - Information for the specification (cahier des charges)
+fees: >
+  The specification may set a fee payable to the Treasury (Art. 20(7)(a) of the 2001 coordinated
+  text).
+obligations:
+  - id: lu-concession-specification
+    name: Comply with the concession specification
+    description: >
+      The concession comes with a specification that must be respected at all times; it is
+      time-limited, renewable, and can be withdrawn if not regularly used.
+    anchor: granted
+    kind: soft
+    cite: [lu.media1991.art-20]
+requires_local_presence: null
+local_presence_note: >
+  The specification may impose activities to be carried out in Luxembourg (Art. 20(7)(b) of the 2001
+  coordinated text). Confirm current requirements with the SMC.
+status: draft
+last_verified: 2026-10-15

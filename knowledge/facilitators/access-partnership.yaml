@@ -1,0 +1,16 @@
+id: access-partnership
+name: Access Partnership
+kind: consultancy
+jurisdictions: [itu, gb]
+services: [market_access, spectrum, itu_filing]
+hq_country: GB
+website: https://accesspartnership.com/
+description: >
+  Public policy and market access consultancy. In its own words, it guides organisations "through
+  the fast-moving space economy, securing spectrum, licences and partnerships to launch services
+  and build infrastructure in orbit and on Earth."
+source:
+  title: Access Partnership — Home page
+  url: https://accesspartnership.com/
+  retrieved: 2026-10-15
+listed_since: 2026-10-15

@@ -1,0 +1,16 @@
+id: lerman-senter
+name: Lerman Senter
+kind: law_firm
+jurisdictions: [us, itu]
+services: [spectrum, earth_station, market_access, itu_filing]
+hq_country: US
+website: https://www.lermansenter.com/our-practice/satellite/
+description: >
+  US communications law firm with a satellite practice covering FCC licensing and policymaking
+  proceedings, space and earth station authorisations, and international spectrum matters before
+  the ITU.
+source:
+  title: Lerman Senter — Satellite practice
+  url: https://www.lermansenter.com/our-practice/satellite/
+  retrieved: 2026-10-15
+listed_since: 2026-10-15

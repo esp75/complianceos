@@ -1,0 +1,82 @@
+id: us-fcc-small-satellite-licence
+jurisdiction: us
+name: FCC streamlined small satellite licence (§ 25.122)
+authority: us-fcc-space-bureau
+category: spectrum
+summary: >
+  A streamlined Part 25 route for non-geostationary systems of ten or fewer satellites that can
+  certify a list of criteria: lifetime of six years or less, deployment at or below 600 km (or
+  propulsion for collision avoidance and deorbit), no operational debris, low collision and casualty
+  risk, and compatibility with existing operations. The licence term is six years.
+applies_when:
+  all:
+    - field: filing_administration
+      eq: US
+      because: The United States is the administration filing your network.
+      cite: [us.cfr47.25-102]
+    - not:
+        field: orbit
+        eq: GEO
+      because: The streamlined route is only for non-geostationary systems.
+      cite: [us.cfr47.25-122]
+    - field: satellite_count
+      lte: 10
+      because: Your system has ten or fewer satellites.
+      cite: [us.cfr47.25-122]
+    - field: altitude_km
+      lte: 600
+      because: >
+        You deploy at or below 600 km. Systems above that can still qualify if each satellite has
+        propulsion for collision avoidance and deorbit.
+      cite: [us.cfr47.25-122]
+legal_basis:
+  - id: us.cfr47.25-122
+    instrument: 47 CFR Part 25 (FCC satellite communications rules)
+    provision: § 25.122(b) and (c)(1)-(3)
+    url: https://www.ecfr.gov/current/title-47/section-25.122
+    retrieved: 2026-10-15
+    language: en
+    excerpt: >
+      (b) Applications for NGSO systems may be filed under this section, provided that the total
+      number of space stations requested in the application is ten or fewer. [...] (c) [...] (1) The
+      space station(s) will operate only in non-geostationary orbit; (2) The total in-orbit lifetime
+      for any individual space station will be six years or less; (3) The space station(s): (i) Will
+      be deployed at an orbital altitude of 600 km or below; or (ii) Will maintain a propulsion system
+      and have the ability to make collision avoidance and deorbit maneuvers using propulsion;
+  - id: us.cfr47.25-121-a3
+    instrument: 47 CFR Part 25 (FCC satellite communications rules)
+    provision: § 25.121(a)(3)
+    url: https://www.ecfr.gov/current/title-47/section-25.121
+    retrieved: 2026-10-15
+    language: en
+    excerpt: >
+      Licenses for which the application was filed pursuant to § 25.122 or § 25.123 will be issued for
+      a period of 6 years, without the possibility of extension or replacement authorization.
+needed_by: launch
+preparation:
+  min_weeks: 6
+  typical_weeks: 10
+  max_weeks: 16
+  basis: estimate
+  note: Form 312 and Schedule S with the § 25.122(c) certifications and narrative.
+review:
+  min_weeks: 13
+  typical_weeks: 26
+  max_weeks: 52
+  basis: estimate
+  note: No regulatory time limit for FCC action.
+documents:
+  - FCC Form 312 (Main Form) and Schedule S for each space station
+  - Certifications under § 25.122(c) and the narrative under § 25.122(d)
+fees: FCC application and regulatory fees apply.
+obligations:
+  - id: us-fcc-small-sat-term
+    name: Licence expires (6-year term, no extension)
+    description: Streamlined licences last six years and cannot be extended or replaced.
+    anchor: launch
+    offset:
+      years: 6
+    kind: hard
+    cite: [us.cfr47.25-121-a3]
+status: draft
+last_verified: 2026-10-15

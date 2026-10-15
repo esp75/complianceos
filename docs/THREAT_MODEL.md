@@ -53,6 +53,20 @@ document is the pre-review baseline and will be revised against findings.
 - No Postgres RLS on the trust tables yet (`app/api/rls/**` reserved); tenancy is enforced at the BFF.
 - No rate-limiting / per-export audit-log entry on bundle generation.
 
+## Open findings (security review, 2026-10-15) — fix before anything depends on `/bundle/sign`
+
+1. **Chain fork under concurrency.** `TrustStore.last_root()` and `append_bundle()` run as separate
+   statements with no transaction or lock, so two concurrent signs for one org can both read the
+   same head and both append, forking the chain. Fix: read the head and insert inside one
+   transaction under `pg_advisory_xact_lock` keyed on the org, and add a unique index on
+   `(org_id, prev_root)` plus a partial unique index for the genesis row so a fork cannot persist.
+2. **Signing gated by a read relation.** `/bundle/sign` checks `can_view`, so any viewer (insurer,
+   regulator) can make the org's key sign and append to the org's chain. Fix: add a
+   `can_export_bundle` relation to the FGA model and gate on it.
+3. **Unrecorded filtering.** The optional `framework` query filter yields an org-signed bundle that
+   omits frameworks without saying so. Fix: record the applied filter in the signed manifest (and
+   render it on the PDF) so a partial bundle cannot pass as a full one.
+
 ## Documented US LLM dependencies
 
 None. The trust/bundle path makes no LLM call and no external network call. (Section retained per

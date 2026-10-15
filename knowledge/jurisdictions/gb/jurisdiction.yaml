@@ -1,0 +1,33 @@
+id: gb
+name: United Kingdom
+kind: national
+country: GB
+summary: >
+  The Civil Aviation Authority (CAA) licenses space activities: under the Space Industry Act 2018
+  for activities carried out in the UK, and under the Outer Space Act 1986 for UK entities acting
+  from outside the UK. Ofcom is the UK's notifying administration for ITU satellite filings and
+  licenses radio equipment, including earth stations, under the Wireless Telegraphy Act 2006.
+authorities:
+  - id: gb-caa
+    name: UK Civil Aviation Authority (CAA) — Space regulation
+    roles: [space_activity_licensing, launch_licensing]
+    website: https://www.caa.co.uk/space/licences-and-permissions/orbital-operator/
+    contacts:
+      - kind: email
+        value: commercialspaceflight@caa.co.uk
+        purpose: Orbital licence applications (question sets are emailed here) and enquiries.
+        source:
+          title: CAA — Orbital operator
+          url: https://www.caa.co.uk/space/licences-and-permissions/orbital-operator/
+          retrieved: 2026-10-15
+    notes: Recommends a pre-application form and meeting before applying.
+  - id: gb-ofcom
+    name: Ofcom — Space and satellites
+    roles: [itu_notifying_administration, spectrum_management, earth_station_licensing]
+    website: https://www.ofcom.org.uk/spectrum/space-and-satellites
+    notes: >
+      Manages UK satellite filings under its "Procedures for the Management of Satellite Filings".
+      Ofcom's website blocks automated retrieval, so contact channels are pending manual
+      verification (see knowledge/VERIFICATION.md).
+status: draft
+last_verified: 2026-10-15

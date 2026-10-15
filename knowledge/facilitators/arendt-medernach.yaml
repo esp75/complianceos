@@ -1,0 +1,15 @@
+id: arendt-medernach
+name: Arendt & Medernach
+kind: law_firm
+jurisdictions: [lu]
+services: [space_activity]
+hq_country: LU
+website: https://www.arendt.com/
+description: >
+  Luxembourg law firm. Its space-sector brochure lists assistance with authorisations to exercise a
+  space activity under the Luxembourg law on space activities, alongside corporate set-up.
+source:
+  title: Arendt — Luxembourg space sector, space activities (brochure, 06/2022)
+  url: https://www.arendt.com/wp-content/uploads/2024/04/brochure_-_luxembourg_-_space_sector_-_space_activities.pdf
+  retrieved: 2026-10-15
+listed_since: 2026-10-15

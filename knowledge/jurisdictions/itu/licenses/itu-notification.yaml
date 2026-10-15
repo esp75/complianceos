@@ -1,0 +1,111 @@
+id: itu-notification
+jurisdiction: itu
+name: ITU notification, recording and bringing into use
+authority: itu-br
+category: itu_filing
+summary: >
+  The notifying administration sends the final characteristics so the Bureau can record the
+  frequency assignments in the Master International Frequency Register. Bringing into use is then
+  confirmed by keeping a satellite on a notified orbital plane (or GSO position) for 90 continuous
+  days, after which the administration has 30 days to tell the Bureau.
+applies_when:
+  always: true
+  because: Every satellite network's frequency assignments are notified for recording.
+  cite: [itu.rr.11-25]
+legal_basis:
+  - id: itu.rr.11-25
+    instrument: ITU Radio Regulations (Edition of 2024), Volume 1
+    provision: No. 11.25
+    url: https://search.itu.int/history/HistoryDigitalCollectionDocLibrary/1.49.48.en.101.pdf
+    retrieved: 2026-10-15
+    language: en
+    excerpt: >
+      Notices relating to assignments to stations in space services, and to terrestrial stations
+      involved in coordination with a satellite network, shall reach the Bureau not earlier than
+      three years before the assignments are brought into use.
+  - id: itu.rr.11-44c
+    instrument: ITU Radio Regulations (Edition of 2024), Volume 1
+    provision: No. 11.44C
+    url: https://search.itu.int/history/HistoryDigitalCollectionDocLibrary/1.49.48.en.101.pdf
+    retrieved: 2026-10-15
+    language: en
+    excerpt: >
+      A frequency assignment to a space station in a non-geostationary-satellite orbit network or
+      system in the fixed-satellite service, the mobile-satellite service or the broadcasting-satellite
+      service shall be considered as having been brought into use when a space station with the
+      capability of transmitting or receiving that frequency assignment has been deployed and
+      maintained on one of the notified orbital plane(s) of the non-geostationary satellite network or
+      system for a continuous period of 90 days [...]. The notifying administration shall so inform
+      the Bureau within 30 days from the end of the 90-day period.
+  - id: itu.rr.11-44b
+    instrument: ITU Radio Regulations (Edition of 2024), Volume 1
+    provision: No. 11.44B
+    url: https://search.itu.int/history/HistoryDigitalCollectionDocLibrary/1.49.48.en.101.pdf
+    retrieved: 2026-10-15
+    language: en
+    excerpt: >
+      A frequency assignment to a space station in the geostationary-satellite orbit shall be
+      considered as having been brought into use when a space station in the geostationary-satellite
+      orbit with the capability of transmitting or receiving that frequency assignment has been
+      deployed and maintained at the notified orbital position for a continuous period of 90 days.
+      The notifying administration shall so inform the Bureau within 30 days from the end of the
+      90-day period.
+prerequisites:
+  - license: itu-advance-publication
+    note: Notification counts as received no earlier than four months after the API is published.
+  - license: itu-coordination-request
+    note: Notify once coordination with the identified administrations is complete.
+needed_by: launch
+submission_window:
+  opens_before_need:
+    years: 3
+  note: A notice may not reach the Bureau more than three years before bringing into use.
+  cite: [itu.rr.11-25]
+preparation:
+  min_weeks: 2
+  typical_weeks: 4
+  max_weeks: 8
+  basis: estimate
+review:
+  min_weeks: 8
+  typical_weeks: 17
+  max_weeks: 26
+  basis: estimate
+  note: Bureau examination before recording; no fixed time limit for space notices.
+documents:
+  - Final Appendix 4 characteristics (after coordination)
+obligations:
+  - id: itu-bring-into-use-notice-ngso
+    name: Confirm bringing into use to the Bureau (NGSO)
+    description: >
+      Keep one satellite on a notified orbital plane for 90 continuous days, then your
+      administration must inform the Bureau within 30 days. Counted here from launch; start the
+      clock from the date the satellite reaches its notified plane.
+    anchor: launch
+    offset:
+      days: 120
+    kind: hard
+    applies_when:
+      all:
+        - not:
+            field: orbit
+            eq: GEO
+        - field: services
+          intersects: [fixed_satellite, mobile_satellite, broadcasting_satellite]
+    cite: [itu.rr.11-44c]
+  - id: itu-bring-into-use-notice-gso
+    name: Confirm bringing into use to the Bureau (GSO)
+    description: >
+      Keep the satellite at the notified orbital position for 90 continuous days, then your
+      administration must inform the Bureau within 30 days. Counted here from launch; start the
+      clock from arrival on station.
+    anchor: launch
+    offset:
+      days: 120
+    kind: hard
+    applies_when:
+      field: orbit
+      eq: GEO
+    cite: [itu.rr.11-44b]
+status: draft
+last_verified: 2026-10-15

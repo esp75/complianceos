@@ -30,8 +30,8 @@ from app.clients.kg import KGClient
 from app.clients.openfga import OpenFGAClient
 from app.clients.openlane import OpenlaneClient
 from app.kg.embeddings import EmbeddingProvider
-from app.l4.citations import CitationError, enforce_citations
-from app.l4.drafting import draft_paragraph
+from app.l4.citations import CitationError, enforce_citations, enforce_text_citations
+from app.l4.drafting import draft_paragraph, evidence_cite_id
 from app.l4.provenance import fetch_manifest, record_context_cores
 from app.l4.retrieval import retrieve
 from app.llm.base import LLMProvider
@@ -77,14 +77,19 @@ async def draft_obligation(
     draft_id = uuid.uuid4().hex
     text = await draft_paragraph(body.query, obligations, evidence, llm)
 
-    # Provenance first, then enforce — a draft that fails grounding never reaches output.
+    # Provenance first, then enforce on what the text actually cites — a draft that invents a
+    # source, leaves a claim uncited, or fails grounding never reaches output.
     await record_context_cores(
         kg, draft_id, obligation_refs=obligation_refs, evidence_ids=evidence_ids,
         derivation="dual-level-retrieval+drafting",
     )
     cores = await fetch_manifest(kg, draft_id)
+    allowed = set(obligation_refs) | {evidence_cite_id(eid) for eid in evidence_ids}
     try:
-        enforce_citations(obligation_refs, evidence_ids, cores)
+        cited = enforce_text_citations(text, allowed)
+        cited_refs = [c for c in cited if c in obligation_refs]
+        cited_evidence = [c.removeprefix("evidence:") for c in cited if c.startswith("evidence:")]
+        enforce_citations(cited_refs, cited_evidence, cores)
     except CitationError as exc:
         raise HTTPException(
             status_code=422,  # Unprocessable Content — draft failed citation grounding
@@ -96,8 +101,9 @@ async def draft_obligation(
         "draft": text,
         "citations": {
             "obligations": [{"ref_code": o.ref_code, "framework": o.framework, "level": o.level}
-                            for o in obligations],
-            "evidence": [{"id": e["id"], "name": e["name"]} for e in evidence],
+                            for o in obligations if o.ref_code in cited_refs],
+            "evidence": [{"id": e["id"], "name": e["name"]} for e in evidence
+                         if e["id"] in cited_evidence],
             "evidence_types": retrieval.evidence_types,
         },
         "context_cores": [

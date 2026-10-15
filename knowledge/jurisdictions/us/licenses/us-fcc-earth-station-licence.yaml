@@ -1,0 +1,42 @@
+id: us-fcc-earth-station-licence
+jurisdiction: us
+name: FCC earth station licence
+authority: us-fcc-space-bureau
+category: earth_station
+summary: >
+  Any earth station transmitting in the US needs an FCC authorisation, filed on Form 312 through
+  ICFS. If it communicates with a non-US-licensed satellite, the application also carries the
+  market access exhibit of § 25.137.
+applies_when:
+  field: ground_station_countries
+  contains: US
+  because: You plan a ground station in the United States.
+  cite: [us.cfr47.25-102-es]
+legal_basis:
+  - id: us.cfr47.25-102-es
+    instrument: 47 CFR Part 25 (FCC satellite communications rules)
+    provision: § 25.102(a)
+    url: https://www.ecfr.gov/current/title-47/section-25.102
+    retrieved: 2026-10-15
+    language: en
+    excerpt: >
+      No person shall use or operate apparatus for the transmission of energy or communications or
+      signals by space or earth stations except under, and in accordance with, an appropriate
+      authorization granted by the Federal Communications Commission.
+needed_by: launch
+preparation:
+  min_weeks: 4
+  typical_weeks: 8
+  max_weeks: 12
+  basis: estimate
+review:
+  min_weeks: 8
+  typical_weeks: 16
+  max_weeks: 39
+  basis: estimate
+  note: No regulatory time limit for FCC action.
+documents:
+  - FCC Form 312 with the earth station technical and operational data
+fees: FCC application and regulatory fees apply.
+status: draft
+last_verified: 2026-10-15

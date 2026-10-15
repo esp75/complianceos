@@ -1,0 +1,49 @@
+id: gb-ofcom-satellite-filing
+jurisdiction: gb
+name: UK satellite filing through Ofcom
+authority: gb-ofcom
+category: itu_filing
+summary: >
+  Ofcom represents the UK at the ITU and submits satellite network filings for UK operators under
+  its Procedures for the Management of Satellite Filings, which cover ITU coordination and
+  notification, Ofcom's due diligence, evaluation of applications, fees, transfers and
+  cancellations.
+applies_when:
+  field: filing_administration
+  eq: GB
+  because: The UK is the administration filing your satellite network with the ITU.
+  cite: [gb.ca2003.s22]
+legal_basis:
+  - id: gb.ca2003.s22
+    instrument: Communications Act 2003
+    provision: Section 22(1)
+    url: https://www.legislation.gov.uk/ukpga/2003/21/section/22
+    retrieved: 2026-10-15
+    language: en
+    excerpt: >
+      It shall be the duty of OFCOM to do, as respects the United Kingdom, such of the following
+      things as they are required to do by the Secretary of State— (a) provide representation on
+      behalf of Her Majesty's Government in the United Kingdom on international and other bodies
+      having communications functions; [...]
+needed_by: launch
+preparation:
+  min_weeks: 4
+  typical_weeks: 8
+  max_weeks: 16
+  basis: estimate
+review:
+  min_weeks: 4
+  typical_weeks: 8
+  max_weeks: 16
+  basis: estimate
+  note: Ofcom's due diligence before it forwards the filing; check its current procedures.
+documents:
+  - Appendix 4 data prepared with ITU SpaceCap
+  - Information required by Ofcom's satellite filing procedures (due diligence)
+fees: Ofcom recovers satellite filing costs under its procedures; ITU cost recovery also applies.
+status: draft
+last_verified: 2026-10-15
+sources:
+  - title: Ofcom — Statement — Procedures for the Management of Satellite Filings
+    url: https://www.ofcom.org.uk/spectrum/space-and-satellites/filings
+    retrieved: 2026-10-15

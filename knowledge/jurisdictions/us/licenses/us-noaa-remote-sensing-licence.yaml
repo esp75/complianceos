@@ -1,0 +1,75 @@
+id: us-noaa-remote-sensing-licence
+jurisdiction: us
+name: NOAA private remote sensing licence
+authority: us-noaa-crsra
+category: remote_sensing
+summary: >
+  Operating a private remote sensing space system in the United States or as a US person needs a
+  licence from the Secretary of Commerce, issued by NOAA's CRSRA. The rules set short statutory
+  clocks: seven days to confirm the application is complete and 60 days to decide. The licence
+  does not cover spectrum, which the FCC authorises separately.
+applies_when:
+  all:
+    - field: earth_observation_imaging
+      eq: true
+      because: Your satellites carry an imaging payload.
+    - any:
+        - field: operator_country
+          eq: US
+          because: You are a US person.
+        - field: control_country
+          eq: US
+          because: You will operate the system from the United States.
+      cite: [us.cfr15.960-2]
+legal_basis:
+  - id: us.cfr15.960-2
+    instrument: 15 CFR Part 960 (Licensing of private remote sensing space systems)
+    provision: § 960.2(a) and (d)
+    url: https://www.ecfr.gov/current/title-15/section-960.2
+    retrieved: 2026-10-15
+    language: en
+    excerpt: >
+      (a) The regulations in this part set forth the requirements for the operation of private remote
+      sensing space systems within the United States or by a U.S. person. [...] (d) The Secretary does
+      not authorize the use of spectrum for radio communications by a private remote sensing space
+      system.
+  - id: us.cfr15.960-5
+    instrument: 15 CFR Part 960 (Licensing of private remote sensing space systems)
+    provision: § 960.5(a) and (c)
+    url: https://www.ecfr.gov/current/title-15/section-960.5
+    retrieved: 2026-10-15
+    language: en
+    excerpt: >
+      (a) Before submitting an application, a person may consult informally with the Secretary to
+      discuss matters under this part, including whether a license is likely to be required for a
+      system. [...] (c) Within seven days of the submission, the Secretary shall determine, after
+      consultation with the Secretaries of Defense and State, whether the submission is a complete
+      application meeting the requirements of appendix A of this part.
+  - id: us.cfr15.960-7
+    instrument: 15 CFR Part 960 (Licensing of private remote sensing space systems)
+    provision: § 960.7(b)
+    url: https://www.ecfr.gov/current/title-15/section-960.7
+    retrieved: 2026-10-15
+    language: en
+    excerpt: >
+      The Secretary shall make the determination in paragraph (a) of this section within 60 days of
+      the notification under § 960.5(c), and shall notify the applicant in writing whether the license
+      is granted or denied.
+needed_by: launch
+preparation:
+  min_weeks: 4
+  typical_weeks: 8
+  max_weeks: 12
+  basis: estimate
+  note: An informal consultation with CRSRA before applying is encouraged.
+review:
+  min_weeks: 2
+  typical_weeks: 10
+  max_weeks: 10
+  basis: statutory
+  note: Seven days to confirm completeness, then 60 days to grant or deny.
+  cite: [us.cfr15.960-5, us.cfr15.960-7]
+documents:
+  - Application with the information in appendix A of 15 CFR Part 960
+status: draft
+last_verified: 2026-10-15

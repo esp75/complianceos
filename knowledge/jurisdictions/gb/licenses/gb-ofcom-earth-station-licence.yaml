@@ -1,0 +1,39 @@
+id: gb-ofcom-earth-station-licence
+jurisdiction: gb
+name: Earth station licence (Ofcom, wireless telegraphy)
+authority: gb-ofcom
+category: earth_station
+summary: >
+  Establishing or using radio equipment in the UK, including a satellite earth station or ground
+  station, is unlawful without a wireless telegraphy licence from Ofcom unless an exemption applies.
+applies_when:
+  field: ground_station_countries
+  contains: GB
+  because: You plan a ground station in the UK.
+  cite: [gb.wta2006.s8]
+legal_basis:
+  - id: gb.wta2006.s8
+    instrument: Wireless Telegraphy Act 2006
+    provision: Section 8(1)
+    url: https://www.legislation.gov.uk/ukpga/2006/36/section/8
+    retrieved: 2026-10-15
+    language: en
+    excerpt: >
+      It is unlawful— (a) to establish or use a wireless telegraphy station, or (b) to instal or use
+      wireless telegraphy apparatus, except under and in accordance with a licence (a "wireless
+      telegraphy licence") granted under this section by OFCOM.
+needed_by: launch
+preparation:
+  min_weeks: 2
+  typical_weeks: 4
+  max_weeks: 8
+  basis: estimate
+review:
+  min_weeks: 4
+  typical_weeks: 8
+  max_weeks: 16
+  basis: estimate
+documents:
+  - Station location and technical parameters
+status: draft
+last_verified: 2026-10-15

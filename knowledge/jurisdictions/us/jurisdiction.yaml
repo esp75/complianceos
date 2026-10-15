@@ -1,0 +1,48 @@
+id: us
+name: United States
+kind: national
+country: US
+summary: >
+  The FCC authorises every space and earth station transmitting to or from the US under 47 CFR
+  Part 25: a US licence for US-filed networks (with a streamlined route for small NGSO systems), or
+  market access for satellites licensed elsewhere. NOAA licenses private remote sensing systems
+  operated in the US or by US persons under 15 CFR Part 960.
+authorities:
+  - id: us-fcc-space-bureau
+    name: Federal Communications Commission (FCC) — Space Bureau
+    roles: [itu_notifying_administration, spectrum_management, market_access, earth_station_licensing]
+    website: https://www.fcc.gov/space
+    contacts:
+      - kind: portal
+        value: https://www.fcc.gov/icfs
+        purpose: >
+          International Communications Filing System (ICFS), where space station, earth station and
+          market access applications are filed.
+        source:
+          title: 47 CFR 25.137(b) (eCFR)
+          url: https://www.ecfr.gov/current/title-47/section-25.137
+          retrieved: 2026-10-15
+      - kind: web
+        value: https://www.fcc.gov/about/contact
+        purpose: FCC contact page.
+        source:
+          title: FCC — Space Bureau
+          url: https://www.fcc.gov/space
+          retrieved: 2026-10-15
+    notes: >
+      The Space Bureau has a Satellite Licensing Division and an Earth Station Licensing Division,
+      and submits ITU filings for US-licensed networks.
+  - id: us-noaa-crsra
+    name: NOAA Office of Space Commerce — Commercial Remote Sensing Regulatory Affairs (CRSRA)
+    roles: [remote_sensing_licensing]
+    website: https://space.commerce.gov/regulations/commercial-remote-sensing-regulatory-affairs/
+    contacts:
+      - kind: web
+        value: https://space.commerce.gov/about/contact-us/
+        purpose: Contact page; CRSRA encourages consultation meetings before an application.
+        source:
+          title: Commercial Remote Sensing Regulatory Affairs
+          url: https://space.commerce.gov/regulations/commercial-remote-sensing-regulatory-affairs/
+          retrieved: 2026-10-15
+status: draft
+last_verified: 2026-10-15

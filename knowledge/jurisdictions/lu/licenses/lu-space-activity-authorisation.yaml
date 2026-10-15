@@ -1,0 +1,191 @@
+id: lu-space-activity-authorisation
+jurisdiction: lu
+name: Space activity authorisation
+name_local: Autorisation d'exercer une activité spatiale
+authority: lu-lsa
+category: space_activity
+summary: >
+  No operator may carry out a space activity without prior written authorisation from the minister
+  responsible for space, issued as a ministerial order. The operator must have its registered
+  office and central administration in Luxembourg, sound governance, at least two experienced
+  managers, a risk assessment with financial cover, and an approved auditor.
+applies_when:
+  any:
+    - field: operator_country
+      eq: LU
+      because: >
+        The law applies to legal persons under Luxembourg law carrying out space activities,
+        including abroad.
+      cite: [lu.space2020.art-1]
+    - field: control_country
+      eq: LU
+      because: You will carry out the space activity from Luxembourg territory.
+      cite: [lu.space2020.art-1]
+    - field: launch_country
+      eq: LU
+      because: You plan to launch from Luxembourg territory.
+      cite: [lu.space2020.art-1]
+legal_basis:
+  - id: lu.space2020.art-1
+    instrument: Loi du 15 décembre 2020 portant sur les activités spatiales
+    provision: Article 1er
+    url: https://legilux.public.lu/eli/etat/leg/loi/2020/12/15/a1086/jo
+    retrieved: 2026-10-15
+    language: fr
+    excerpt: >
+      La présente loi s'applique aux activités spatiales menées : 1° par un opérateur, quelle que soit
+      sa nationalité, à partir du territoire du Grand-Duché de Luxembourg ou au moyen
+      d'installations, meubles ou immeubles, qui se trouvent sous le contrôle et la juridiction du
+      Grand-Duché de Luxembourg ; ou 2° sur le territoire d'un État étranger ou d'un espace non soumis
+      à la souveraineté d'un État par des personnes physiques possédant la nationalité
+      luxembourgeoise ou des personnes morales de droit luxembourgeois.
+    excerpt_en: >
+      This law applies to space activities carried out: 1° by an operator, whatever its nationality,
+      from the territory of Luxembourg or by means of installations under Luxembourg's control and
+      jurisdiction; or 2° on the territory of a foreign State or in an area not subject to State
+      sovereignty by Luxembourg nationals or legal persons under Luxembourg law. (Unofficial
+      translation.)
+  - id: lu.space2020.art-5
+    instrument: Loi du 15 décembre 2020 portant sur les activités spatiales
+    provision: Article 5(1) and (4)
+    url: https://legilux.public.lu/eli/etat/leg/loi/2020/12/15/a1086/jo
+    retrieved: 2026-10-15
+    language: fr
+    excerpt: >
+      (1) Aucun opérateur ne peut exercer une activité spatiale sans y avoir été préalablement
+      autorisé par le ministre ayant la politique et législation spatiales dans ses attributions [...]
+      (4) Pour chaque demande d'autorisation, une redevance est fixée par le ministre pour couvrir les
+      frais administratifs occasionnés par le traitement de la demande. Cette redevance varie entre
+      5 000 et 500 000 euros suivant la complexité de la demande et le volume du travail.
+    excerpt_en: >
+      (1) No operator may carry out a space activity without prior authorisation from the minister
+      responsible for space policy and legislation [...] (4) For each application, the minister sets
+      a fee covering the administrative cost of processing it, between EUR 5,000 and EUR 500,000
+      depending on the complexity of the application and the work involved. (Unofficial
+      translation.)
+  - id: lu.space2020.art-6
+    instrument: Loi du 15 décembre 2020 portant sur les activités spatiales
+    provision: Article 6(1), first paragraph
+    url: https://legilux.public.lu/eli/etat/leg/loi/2020/12/15/a1086/jo
+    retrieved: 2026-10-15
+    language: fr
+    excerpt: >
+      L'opérateur à autoriser justifie de l'existence au Grand-Duché de Luxembourg de son siège
+      statutaire et de son administration centrale, y inclus la structure administrative et
+      comptable.
+    excerpt_en: >
+      The operator must show that its registered office and central administration, including its
+      administrative and accounting structure, are in Luxembourg. (Unofficial translation.)
+  - id: lu.space2020.art-8
+    instrument: Loi du 15 décembre 2020 portant sur les activités spatiales
+    provision: Article 8(2)
+    url: https://legilux.public.lu/eli/etat/leg/loi/2020/12/15/a1086/jo
+    retrieved: 2026-10-15
+    language: fr
+    excerpt: >
+      Les autorisations sont soumises au paiement par l'opérateur d'une redevance annuelle à l'État.
+      La redevance annuelle sera comprise entre 2 000 et 50 000 euros en fonction des frais engendrés
+      par la surveillance [...].
+    excerpt_en: >
+      Authorisations are subject to an annual fee paid to the State, between EUR 2,000 and
+      EUR 50,000 depending on supervision costs [...]. (Unofficial translation.)
+  - id: lu.space2020.art-9
+    instrument: Loi du 15 décembre 2020 portant sur les activités spatiales
+    provision: Article 9(1), 3°
+    url: https://legilux.public.lu/eli/etat/leg/loi/2020/12/15/a1086/jo
+    retrieved: 2026-10-15
+    language: fr
+    excerpt: >
+      L'autorisation est retirée si : [...] 3° l'opérateur n'en fait pas usage dans un délai de
+      trente-six mois à partir de son octroi, y renonce ou a cessé d'exercer son activité au cours des
+      six derniers mois.
+    excerpt_en: >
+      The authorisation is withdrawn if: [...] 3° the operator does not use it within thirty-six months
+      of its grant, renounces it, or has stopped its activity during the last six months. (Unofficial
+      translation.)
+  - id: lu.space2020.art-15
+    instrument: Loi du 15 décembre 2020 portant sur les activités spatiales
+    provision: Article 15(2)
+    url: https://legilux.public.lu/eli/etat/leg/loi/2020/12/15/a1086/jo
+    retrieved: 2026-10-15
+    language: fr
+    excerpt: >
+      L'opérateur qui prend l'initiative de lancer ou faire lancer un objet spatial dans l'espace
+      extra-atmosphérique doit fournir au ministre toutes les indications qui permettent d'identifier
+      l'objet spatial, son lancement ainsi que la position qu'il doit occuper dans l'espace
+      extra-atmosphérique [...].
+    excerpt_en: >
+      The operator that launches or has a space object launched must give the minister all the
+      information needed to identify the object, its launch and its position in outer space [...].
+      (Unofficial translation.)
+needed_by: launch
+preparation:
+  min_weeks: 8
+  typical_weeks: 12
+  max_weeks: 26
+  basis: estimate
+  note: >
+    Includes the risk assessment and financial cover, governance documentation and the shareholder
+    information the law requires.
+review:
+  min_weeks: 26
+  typical_weeks: 26
+  max_weeks: 39
+  basis: practice
+  note: >
+    The LSA asks for a written, free-format preliminary application at least six months before the
+    planned launch.
+  source:
+    title: Luxembourg Space Agency — Legal framework
+    url: https://space-agency.public.lu/en/support/industry-portal/legal-framework.html
+    retrieved: 2026-10-15
+documents:
+  - Programme of activity and all information useful to assess the application (Art. 7)
+  - Risk assessment and its financial cover (own funds, insurance or bank guarantee) (Art. 6(4))
+  - Identity of qualifying shareholders (10% or more) or the twenty largest shareholders (Art. 6(2))
+  - Appointment of an approved statutory auditor (Art. 6(5))
+fees: >
+  Application fee between EUR 5,000 and EUR 500,000 depending on complexity (Art. 5(4)); annual fee
+  between EUR 2,000 and EUR 50,000 (Art. 8(2)). A Grand-Ducal Regulation of 11 July 2025 sets the
+  fees applicable to authorisations.
+obligations:
+  - id: lu-annual-fee
+    name: Annual authorisation fee
+    description: Annual fee to the State for supervision of the authorised activity.
+    anchor: granted
+    offset:
+      years: 1
+    repeat_every:
+      years: 1
+    kind: soft
+    cite: [lu.space2020.art-8]
+  - id: lu-use-within-36-months
+    name: Use the authorisation within 36 months
+    description: The authorisation is withdrawn if it is not used within 36 months of its grant.
+    anchor: granted
+    offset:
+      months: 36
+    kind: hard
+    cite: [lu.space2020.art-9]
+  - id: lu-registration-particulars
+    name: Provide registration particulars
+    description: >
+      Give the minister the information identifying the space object, its launch and its orbit
+      (nodal period, inclination, apogee, perigee) for the national registry, using the LSA
+      submission form.
+    anchor: launch
+    kind: hard
+    cite: [lu.space2020.art-15]
+requires_local_presence: true
+local_presence_note: >
+  Registered office and central administration in Luxembourg, including the administrative and
+  accounting structure (Art. 6(1)).
+status: draft
+last_verified: 2026-10-15
+sources:
+  - title: Luxembourg Space Agency — Legal framework
+    url: https://space-agency.public.lu/en/support/industry-portal/legal-framework.html
+    retrieved: 2026-10-15
+  - title: Mémorial A n° 1086 du 28 décembre 2020 (official journal PDF)
+    url: https://data.legilux.public.lu/filestore/eli/etat/leg/loi/2020/12/15/a1086/jo/fr/pdfa/eli-etat-leg-loi-2020-12-15-a1086-jo-fr-pdfa.pdf
+    retrieved: 2026-10-15

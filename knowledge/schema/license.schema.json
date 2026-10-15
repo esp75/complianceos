@@ -1,0 +1,746 @@
+{
+  "$defs": {
+    "Citation": {
+      "additionalProperties": false,
+      "description": "A pinpoint reference to the text of a legal instrument.\n\n``excerpt`` is quoted verbatim in the instrument's language; ``excerpt_en`` is an unofficial\nEnglish rendering when the original is not English.",
+      "properties": {
+        "id": {
+          "maxLength": 120,
+          "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "instrument": {
+          "title": "Instrument",
+          "type": "string"
+        },
+        "provision": {
+          "title": "Provision",
+          "type": "string"
+        },
+        "url": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "retrieved": {
+          "format": "date",
+          "title": "Retrieved",
+          "type": "string"
+        },
+        "language": {
+          "pattern": "^[a-z]{2}$",
+          "title": "Language",
+          "type": "string"
+        },
+        "excerpt": {
+          "maxLength": 1200,
+          "minLength": 1,
+          "title": "Excerpt",
+          "type": "string"
+        },
+        "excerpt_en": {
+          "anyOf": [
+            {
+              "maxLength": 1200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Excerpt En"
+        }
+      },
+      "required": [
+        "id",
+        "instrument",
+        "provision",
+        "url",
+        "retrieved",
+        "language",
+        "excerpt"
+      ],
+      "title": "Citation",
+      "type": "object"
+    },
+    "Duration": {
+      "additionalProperties": false,
+      "description": "Elapsed time in weeks, with where the numbers come from.\n\n``statutory``: a deadline fixed in law; ``practice``: the authority's published guidance or\nservice standard; ``estimate``: no official figure, judgement from experience.",
+      "properties": {
+        "min_weeks": {
+          "minimum": 0,
+          "title": "Min Weeks",
+          "type": "integer"
+        },
+        "typical_weeks": {
+          "minimum": 0,
+          "title": "Typical Weeks",
+          "type": "integer"
+        },
+        "max_weeks": {
+          "minimum": 0,
+          "title": "Max Weeks",
+          "type": "integer"
+        },
+        "basis": {
+          "enum": [
+            "statutory",
+            "practice",
+            "estimate"
+          ],
+          "title": "Basis",
+          "type": "string"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "cite": {
+          "items": {
+            "maxLength": 120,
+            "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$",
+            "type": "string"
+          },
+          "title": "Cite",
+          "type": "array"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Source"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "min_weeks",
+        "typical_weeks",
+        "max_weeks",
+        "basis"
+      ],
+      "title": "Duration",
+      "type": "object"
+    },
+    "LicenseCategory": {
+      "enum": [
+        "space_activity",
+        "itu_filing",
+        "spectrum",
+        "earth_station",
+        "market_access",
+        "remote_sensing",
+        "launch",
+        "registration"
+      ],
+      "title": "LicenseCategory",
+      "type": "string"
+    },
+    "Obligation": {
+      "additionalProperties": false,
+      "description": "A dated duty that follows from a licence: a deadline, a renewal, a recurring report.\n\n``applies_when`` narrows it to some missions (e.g. constellation milestones); omitted means it\nalways comes with the licence.",
+      "properties": {
+        "id": {
+          "maxLength": 120,
+          "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "anchor": {
+          "enum": [
+            "submitted",
+            "granted",
+            "launch",
+            "service_start"
+          ],
+          "title": "Anchor",
+          "type": "string"
+        },
+        "offset": {
+          "$ref": "#/$defs/Offset",
+          "default": {
+            "years": 0,
+            "months": 0,
+            "weeks": 0,
+            "days": 0
+          }
+        },
+        "repeat_every": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Offset"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "kind": {
+          "enum": [
+            "hard",
+            "soft"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "applies_when": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Rule"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "cite": {
+          "items": {
+            "maxLength": 120,
+            "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$",
+            "type": "string"
+          },
+          "title": "Cite",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "anchor",
+        "kind"
+      ],
+      "title": "Obligation",
+      "type": "object"
+    },
+    "Offset": {
+      "additionalProperties": false,
+      "properties": {
+        "years": {
+          "default": 0,
+          "title": "Years",
+          "type": "integer"
+        },
+        "months": {
+          "default": 0,
+          "title": "Months",
+          "type": "integer"
+        },
+        "weeks": {
+          "default": 0,
+          "title": "Weeks",
+          "type": "integer"
+        },
+        "days": {
+          "default": 0,
+          "title": "Days",
+          "type": "integer"
+        }
+      },
+      "title": "Offset",
+      "type": "object"
+    },
+    "Prerequisite": {
+      "additionalProperties": false,
+      "description": "Ordering constraint: this licence's submission waits for ``license`` to reach ``stage``.\n\nOnly applies when both licences are in the plan; a prerequisite that does not apply to the\nmission is dropped, so one licence can list alternatives (e.g. each country's ITU route).",
+      "properties": {
+        "license": {
+          "maxLength": 120,
+          "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$",
+          "title": "License",
+          "type": "string"
+        },
+        "stage": {
+          "default": "granted",
+          "enum": [
+            "submitted",
+            "granted"
+          ],
+          "title": "Stage",
+          "type": "string"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        }
+      },
+      "required": [
+        "license"
+      ],
+      "title": "Prerequisite",
+      "type": "object"
+    },
+    "ReviewStatus": {
+      "enum": [
+        "draft",
+        "reviewed"
+      ],
+      "title": "ReviewStatus",
+      "type": "string"
+    },
+    "Rule": {
+      "additionalProperties": false,
+      "description": "Applicability rule. Exactly one of: ``all``, ``any``, ``not``, or a ``field`` test.\n\nA field test uses exactly one operator: ``eq``, ``in``, ``contains`` (list fact contains the\nvalue), ``intersects`` (list fact shares a value with the list), ``gte`` / ``lte`` (numbers),\nor ``present`` (fact is set / non-empty). ``because`` and ``cite`` explain a match to the user.",
+      "properties": {
+        "all": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Rule"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "All"
+        },
+        "any": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Rule"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Any"
+        },
+        "not": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Rule"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "always": {
+          "anyOf": [
+            {
+              "const": true,
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Always"
+        },
+        "field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field"
+        },
+        "eq": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Eq"
+        },
+        "in": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "In"
+        },
+        "contains": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contains"
+        },
+        "intersects": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Intersects"
+        },
+        "gte": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gte"
+        },
+        "lte": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lte"
+        },
+        "present": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Present"
+        },
+        "because": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Because"
+        },
+        "cite": {
+          "items": {
+            "maxLength": 120,
+            "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$",
+            "type": "string"
+          },
+          "title": "Cite",
+          "type": "array"
+        }
+      },
+      "title": "Rule",
+      "type": "object"
+    },
+    "Source": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "url": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "retrieved": {
+          "format": "date",
+          "title": "Retrieved",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "url",
+        "retrieved"
+      ],
+      "title": "Source",
+      "type": "object"
+    },
+    "SubmissionWindow": {
+      "additionalProperties": false,
+      "description": "The earliest a submission may be made, counted back from the date the licence is needed\n(e.g. an ITU notice may not reach the Bureau more than three years before bringing into use).",
+      "properties": {
+        "opens_before_need": {
+          "$ref": "#/$defs/Offset"
+        },
+        "note": {
+          "title": "Note",
+          "type": "string"
+        },
+        "cite": {
+          "items": {
+            "maxLength": 120,
+            "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$",
+            "type": "string"
+          },
+          "title": "Cite",
+          "type": "array"
+        }
+      },
+      "required": [
+        "opens_before_need",
+        "note"
+      ],
+      "title": "SubmissionWindow",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "maxLength": 120,
+      "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$",
+      "title": "Id",
+      "type": "string"
+    },
+    "jurisdiction": {
+      "maxLength": 120,
+      "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$",
+      "title": "Jurisdiction",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "name_local": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Name Local"
+    },
+    "authority": {
+      "maxLength": 120,
+      "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$",
+      "title": "Authority",
+      "type": "string"
+    },
+    "category": {
+      "$ref": "#/$defs/LicenseCategory"
+    },
+    "summary": {
+      "title": "Summary",
+      "type": "string"
+    },
+    "applies_when": {
+      "$ref": "#/$defs/Rule"
+    },
+    "legal_basis": {
+      "items": {
+        "$ref": "#/$defs/Citation"
+      },
+      "minItems": 1,
+      "title": "Legal Basis",
+      "type": "array"
+    },
+    "prerequisites": {
+      "items": {
+        "$ref": "#/$defs/Prerequisite"
+      },
+      "title": "Prerequisites",
+      "type": "array"
+    },
+    "needed_by": {
+      "default": "launch",
+      "enum": [
+        "launch",
+        "service_start"
+      ],
+      "title": "Needed By",
+      "type": "string"
+    },
+    "submission_window": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SubmissionWindow"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "preparation": {
+      "$ref": "#/$defs/Duration"
+    },
+    "review": {
+      "$ref": "#/$defs/Duration"
+    },
+    "documents": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Documents",
+      "type": "array"
+    },
+    "fees": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Fees"
+    },
+    "obligations": {
+      "items": {
+        "$ref": "#/$defs/Obligation"
+      },
+      "title": "Obligations",
+      "type": "array"
+    },
+    "requires_local_presence": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Requires Local Presence"
+    },
+    "local_presence_note": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Local Presence Note"
+    },
+    "status": {
+      "$ref": "#/$defs/ReviewStatus"
+    },
+    "last_verified": {
+      "format": "date",
+      "title": "Last Verified",
+      "type": "string"
+    },
+    "reviewed_by": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reviewed By"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/Source"
+      },
+      "title": "Sources",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "jurisdiction",
+    "name",
+    "authority",
+    "category",
+    "summary",
+    "applies_when",
+    "legal_basis",
+    "preparation",
+    "review",
+    "status",
+    "last_verified"
+  ],
+  "title": "License",
+  "type": "object"
+}

@@ -1,0 +1,175 @@
+id: itu-coordination-request
+jurisdiction: itu
+name: ITU coordination request for the satellite network
+authority: itu-br
+category: itu_filing
+summary: >
+  Geostationary networks, and non-geostationary systems in bands subject to coordination, file a
+  coordination request instead of an advance publication. The Bureau publishes it, identifies the
+  administrations you must coordinate with, and your administration then negotiates coordination
+  agreements with them. The date of receipt sets your priority and starts the seven-year clock.
+applies_when:
+  any:
+    - field: orbit
+      eq: GEO
+      because: Geostationary satellite networks are subject to coordination.
+    - field: services
+      intersects: [fixed_satellite, mobile_satellite, broadcasting_satellite]
+      because: >
+        Fixed-, mobile- and broadcasting-satellite systems usually operate in bands subject to
+        coordination (RR Nos. 9.7 to 9.21). Confirm the route with your administration.
+  cite: [itu.rr.9-30]
+legal_basis:
+  - id: itu.rr.9-30
+    instrument: ITU Radio Regulations (Edition of 2024), Volume 1
+    provision: No. 9.30
+    url: https://search.itu.int/history/HistoryDigitalCollectionDocLibrary/1.49.48.en.101.pdf
+    retrieved: 2026-10-15
+    language: en
+    excerpt: >
+      Requests for coordination made under Nos. 9.7 to 9.14 and 9.21 shall be sent by the requesting
+      administration to the Bureau, together with the appropriate information listed in Appendix 4 to
+      these Regulations.
+  - id: itu.rr.9-38
+    instrument: ITU Radio Regulations (Edition of 2024), Volume 1
+    provision: No. 9.38 d)
+    url: https://search.itu.int/history/HistoryDigitalCollectionDocLibrary/1.49.48.en.101.pdf
+    retrieved: 2026-10-15
+    language: en
+    excerpt: >
+      publish, as appropriate, the complete information in the BR IFIC within four months.
+  - id: itu.res35.resolves-7
+    instrument: ITU Radio Regulations (Edition of 2024), Volume 3, Resolution 35 (Rev.WRC-23)
+    provision: resolves 1 and 7
+    url: https://search.itu.int/history/HistoryDigitalCollectionDocLibrary/1.49.48.en.103.pdf
+    retrieved: 2026-10-15
+    language: en
+    excerpt: >
+      the notifying administration shall communicate to BR the required deployment information in
+      accordance with Annex 1 to this Resolution as of the expiry of the milestone periods mentioned
+      in subsections a) through c) below [...] a) no later than 30 days after the expiry of the
+      two-year period after the end of the seven-year regulatory period referred to in No. 11.44;
+      b) no later than 30 days after the expiry of the five-year period after the end of the
+      seven-year regulatory period referred to in No. 11.44; c) no later than 30 days after the
+      expiry of the seven-year period after the end of the seven-year regulatory period referred to
+      in No. 11.44;
+  - id: itu.res35.resolves-11
+    instrument: ITU Radio Regulations (Edition of 2024), Volume 3, Resolution 35 (Rev.WRC-23)
+    provision: resolves 11
+    url: https://search.itu.int/history/HistoryDigitalCollectionDocLibrary/1.49.48.en.103.pdf
+    retrieved: 2026-10-15
+    language: en
+    excerpt: >
+      a) under resolves 7a) or 8a), as appropriate, is less than 10% of the total number of
+      satellites [...] b) under resolves 7b) or 8b), as appropriate, is less than 50% of the total
+      number of satellites [...] c) under resolves 7c) or 8c), as appropriate, is less than 100% of
+      the total number of satellites
+prerequisites:
+  - license: fr-anfr-satellite-frequency-filing
+  - license: gb-ofcom-satellite-filing
+  - license: lu-satellite-system-concession
+    stage: submitted
+  - license: us-fcc-space-station-licence
+    stage: submitted
+needed_by: launch
+submission_window:
+  opens_before_need:
+    years: 7
+  note: >
+    Bringing into use must follow within seven years of receipt (No. 11.44), so filing earlier than
+    that before launch would expire the filing.
+  cite: [itu.rr.11-44]
+preparation:
+  min_weeks: 4
+  typical_weeks: 12
+  max_weeks: 26
+  basis: estimate
+review:
+  min_weeks: 52
+  typical_weeks: 104
+  max_weeks: 260
+  basis: estimate
+  note: >
+    The Bureau publishes within four months (No. 9.38). Coordination negotiations with the affected
+    administrations have no fixed duration; years are common for crowded bands.
+  cite: [itu.rr.9-38]
+documents:
+  - Appendix 4 network characteristics prepared in ITU SpaceCap
+fees: ITU cost recovery applies to satellite network filings (Council Decision 482).
+obligations:
+  - id: itu-coordination-bring-into-use-limit
+    name: Bring frequencies into use (ITU 7-year limit)
+    description: >
+      The frequencies must be brought into use within seven years of the Bureau receiving the
+      coordination request, or the Bureau cancels them.
+    anchor: submitted
+    offset:
+      years: 7
+    kind: hard
+    cite: [itu.rr.11-44]
+  - id: itu-res35-milestone-1
+    name: Resolution 35 milestone 1 (10% deployed)
+    description: >
+      Report deployment to the Bureau 2 years after the end of the 7-year period. Below 10% of the
+      filed satellites, the filing must be reduced.
+    anchor: submitted
+    offset:
+      years: 9
+      days: 30
+    kind: hard
+    applies_when:
+      all:
+        - not:
+            field: orbit
+            eq: GEO
+        - field: services
+          intersects: [fixed_satellite, mobile_satellite, broadcasting_satellite]
+        - field: frequency_bands
+          intersects: [Ku, K, Ka, Q, V]
+      because: >
+        Resolution 35 applies to non-GSO FSS/MSS/BSS systems in the bands listed in its table
+        (10.7-12.75, 17.3-20.2, 27-30, 37.5-42.5 and 47.2-51.4 GHz).
+      cite: [itu.res35.resolves-7]
+    cite: [itu.res35.resolves-7, itu.res35.resolves-11]
+  - id: itu-res35-milestone-2
+    name: Resolution 35 milestone 2 (50% deployed)
+    description: >
+      Report deployment 5 years after the end of the 7-year period. Below 50% of the filed
+      satellites, the filing must be reduced.
+    anchor: submitted
+    offset:
+      years: 12
+      days: 30
+    kind: hard
+    applies_when:
+      all:
+        - not:
+            field: orbit
+            eq: GEO
+        - field: services
+          intersects: [fixed_satellite, mobile_satellite, broadcasting_satellite]
+        - field: frequency_bands
+          intersects: [Ku, K, Ka, Q, V]
+    cite: [itu.res35.resolves-7, itu.res35.resolves-11]
+  - id: itu-res35-milestone-3
+    name: Resolution 35 milestone 3 (100% deployed)
+    description: >
+      Report deployment 7 years after the end of the 7-year period. Below 100%, the filing is
+      reduced to the number deployed.
+    anchor: submitted
+    offset:
+      years: 14
+      days: 30
+    kind: hard
+    applies_when:
+      all:
+        - not:
+            field: orbit
+            eq: GEO
+        - field: services
+          intersects: [fixed_satellite, mobile_satellite, broadcasting_satellite]
+        - field: frequency_bands
+          intersects: [Ku, K, Ka, Q, V]
+    cite: [itu.res35.resolves-7, itu.res35.resolves-11]
+status: draft
+last_verified: 2026-10-15

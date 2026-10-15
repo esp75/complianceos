@@ -1,0 +1,124 @@
+id: itu-advance-publication
+jurisdiction: itu
+name: ITU advance publication (API) of the satellite network
+authority: itu-br
+category: itu_filing
+summary: >
+  For satellite networks that are not subject to formal coordination, the notifying administration
+  sends the Bureau a general description of the network (Appendix 4 data) for publication in the
+  BR IFIC. Other administrations can then comment, and the network cannot be notified for recording
+  until four months after publication. The date the Bureau receives this filing starts the
+  seven-year clock to bring the frequencies into use.
+applies_when:
+  all:
+    - not:
+        field: orbit
+        eq: GEO
+      because: Your satellites are not in geostationary orbit.
+    - not:
+        field: services
+        intersects: [fixed_satellite, mobile_satellite, broadcasting_satellite]
+      because: >
+        You did not select fixed-, mobile- or broadcasting-satellite services, which are the services
+        most often subject to formal coordination. Coordination also depends on the exact bands
+        (RR Nos. 9.7 to 9.21), so confirm the route with your administration.
+  because: Networks not subject to coordination start with advance publication.
+  cite: [itu.rr.9-1]
+legal_basis:
+  - id: itu.rr.9-1
+    instrument: ITU Radio Regulations (Edition of 2024), Volume 1
+    provision: No. 9.1
+    url: https://search.itu.int/history/HistoryDigitalCollectionDocLibrary/1.49.48.en.101.pdf
+    retrieved: 2026-10-15
+    language: en
+    excerpt: >
+      Before initiating any action under Article 11 in respect of frequency assignments for a
+      satellite network or system not subject to the coordination procedure described in Section II
+      of Article 9 below, an administration [...] shall send to the Bureau a general description of
+      the network or system for advance publication in the International Frequency Information
+      Circular (BR IFIC) not earlier than seven years and preferably not later than two years before
+      the planned date of bringing into use of the network or system [...]. The notification
+      information may also be communicated to the Bureau at the same time, but shall be considered as
+      having been received by the Bureau not earlier than four months after the date of publication of
+      the advance publication information.
+  - id: itu.rr.9-2b
+    instrument: ITU Radio Regulations (Edition of 2024), Volume 1
+    provision: No. 9.2B
+    url: https://search.itu.int/history/HistoryDigitalCollectionDocLibrary/1.49.48.en.101.pdf
+    retrieved: 2026-10-15
+    language: en
+    excerpt: >
+      On receipt of the complete information sent under Nos. 9.1 and 9.2, the Bureau shall publish it
+      in a Special Section of its BR IFIC within two months.
+  - id: itu.rr.11-44
+    instrument: ITU Radio Regulations (Edition of 2024), Volume 1
+    provision: No. 11.44
+    url: https://search.itu.int/history/HistoryDigitalCollectionDocLibrary/1.49.48.en.101.pdf
+    retrieved: 2026-10-15
+    language: en
+    excerpt: >
+      The notified date of bringing into use of any frequency assignment to a space station of a
+      satellite network or system shall be not later than seven years following the date of receipt
+      by the Bureau of the relevant complete information under No. 9.1 or 9.2 in the case of satellite
+      networks or systems not subject to Section II of Article 9 or under No. 9.30 in the case of
+      satellite networks or systems subject to Section II of Article 9. Any frequency assignment not
+      brought into use within the required period shall be cancelled by the Bureau [...].
+prerequisites:
+  - license: fr-anfr-satellite-frequency-filing
+    note: ANFR declares the assignments to the ITU on the operator's behalf.
+  - license: gb-ofcom-satellite-filing
+    note: Ofcom submits the filing to the ITU on the operator's behalf.
+  - license: lu-satellite-system-concession
+    stage: submitted
+    note: >
+      Luxembourg files through the SMC for a concession holder. How the concession and the ITU
+      filing are sequenced is not published; confirm with the SMC.
+  - license: us-fcc-space-station-licence
+    stage: submitted
+    note: The FCC submits the ITU filing for US-licensed networks.
+  - license: us-fcc-small-satellite-licence
+    stage: submitted
+    note: The FCC submits the ITU filing for US-licensed networks.
+needed_by: launch
+submission_window:
+  opens_before_need:
+    years: 7
+  note: The API may not be sent earlier than seven years before the planned bringing into use.
+  cite: [itu.rr.9-1]
+preparation:
+  min_weeks: 4
+  typical_weeks: 8
+  max_weeks: 16
+  basis: estimate
+  note: Preparing the Appendix 4 data (ITU SpaceCap) with your administration.
+review:
+  min_weeks: 17
+  typical_weeks: 26
+  max_weeks: 30
+  basis: statutory
+  note: >
+    Up to two months for the Bureau to publish, then four months before a notification can be
+    treated as received.
+  cite: [itu.rr.9-2b, itu.rr.9-1]
+documents:
+  - Appendix 4 network characteristics prepared in ITU SpaceCap
+fees: >
+  ITU cost recovery applies to satellite network filings (Council Decision 482). ANFR's 2021 guide
+  for small companies put the minimum at about CHF 7,600 for an API plus notification.
+obligations:
+  - id: itu-bring-into-use-limit
+    name: Bring frequencies into use (ITU 7-year limit)
+    description: >
+      The frequencies must be brought into use within seven years of the Bureau receiving this
+      filing, or the Bureau cancels them.
+    anchor: submitted
+    offset:
+      years: 7
+    kind: hard
+    cite: [itu.rr.11-44]
+status: draft
+last_verified: 2026-10-15
+sources:
+  - title: ANFR — Guide for start-ups and SMEs on access to space frequencies (v1.0)
+    url: https://www.anfr.fr/fileadmin/medias/brochures-plaquettes/Guide-PME-frequences-spatiales.pdf
+    retrieved: 2026-10-15

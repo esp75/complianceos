@@ -1,0 +1,118 @@
+id: gb-orbital-operator-licence
+jurisdiction: gb
+name: Orbital operator licence (CAA)
+authority: gb-caa
+category: space_activity
+summary: >
+  Allows a person or organisation to procure the launch of a space object into orbit, operate it,
+  or conduct other activity in outer space. Activities carried out from within the UK are licensed
+  under the Space Industry Act 2018; UK entities acting from outside the UK are licensed under the
+  Outer Space Act 1986. The CAA assesses six legislative tests, including safety, financial
+  resources and national security.
+applies_when:
+  any:
+    - field: control_country
+      eq: GB
+      because: >
+        You will operate your satellites from the UK, which is a spaceflight activity carried out in
+        the UK under the Space Industry Act 2018.
+      cite: [gb.sia2018.s3]
+    - field: operator_country
+      eq: GB
+      because: >
+        The Outer Space Act 1986 applies to bodies incorporated in the UK, including for activities
+        they carry on outside the UK.
+      cite: [gb.osa1986.s2]
+legal_basis:
+  - id: gb.sia2018.s3
+    instrument: Space Industry Act 2018
+    provision: Section 3(1)
+    url: https://www.legislation.gov.uk/ukpga/2018/5/section/3
+    retrieved: 2026-10-15
+    language: en
+    excerpt: >
+      A person must not (subject to the following provisions)— (a) carry out spaceflight activities
+      in the United Kingdom, or (b) operate a spaceport in the United Kingdom, except under the
+      authority of a licence under this section.
+  - id: gb.sia2018.s1
+    instrument: Space Industry Act 2018
+    provision: Section 1(2) and (4)
+    url: https://www.legislation.gov.uk/ukpga/2018/5/section/1
+    retrieved: 2026-10-15
+    language: en
+    excerpt: >
+      For the purposes of this Act, a person carries out a space activity or sub-orbital activity if
+      the person causes it to occur or is responsible for its continuing. [...] "space activity"
+      means— launching or procuring the launch or the return to earth of a space object or of an
+      aircraft carrying a space object, operating a space object, or any activity in outer space;
+  - id: gb.osa1986.s2
+    instrument: Outer Space Act 1986
+    provision: Section 2(1)
+    url: https://www.legislation.gov.uk/ukpga/1986/38/section/2
+    retrieved: 2026-10-15
+    language: en
+    excerpt: >
+      This Act applies to United Kingdom nationals, Scottish firms, and bodies incorporated under the
+      law of any part of the United Kingdom.
+  - id: gb.osa1986.s3
+    instrument: Outer Space Act 1986
+    provision: Section 3(1)
+    url: https://www.legislation.gov.uk/ukpga/1986/38/section/3
+    retrieved: 2026-10-15
+    language: en
+    excerpt: >
+      A person to whom this Act applies shall not, subject to the following provisions, carry on an
+      activity to which this Act applies except under the authority of a licence granted by the
+      Secretary of State.
+  - id: gb.osa1986.s1-2
+    instrument: Outer Space Act 1986
+    provision: Section 1(2)
+    url: https://www.legislation.gov.uk/ukpga/1986/38/section/1
+    retrieved: 2026-10-15
+    language: en
+    excerpt: >
+      This Act does not apply to activities carried on in the United Kingdom (and accordingly does not
+      apply to activities requiring authorisation under section 3(1) of the Space Industry Act 2018).
+needed_by: launch
+preparation:
+  min_weeks: 8
+  typical_weeks: 12
+  max_weeks: 26
+  basis: estimate
+  note: >
+    Start with the CAA pre-application form and meeting; then complete the technical, radio
+    frequency, financial and national security question sets.
+review:
+  min_weeks: 26
+  typical_weeks: 39
+  max_weeks: 52
+  basis: practice
+  note: >
+    The CAA says assessment takes at least 6 months once it has the application, and at least
+    12 months for novel or complex missions (e.g. close proximity operations, in-orbit
+    manufacturing).
+  source:
+    title: CAA — Orbital operator
+    url: https://www.caa.co.uk/space/licences-and-permissions/orbital-operator/
+    retrieved: 2026-10-15
+documents:
+  - Pre-application form
+  - Online application form
+  - Technical question set
+  - Radio frequency / spectrum question set
+  - Financial question set
+  - National security question set
+  - Safety case showing risks are as low as reasonably practicable (ALARP)
+fees: >
+  GBP 6,500 per application, non-refundable (CAA). Separate entities operating the satellite and
+  procuring its launch each need a licence and pay a fee.
+requires_local_presence: null
+local_presence_note: >
+  Operating from the UK or being UK-incorporated triggers the requirement; the CAA's "fit and proper
+  persons" and national interest tests apply to the applicant.
+status: draft
+last_verified: 2026-10-15
+sources:
+  - title: CAA — Orbital operator
+    url: https://www.caa.co.uk/space/licences-and-permissions/orbital-operator/
+    retrieved: 2026-10-15

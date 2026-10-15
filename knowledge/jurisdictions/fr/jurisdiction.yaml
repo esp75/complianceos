@@ -1,0 +1,60 @@
+id: fr
+name: France
+kind: national
+country: FR
+summary: >
+  France authorises space operations under the 2008 Space Operations Act (LOS): the ministry in
+  charge of space issues the authorisation and CNES checks technical conformity. Satellite frequency
+  assignments are declared to the ITU by ANFR, and operating them needs a separate ministerial
+  authorisation under the electronic communications code (CPCE).
+authorities:
+  - id: fr-ministry-space
+    name: Ministère chargé de l'espace — Direction générale de la recherche et de l'innovation (DGRI)
+    name_en: Ministry in charge of space — Directorate-General for Research and Innovation
+    roles: [space_activity_licensing]
+    website: https://spacecare.cnes.fr/en/the-fsoa-orbital-systems-office/authorisation-process/
+    contacts:
+      - kind: web_form
+        value: https://spacecare.cnes.fr/contact/
+        purpose: >
+          CNES advises contacting the CNES FSOA Office and the DGRI as the first step; this form
+          reaches the FSOA Office.
+        source:
+          title: CNES FSOA — Authorisation process
+          url: https://spacecare.cnes.fr/en/the-fsoa-orbital-systems-office/authorisation-process/
+          retrieved: 2026-10-15
+    notes: Issues the authorisation order after CNES's technical conformity review.
+  - id: fr-cnes-fsoa
+    name: CNES — Bureau LOS Systèmes Orbitaux (FSOA Orbital Systems Office)
+    name_en: CNES Space Safety Office for Orbital Systems
+    roles: [technical_assessment]
+    website: https://spacecare.cnes.fr/en/
+    contacts:
+      - kind: web_form
+        value: https://spacecare.cnes.fr/contact/
+        purpose: Questions about LOS conformity and opening an account on the FSOA discussion platform.
+        source:
+          title: CNES FSOA — Contact
+          url: https://spacecare.cnes.fr/contact/
+          retrieved: 2026-10-15
+    notes: >
+      Checks conformity with the LOS technical regulations on behalf of the ministry. Applications
+      are submitted on the FSOA discussion platform; CNES opens an account for the operator.
+  - id: fr-anfr
+    name: Agence nationale des fréquences (ANFR)
+    name_en: National Frequency Agency
+    roles: [itu_notifying_administration, spectrum_management]
+    website: https://www.anfr.fr/
+    contacts:
+      - kind: email
+        value: satcoord@anfr.fr
+        purpose: ANFR's space activities team (satellite frequency filings and coordination).
+        source:
+          title: ANFR — Guide for start-ups and SMEs on access to space frequencies (v1.0)
+          url: https://www.anfr.fr/fileadmin/medias/brochures-plaquettes/Guide-PME-frequences-spatiales.pdf
+          retrieved: 2026-10-15
+    notes: >
+      France's single interface with the ITU. Also instructs, for the minister in charge of
+      electronic communications, applications to operate satellite frequency assignments.
+status: draft
+last_verified: 2026-10-15

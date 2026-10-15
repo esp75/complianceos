@@ -1,0 +1,68 @@
+id: us-fcc-market-access
+jurisdiction: us
+name: FCC US market access for a non-US-licensed satellite system
+authority: us-fcc-space-bureau
+category: market_access
+summary: >
+  To serve the US, or to use US earth stations, with satellites licensed by another
+  administration, file a petition for declaratory ruling (or an earth station application naming
+  the satellite) through ICFS. It must include the technical and legal information a US licence
+  application would need, including Schedule S.
+applies_when:
+  all:
+    - any:
+        - field: service_countries
+          contains: US
+          because: You plan to provide services to users in the United States.
+        - field: ground_station_countries
+          contains: US
+          because: You plan to communicate with earth stations in the United States.
+      cite: [us.cfr47.25-137]
+    - not:
+        field: filing_administration
+        eq: US
+      because: Your satellites are licensed through another administration, not the FCC.
+      cite: [us.cfr47.25-137]
+legal_basis:
+  - id: us.cfr47.25-137
+    instrument: 47 CFR Part 25 (FCC satellite communications rules)
+    provision: § 25.137(a) and (b)
+    url: https://www.ecfr.gov/current/title-47/section-25.137
+    retrieved: 2026-10-15
+    language: en
+    excerpt: >
+      (a) Earth station applicants requesting authority to communicate with a non-U.S.-licensed space
+      station and entities filing a petition for declaratory ruling to access the United States market
+      using a non-U.S.-licensed space station must attach an exhibit with their FCC Form 312 [...].
+      (b) Any request pursuant to paragraph (a) of this section must be filed electronically through
+      the International Communications Filing System and must include an exhibit providing legal and
+      technical information for the non-U.S.-licensed space station of the kind that § 25.114,
+      § 25.122, § 25.123, or § 25.125 would require in a license application for that space station,
+      including but not limited to information required to complete Schedule S.
+prerequisites:
+  - license: itu-advance-publication
+    stage: submitted
+    note: The petition describes a network your administration has filed with the ITU.
+  - license: itu-coordination-request
+    stage: submitted
+    note: The petition describes a network your administration has filed with the ITU.
+needed_by: service_start
+preparation:
+  min_weeks: 6
+  typical_weeks: 12
+  max_weeks: 20
+  basis: estimate
+review:
+  min_weeks: 26
+  typical_weeks: 39
+  max_weeks: 78
+  basis: estimate
+  note: No regulatory time limit for FCC action.
+documents:
+  - FCC Form 312 and Schedule S
+  - Legal and technical exhibit for the non-US-licensed space station (§ 25.137(b))
+  - Effective competitive opportunities showing, unless the licensing administration is a WTO member
+    and the service is covered by the WTO Basic Telecommunications Agreement (§ 25.137(a))
+fees: FCC application and regulatory fees apply.
+status: draft
+last_verified: 2026-10-15

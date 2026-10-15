@@ -1,0 +1,58 @@
+id: lu
+name: Luxembourg
+kind: national
+country: LU
+summary: >
+  Space activities need prior written authorisation from the minister responsible for space under
+  the Law of 15 December 2020, with the Luxembourg Space Agency (LSA) running the procedure. The
+  operator must have its registered office and central administration in Luxembourg. Luxembourg
+  satellite systems using Luxembourg frequencies need a government concession, administered by the
+  Department of Media, Connectivity and Digital Policy (SMC).
+authorities:
+  - id: lu-lsa
+    name: Luxembourg Space Agency (LSA) / Ministry of the Economy
+    roles: [space_activity_licensing, registration]
+    website: https://space-agency.public.lu/en/support/industry-portal/legal-framework.html
+    contacts:
+      - kind: email
+        value: info@space-agency.lu
+        purpose: Preliminary applications for space activity authorisation and general enquiries.
+        source:
+          title: Luxembourg Space Agency — Contact
+          url: https://space-agency.public.lu/en/support/contact.html
+          retrieved: 2026-10-15
+      - kind: phone
+        value: "+352 288 482 10"
+        purpose: General enquiries.
+        source:
+          title: Luxembourg Space Agency — Contact
+          url: https://space-agency.public.lu/en/support/contact.html
+          retrieved: 2026-10-15
+      - kind: postal
+        value: 12C Impasse Drosbach, L-1882 Luxembourg
+        purpose: Postal address.
+        source:
+          title: Luxembourg Space Agency — Contact
+          url: https://space-agency.public.lu/en/support/contact.html
+          retrieved: 2026-10-15
+    notes: >
+      Coordinates the authorisation procedure and keeps the national registry of space objects; the
+      authorisation itself is a ministerial order.
+  - id: lu-smc
+    name: Service des médias, de la connectivité et de la politique numérique (SMC)
+    name_en: Department of Media, Connectivity and Digital Policy
+    roles: [itu_notifying_administration, spectrum_management]
+    website: https://smc.gouvernement.lu/en.html
+    contacts:
+      - kind: email
+        value: secretariat@smc.etat.lu
+        purpose: General secretariat (ask for the team handling satellite frequencies).
+        source:
+          title: SMC — Home page
+          url: https://smc.gouvernement.lu/en.html
+          retrieved: 2026-10-15
+    notes: >
+      Handles concessions for Luxembourg satellite systems. Its space page did not load during
+      research; see knowledge/VERIFICATION.md.
+status: draft
+last_verified: 2026-10-15

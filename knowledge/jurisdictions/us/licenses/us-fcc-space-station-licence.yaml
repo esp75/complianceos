@@ -1,0 +1,129 @@
+id: us-fcc-space-station-licence
+jurisdiction: us
+name: FCC space station licence (Part 25, standard)
+authority: us-fcc-space-bureau
+category: spectrum
+summary: >
+  A US licence for the satellites themselves, filed on FCC Form 312 with Schedule S through ICFS.
+  The FCC then submits the ITU filings for the network. Licences carry deployment milestones and a
+  15-year term.
+applies_when:
+  all:
+    - field: filing_administration
+      eq: US
+      because: The United States is the administration filing your network (a US-licensed system).
+      cite: [us.cfr47.25-102]
+    - not:
+        all:
+          - not:
+              field: orbit
+              eq: GEO
+          - field: satellite_count
+            lte: 10
+          - field: altitude_km
+            lte: 600
+      because: >
+        Your system does not fit the streamlined small-satellite route (non-GSO, ten or fewer
+        satellites, at or below 600 km or with propulsion), so the standard Part 25 process applies.
+      cite: [us.cfr47.25-122]
+legal_basis:
+  - id: us.cfr47.25-102
+    instrument: 47 CFR Part 25 (FCC satellite communications rules)
+    provision: § 25.102(a)
+    url: https://www.ecfr.gov/current/title-47/section-25.102
+    retrieved: 2026-10-15
+    language: en
+    excerpt: >
+      No person shall use or operate apparatus for the transmission of energy or communications or
+      signals by space or earth stations except under, and in accordance with, an appropriate
+      authorization granted by the Federal Communications Commission.
+  - id: us.cfr47.25-164
+    instrument: 47 CFR Part 25 (FCC satellite communications rules)
+    provision: § 25.164(a) and (b)
+    url: https://www.ecfr.gov/current/title-47/section-25.164
+    retrieved: 2026-10-15
+    language: en
+    excerpt: >
+      (a) The recipient of an initial license for a GSO space station [...] must launch the space
+      station, position it in its assigned orbital location, and operate it in accordance with the
+      station authorization no later than five years after the grant of the license [...]. (b)(1) The
+      recipient of an initial authorization for an NGSO satellite system [...] must launch 50 percent
+      of the maximum number of space stations authorized for service, place them in their assigned
+      orbits, and operate them in accordance with the station authorization no later than 6 years
+      after the grant of the authorization [...]. (2) A licensee that satisfies the requirement in
+      paragraph (b)(1) of this section must launch the remaining space stations [...] no later than
+      nine years after the grant of the authorization.
+  - id: us.cfr47.25-121
+    instrument: 47 CFR Part 25 (FCC satellite communications rules)
+    provision: § 25.121(a)(1)
+    url: https://www.ecfr.gov/current/title-47/section-25.121
+    retrieved: 2026-10-15
+    language: en
+    excerpt: >
+      Except for licenses for SDARS space stations and terrestrial repeaters, DBS and 17/24 GHz BSS
+      space stations licensed as broadcast facilities, and licenses for which the application was
+      filed pursuant to §§ 25.122 and 25.123, licenses for facilities governed by this part will be
+      issued for a period of 15 years.
+needed_by: launch
+preparation:
+  min_weeks: 8
+  typical_weeks: 16
+  max_weeks: 26
+  basis: estimate
+  note: Form 312, Schedule S and technical exhibits, including the orbital debris showing.
+review:
+  min_weeks: 26
+  typical_weeks: 52
+  max_weeks: 104
+  basis: estimate
+  note: No regulatory time limit for FCC action; large NGSO systems can take much longer.
+documents:
+  - FCC Form 312 (Main Form) and Schedule S
+  - Technical and legal exhibits
+fees: FCC application and regulatory fees apply.
+obligations:
+  - id: us-fcc-ngso-milestone-50
+    name: FCC milestone — 50% of the NGSO constellation in service
+    description: Launch and operate 50% of the authorised satellites within 6 years of grant.
+    anchor: granted
+    offset:
+      years: 6
+    kind: hard
+    applies_when:
+      not:
+        field: orbit
+        eq: GEO
+    cite: [us.cfr47.25-164]
+  - id: us-fcc-ngso-milestone-100
+    name: FCC milestone — full NGSO constellation in service
+    description: Launch and operate the remaining satellites within 9 years of grant.
+    anchor: granted
+    offset:
+      years: 9
+    kind: hard
+    applies_when:
+      not:
+        field: orbit
+        eq: GEO
+    cite: [us.cfr47.25-164]
+  - id: us-fcc-gso-milestone
+    name: FCC milestone — GSO satellite on station
+    description: Launch, position and operate the GSO satellite within 5 years of grant.
+    anchor: granted
+    offset:
+      years: 5
+    kind: hard
+    applies_when:
+      field: orbit
+      eq: GEO
+    cite: [us.cfr47.25-164]
+  - id: us-fcc-licence-term
+    name: Space station licence expires (15-year term)
+    description: Plan a renewal or replacement authorisation before the licence term ends.
+    anchor: launch
+    offset:
+      years: 15
+    kind: soft
+    cite: [us.cfr47.25-121]
+status: draft
+last_verified: 2026-10-15

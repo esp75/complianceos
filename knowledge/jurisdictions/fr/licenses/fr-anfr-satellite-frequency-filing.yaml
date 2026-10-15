@@ -1,0 +1,79 @@
+id: fr-anfr-satellite-frequency-filing
+jurisdiction: fr
+name: Satellite frequency assignment request to ANFR (ITU filing)
+name_local: Demande d'assignation de fréquence relative à un système satellitaire
+authority: fr-anfr
+category: itu_filing
+summary: >
+  The operator prepares its frequency assignments with the ITU's SpaceCap software and sends them to
+  ANFR with the Appendix 4 data. Unless they conflict with the national frequency allocation table
+  or ITU instruments, ANFR declares them to the ITU in France's name within one month.
+applies_when:
+  field: filing_administration
+  eq: FR
+  because: France is the administration filing your satellite network with the ITU.
+  cite: [fr.cpce.l97-2-i-1]
+legal_basis:
+  - id: fr.cpce.l97-2-i-1
+    instrument: Code des postes et des communications électroniques
+    provision: Article L97-2, I, 1
+    url: https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006465950
+    retrieved: 2026-10-15
+    language: fr
+    excerpt: >
+      Toute demande d'assignation de fréquence relative à un système satellitaire est adressée à
+      l'Agence nationale des fréquences. Sauf si l'assignation demandée n'est pas conforme au tableau
+      national de répartition des bandes de fréquences ou aux stipulations des instruments de l'Union
+      internationale des télécommunications, l'Agence nationale des fréquences déclare, au nom de la
+      France, l'assignation de fréquence correspondante à l'Union internationale des
+      télécommunications et engage la procédure prévue par le règlement des radiocommunications.
+    excerpt_en: >
+      Every request for a frequency assignment for a satellite system is sent to the National
+      Frequency Agency. Unless the requested assignment does not conform to the national frequency
+      allocation table or to ITU instruments, the Agency declares the assignment to the ITU in
+      France's name and starts the procedure set out in the Radio Regulations. (Unofficial
+      translation.)
+  - id: fr.cpce.r52-3-1
+    instrument: Code des postes et des communications électroniques
+    provision: Article R52-3-1
+    url: https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006070987/LEGISCTA000006165970/
+    retrieved: 2026-10-15
+    language: fr
+    excerpt: >
+      La demande contient les renseignements prévus à l'appendice 4 du règlement des
+      radiocommunications. [...] l'Agence nationale des fréquences les déclare dans un délai d'un
+      mois, au nom de la France, pour le compte du demandeur et engage la procédure prévue par le
+      règlement des radiocommunications.
+    excerpt_en: >
+      The request contains the information required by Appendix 4 of the Radio Regulations. [...]
+      the Agency declares them within one month, in France's name, on behalf of the applicant, and
+      starts the procedure set out in the Radio Regulations. (Unofficial translation.)
+needed_by: launch
+preparation:
+  min_weeks: 4
+  typical_weeks: 8
+  max_weeks: 16
+  basis: estimate
+  note: Gather the technical data and prepare the filing in ITU SpaceCap before contacting ANFR.
+review:
+  min_weeks: 1
+  typical_weeks: 4
+  max_weeks: 5
+  basis: statutory
+  note: ANFR declares compliant assignments to the ITU within one month.
+  cite: [fr.cpce.r52-3-1]
+documents:
+  - Appendix 4 data prepared with ITU SpaceCap
+fees: >
+  A fee covering the cost of processing the ITU filing, plus ITU cost recovery (Art. R52-3-1).
+  ANFR's 2021 guide put the ITU minimum at about CHF 7,600.
+requires_local_presence: null
+local_presence_note: >
+  ANFR's SME guide is written for French companies seeking frequencies declared by France; confirm
+  eligibility with ANFR if you are not established in France.
+status: draft
+last_verified: 2026-10-15
+sources:
+  - title: ANFR — Guide for start-ups and SMEs on access to space frequencies (v1.0)
+    url: https://www.anfr.fr/fileadmin/medias/brochures-plaquettes/Guide-PME-frequences-spatiales.pdf
+    retrieved: 2026-10-15

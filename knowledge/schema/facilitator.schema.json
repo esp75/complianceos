@@ -1,0 +1,127 @@
+{
+  "$defs": {
+    "LicenseCategory": {
+      "enum": [
+        "space_activity",
+        "itu_filing",
+        "spectrum",
+        "earth_station",
+        "market_access",
+        "remote_sensing",
+        "launch",
+        "registration"
+      ],
+      "title": "LicenseCategory",
+      "type": "string"
+    },
+    "Source": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "url": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "retrieved": {
+          "format": "date",
+          "title": "Retrieved",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "url",
+        "retrieved"
+      ],
+      "title": "Source",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "A third-party firm that helps operators through licensing. Listing is neutral: no ranking,\nno paid placement, firm-level public information only (CONTRIBUTING.md, \"Facilitators\").",
+  "properties": {
+    "id": {
+      "maxLength": 120,
+      "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$",
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "consultancy",
+        "law_firm",
+        "engineering",
+        "industry_body"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "jurisdictions": {
+      "items": {
+        "maxLength": 120,
+        "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Jurisdictions",
+      "type": "array"
+    },
+    "services": {
+      "items": {
+        "$ref": "#/$defs/LicenseCategory"
+      },
+      "minItems": 1,
+      "title": "Services",
+      "type": "array"
+    },
+    "hq_country": {
+      "pattern": "^[A-Z]{2}$",
+      "title": "Hq Country",
+      "type": "string"
+    },
+    "website": {
+      "format": "uri",
+      "maxLength": 2083,
+      "minLength": 1,
+      "title": "Website",
+      "type": "string"
+    },
+    "description": {
+      "maxLength": 400,
+      "title": "Description",
+      "type": "string"
+    },
+    "source": {
+      "$ref": "#/$defs/Source"
+    },
+    "listed_since": {
+      "format": "date",
+      "title": "Listed Since",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "kind",
+    "jurisdictions",
+    "services",
+    "hq_country",
+    "website",
+    "description",
+    "source",
+    "listed_since"
+  ],
+  "title": "Facilitator",
+  "type": "object"
+}
