@@ -55,3 +55,7 @@ weights/
 *.safetensors
 *.bin
 .gstack/
+
+# Local agent tooling (not part of the published source)
+.context/
+.agents/
