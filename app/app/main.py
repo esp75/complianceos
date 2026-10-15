@@ -6,6 +6,7 @@ Run with: ``uvicorn app.main:app``.
 
 from __future__ import annotations
 
+import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
@@ -21,6 +22,7 @@ from app.api import (
     health,
     kg,
     organizations,
+    planner,
     portal,
     sder,
 )
@@ -36,6 +38,24 @@ from app.config import get_settings
 from app.kg.embeddings import HashingEmbedding
 from app.kg.schema import SCHEMA_SQL
 from app.llm.anthropic_eu import AnthropicEUClient
+from app.planner.knowledge import KnowledgeError, load_knowledge
+from app.planner.store import MemoryPlannerStore, PlannerStore, PostgresPlannerStore
+
+log = logging.getLogger("celestia.api")
+
+
+async def _planner_store(dsn: str) -> PlannerStore:
+    """Postgres when reachable; otherwise process memory, so the planner always starts."""
+    store = PostgresPlannerStore(dsn)
+    try:
+        await store.connect()
+        await store.apply_schema()
+        return store
+    except Exception:  # noqa: BLE001 - any connection failure falls back to memory
+        await store.close()
+        log.warning("planner: Postgres unreachable at startup; using an in-memory store "
+                    "(data is lost on restart)")
+        return MemoryPlannerStore()
 
 
 @asynccontextmanager
@@ -73,11 +93,20 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
             pass
         app.state.trust_keystore = DerivedKeyStore(settings.trust_signing_seed.encode("utf-8"))
         app.state.bundle_signer = DetachedEd25519PdfSigner()
+        # Regulatory path planner (ADR-0018): the open knowledge pack + mission/application store.
+        try:
+            app.state.knowledge = load_knowledge()
+        except KnowledgeError as exc:
+            app.state.knowledge = None
+            log.error("planner: knowledge pack invalid:\n%s", exc)
+        app.state.planner_store = await _planner_store(settings.planner_dsn or settings.kg_dsn)
         try:
             yield
         finally:
             await app.state.kg.close()
             await app.state.trust.close()
+            if isinstance(app.state.planner_store, PostgresPlannerStore):
+                await app.state.planner_store.close()
 
 
 app = FastAPI(
@@ -96,5 +125,6 @@ app.include_router(sder.router)
 app.include_router(compliance.router)
 app.include_router(kg.router)
 app.include_router(draft.router)
+app.include_router(planner.router)
 app.include_router(portal.router)
 app.include_router(bundle_sign.router)

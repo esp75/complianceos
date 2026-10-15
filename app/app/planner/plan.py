@@ -48,6 +48,7 @@ class DatedObligation(BaseModel):
     name: str
     description: str
     kind: Literal["hard", "soft"]
+    anchor: Literal["submitted", "granted", "launch", "service_start"]
     #: When the clock runs, in words ("36 months after grant"). Dates anchored on submission or
     #: grant assume work starts now, so the real date can only be the same or later.
     when: str
@@ -180,7 +181,7 @@ def _dated(lic: License, obligations: tuple[Obligation, ...], s: Scheduled,
         for n in range(count):
             out.append(DatedObligation(
                 id=o.id, license_id=lic.id, name=o.name, description=o.description.strip(),
-                kind=o.kind, when=_when(o), due=due, occurrence=n + 1,
+                kind=o.kind, anchor=o.anchor, when=_when(o), due=due, occurrence=n + 1,
                 recurring=o.repeat_every is not None, cite=list(o.cite),
             ))
             if o.repeat_every:

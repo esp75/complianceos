@@ -1,10 +1,11 @@
 """Liveness and readiness endpoints.
 
 - ``/healthz`` — liveness: the process is up. Never touches upstreams.
-- ``/readyz``  — readiness: the BFF can reach theopenlane's GraphQL. Returns 503
-  otherwise. This is the M1 proof that the BFF -> L1 wire is connected. The L3 Orekit
-  probe is reported informationally and does NOT gate readiness (Phase-1 behavior is
-  unchanged; the SDER service is optional, behind the compose ``sder`` profile).
+- ``/readyz``  — readiness. In team mode (``CELESTIA_AUTH_MODE=openlane``) the BFF must reach
+  theopenlane's GraphQL, or it returns 503 (the M1 proof that the BFF -> L1 wire is connected).
+  In local mode (the default, ADR-0018) theopenlane is optional and readiness depends on the
+  planner: its knowledge pack must have loaded. Orekit, the KG and the planner store kind are
+  reported informationally.
 """
 
 from __future__ import annotations
@@ -13,6 +14,7 @@ from fastapi import APIRouter, Request, Response, status
 
 from app.clients.openlane import OpenlaneClient, OpenlaneError
 from app.clients.orekit import OrekitClient, OrekitError
+from app.config import get_settings
 
 router = APIRouter(tags=["health"])
 
@@ -39,9 +41,16 @@ async def readyz(request: Request, response: Response) -> dict[str, object]:
         orekit_ready = False
 
     kg_ready = await request.app.state.kg.ping()
+    store = getattr(request.app.state, "planner_store", None)
+    planner = {
+        "knowledge": getattr(request.app.state, "knowledge", None) is not None,
+        "store": getattr(store, "kind", None),
+    }
+    body: dict[str, object] = {"openlane": reachable, "orekit": orekit_ready, "kg": kg_ready,
+                               "planner": planner, "mode": get_settings().auth_mode}
 
-    if not reachable:
+    needed = planner["knowledge"] if get_settings().auth_mode == "local" else reachable
+    if not needed:
         response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
-        return {"status": "unavailable", "openlane": False, "orekit": orekit_ready, "kg": kg_ready}
-
-    return {"status": "ready", "openlane": True, "orekit": orekit_ready, "kg": kg_ready}
+        return {"status": "unavailable", **body}
+    return {"status": "ready", **body}

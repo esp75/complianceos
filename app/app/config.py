@@ -6,6 +6,7 @@ resolve services by their compose service names.
 """
 
 from functools import lru_cache
+from typing import Literal
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -56,6 +57,14 @@ class Settings(BaseSettings):
     # DSN for the trust store (tamper-evident bundle/audit chain). Defaults to the L2 KG DSN so the
     # trust tables share the same Postgres; set CELESTIA_TRUST_DSN to separate them later.
     trust_dsn: str = ""
+
+    # --- Regulatory path planner (ADR-0018) ---
+    # "local": one workspace for the person running the server, answering only loopback and
+    # private-network clients. "openlane": team mode — theopenlane users + OpenFGA checks.
+    auth_mode: Literal["local", "openlane"] = "local"
+    # Planner tables (missions, applications, events, contacts). Defaults to the L2 KG DSN; when no
+    # Postgres is reachable the planner falls back to an in-memory store (reported by /readyz).
+    planner_dsn: str = ""
 
     # --- HTTP client tuning ---
     upstream_timeout_seconds: float = 10.0

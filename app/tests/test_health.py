@@ -9,6 +9,17 @@ import pytest
 from fastapi import FastAPI
 
 from app.api import health
+from app.config import get_settings
+
+
+@pytest.fixture
+def mode(monkeypatch: pytest.MonkeyPatch):  # noqa: ANN201
+    """Set CELESTIA_AUTH_MODE for one test (settings are cached)."""
+    def _set(value: str) -> None:
+        monkeypatch.setenv("CELESTIA_AUTH_MODE", value)
+        get_settings.cache_clear()
+    yield _set
+    get_settings.cache_clear()
 
 
 class _StubPingable:
@@ -19,11 +30,18 @@ class _StubPingable:
         return self._reachable
 
 
-def _make_app(*, reachable: bool, orekit_ready: bool = True, kg_ready: bool = True) -> FastAPI:
+class _Store:
+    kind = "memory"
+
+
+def _make_app(*, reachable: bool, orekit_ready: bool = True, kg_ready: bool = True,
+              knowledge: object | None = object()) -> FastAPI:
     app = FastAPI()
     app.state.openlane = _StubPingable(reachable=reachable)
     app.state.orekit = _StubPingable(reachable=orekit_ready)
     app.state.kg = _StubPingable(reachable=kg_ready)
+    app.state.knowledge = knowledge
+    app.state.planner_store = _Store()
     app.include_router(health.router)
     return app
 
@@ -38,21 +56,41 @@ async def test_healthz_is_ok_without_upstream() -> None:
     assert resp.json() == {"status": "ok"}
 
 
-@pytest.mark.asyncio
-async def test_readyz_ok_when_openlane_reachable() -> None:
-    app = _make_app(reachable=True, orekit_ready=True)
+async def _readyz(app: FastAPI) -> httpx.Response:
     transport = httpx.ASGITransport(app=app)
     async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
-        resp = await client.get("/readyz")
+        return await client.get("/readyz")
+
+
+@pytest.mark.asyncio
+async def test_team_mode_ready_when_openlane_reachable(mode) -> None:  # noqa: ANN001
+    mode("openlane")
+    resp = await _readyz(_make_app(reachable=True, orekit_ready=True))
     assert resp.status_code == 200
-    assert resp.json() == {"status": "ready", "openlane": True, "orekit": True, "kg": True}
+    body = resp.json()
+    assert (body["status"], body["openlane"], body["orekit"], body["kg"]) == ("ready", True, True, True)
 
 
 @pytest.mark.asyncio
-async def test_readyz_503_when_openlane_unreachable() -> None:
-    app = _make_app(reachable=False, orekit_ready=False, kg_ready=False)
-    transport = httpx.ASGITransport(app=app)
-    async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
-        resp = await client.get("/readyz")
+async def test_team_mode_503_when_openlane_unreachable(mode) -> None:  # noqa: ANN001
+    mode("openlane")
+    resp = await _readyz(_make_app(reachable=False, orekit_ready=False, kg_ready=False))
     assert resp.status_code == 503
-    assert resp.json() == {"status": "unavailable", "openlane": False, "orekit": False, "kg": False}
+    body = resp.json()
+    assert (body["status"], body["openlane"], body["orekit"], body["kg"]) == (
+        "unavailable", False, False, False)
+
+
+@pytest.mark.asyncio
+async def test_local_mode_ready_without_openlane(mode) -> None:  # noqa: ANN001
+    mode("local")
+    resp = await _readyz(_make_app(reachable=False))
+    assert resp.status_code == 200
+    assert resp.json()["planner"] == {"knowledge": True, "store": "memory"}
+
+
+@pytest.mark.asyncio
+async def test_local_mode_503_when_knowledge_failed(mode) -> None:  # noqa: ANN001
+    mode("local")
+    resp = await _readyz(_make_app(reachable=True, knowledge=None))
+    assert resp.status_code == 503
