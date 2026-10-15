@@ -6,8 +6,9 @@ Tracking: applications per licence, status changes, contact log, deadlines, cale
 
 Authentication depends on ``CELESTIA_AUTH_MODE``:
 
-- ``local`` (default): one workspace for the person running the server. Requests from outside
-  loopback and private networks are refused, so a local instance is not accidentally public.
+- ``local`` (default): one workspace for the person running the server, no login. Only loopback
+  clients and networks listed in ``CELESTIA_LOCAL_ALLOWED_NETWORKS`` are served, so a local
+  instance is not accidentally shared.
 - ``openlane`` (team mode): the theopenlane user from the bearer token, the workspace from the
   ``X-Workspace`` header (an organization id), and OpenFGA checks at the boundary (ADR-0012):
   ``can_view`` to read, ``can_create_evidence`` to change anything.
@@ -87,15 +88,25 @@ class Principal:
     user: str
 
 
+def _allowed_networks() -> list[ipaddress.IPv4Network | ipaddress.IPv6Network]:
+    raw = get_settings().local_allowed_networks
+    return [ipaddress.ip_network(n.strip(), strict=False) for n in raw.split(",") if n.strip()]
+
+
 def _local_client(request: Request) -> None:
+    """Local mode has no login, so it only answers loopback clients, plus networks the operator
+    lists explicitly in CELESTIA_LOCAL_ALLOWED_NETWORKS (e.g. the compose network the web container
+    sits on). Private ranges are NOT trusted by default: behind a reverse proxy or on a shared
+    network every caller would look private."""
     host = request.client.host if request.client else ""
     try:
         ip = ipaddress.ip_address(host)
     except ValueError:
         ip = None
-    if ip is None or not (ip.is_loopback or ip.is_private):
-        raise HTTPException(status.HTTP_403_FORBIDDEN,
-                            detail="local mode only serves this machine; use team mode to share")
+    if ip is not None and (ip.is_loopback or any(ip in net for net in _allowed_networks())):
+        return
+    raise HTTPException(status.HTTP_403_FORBIDDEN,
+                        detail="local mode only serves this machine; use team mode to share")
 
 
 async def _principal(request: Request, relation: str,

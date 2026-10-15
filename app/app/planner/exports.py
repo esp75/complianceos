@@ -15,6 +15,7 @@ from __future__ import annotations
 import datetime as dt
 import hashlib
 import json
+import re
 from typing import Any
 
 from fpdf import FPDF
@@ -35,9 +36,21 @@ _DISCLAIMER = ("Information, not legal advice. Records marked draft have been re
 
 # --- calendar ---
 
+_LINE_BREAKS = re.compile(r"\r\n|[\r\n\x0b\x0c\x85\u2028\u2029]")
+_CONTROL = re.compile(r"[\x00-\x08\x0e-\x1f\x7f]")
+
+
+def _single_line(text: str) -> str:
+    """User text with every kind of line break collapsed to a space and controls removed."""
+    return _CONTROL.sub("", _LINE_BREAKS.sub(" ", text)).strip()
+
+
 def _ics_escape(text: str) -> str:
-    return (text.replace("\\", "\\\\").replace(";", "\\;").replace(",", "\\,")
-            .replace("\r\n", "\\n").replace("\n", "\\n"))
+    """RFC 5545 TEXT escaping. Every line-break form (including a bare CR and Unicode separators)
+    becomes an escaped ``\\n`` and control characters are dropped, so user-supplied text (mission
+    names, contact notes) can never start a new property line."""
+    text = _CONTROL.sub("", text.replace("\\", "\\\\").replace(";", "\\;").replace(",", "\\,"))
+    return _LINE_BREAKS.sub("\\\\n", text)
 
 
 def _fold(line: str) -> list[str]:
@@ -144,8 +157,6 @@ def _p(pdf: FPDF, text: str, size: float = 9.5, style: str = "") -> None:
 
 
 def _strip_markers(text: str) -> str:
-    import re
-
     return re.sub(r"\s*\[cite:([^\]]+)\]", r" [\1]", text).strip()
 
 
@@ -237,7 +248,7 @@ def intro_email(roadmap: Roadmap, item: RoadmapItem, recipient: str) -> EmailDra
              + f", target launch {m.target_launch_date:%B %Y}")
     if recipient in roadmap.facilitators:
         f = roadmap.facilitators[recipient]
-        subject = f"Support with the {item.name}"
+        subject = _single_line(f"Support with the {item.name}")
         body = (f"Hello {f.name} team,\n\n"
                 f"{operator} is preparing {m.name} ({facts}). Our roadmap shows we need the "
                 f"{item.name}, which we plan to submit by {item.submit_by:%d %B %Y}.\n\n"
@@ -255,7 +266,7 @@ def intro_email(roadmap: Roadmap, item: RoadmapItem, recipient: str) -> EmailDra
         questions.append("your current processing time")
     if item.requires_local_presence is None:
         questions.append("whether a local entity or representative is required")
-    subject = f"Pre-application enquiry: {item.name} for {m.name}"
+    subject = _single_line(f"Pre-application enquiry: {item.name} for {m.name}")
     asks = questions[0] if len(questions) == 1 else ", ".join(questions[:-1]) + " and " + questions[-1]
     body = (f"Dear {a.name},\n\n"
             f"{operator} is preparing {m.name} ({facts}). We understand we will need the "

@@ -59,9 +59,12 @@ class Settings(BaseSettings):
     trust_dsn: str = ""
 
     # --- Regulatory path planner (ADR-0018) ---
-    # "local": one workspace for the person running the server, answering only loopback and
-    # private-network clients. "openlane": team mode — theopenlane users + OpenFGA checks.
+    # "local": one workspace for the person running the server, answering only loopback clients
+    # (plus local_allowed_networks). "openlane": team mode — theopenlane users + OpenFGA checks.
     auth_mode: Literal["local", "openlane"] = "local"
+    # Comma-separated CIDRs that local mode also serves besides loopback (e.g. the compose network
+    # the web container uses). Empty by default: private ranges are not trusted implicitly.
+    local_allowed_networks: str = ""
     # Planner tables (missions, applications, events, contacts). Defaults to the L2 KG DSN; when no
     # Postgres is reachable the planner falls back to an in-memory store (reported by /readyz).
     planner_dsn: str = ""

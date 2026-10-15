@@ -273,3 +273,42 @@ async def test_team_mode_requires_workspace_token_and_permission(monkeypatch: py
             assert r.status_code == expected
             await c.post("/missions/sample", headers={"X-Workspace": "01O", "Authorization": "Bearer good"})
         assert fga.calls[0] == "can_view" and fga.calls[-1] == "can_create_evidence"
+
+
+async def test_local_mode_does_not_trust_private_networks_by_default(
+        monkeypatch: pytest.MonkeyPatch) -> None:
+    transport = httpx.ASGITransport(app=make_app(), client=("10.0.0.5", 4242))
+    async with httpx.AsyncClient(transport=transport, base_url="http://t") as c:
+        assert (await c.get("/missions")).status_code == 403
+    monkeypatch.setenv("CELESTIA_LOCAL_ALLOWED_NETWORKS", "10.0.0.0/24, 172.30.0.0/24")
+    get_settings.cache_clear()
+    async with httpx.AsyncClient(transport=transport, base_url="http://t") as c:
+        assert (await c.get("/missions")).status_code == 200
+    other = httpx.ASGITransport(app=make_app(), client=("10.0.1.5", 4242))
+    async with httpx.AsyncClient(transport=other, base_url="http://t") as c:
+        assert (await c.get("/missions")).status_code == 403
+
+
+async def test_calendar_cannot_be_injected_through_user_text(client: httpx.AsyncClient) -> None:
+    profile = sample_mission(TODAY).model_dump(mode="json")
+    profile["name"] = "Evil\rBEGIN:VALARM ATTACH:http://x\nEND:VALARM\x00"
+    mid = (await client.post("/missions", json=profile)).json()["id"]
+    app_id = (await client.post(f"/missions/{mid}/applications",
+                                json={"license_id": "lu-space-activity-authorisation"})).json()[
+        "application"]["id"]
+    await client.post(f"/applications/{app_id}/contacts", json={
+        "on_date": "2026-10-10", "channel": "email", "counterpart": "LSA\r\nATTACH:x",
+        "summary": "s", "next_step": "reply\rBEGIN:VALARM", "next_step_due": "2026-11-01"})
+    text = (await client.get(f"/missions/{mid}/calendar.ics")).text
+    lines = text.split("\r\n")
+    assert "\r" not in text.replace("\r\n", "") and "\n" not in text.replace("\r\n", "")
+    assert not any(line.startswith(("BEGIN:VALARM", "ATTACH:", "END:VALARM")) for line in lines)
+    assert " " not in text and "\x00" not in text
+
+
+async def test_email_subject_is_single_line(client: httpx.AsyncClient) -> None:
+    profile = sample_mission(TODAY).model_dump(mode="json") | {"name": "A\r\nBcc: x@example.org"}
+    mid = (await client.post("/missions", json=profile)).json()["id"]
+    draft = (await client.post(f"/missions/{mid}/intro-email", json={
+        "license_id": "lu-space-activity-authorisation", "recipient": "lu-lsa"})).json()
+    assert "\r" not in draft["subject"] and "\n" not in draft["subject"]
