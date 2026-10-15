@@ -9,6 +9,7 @@ import { formatDate } from "@/lib/dates";
 import { CATEGORY } from "@/lib/labels";
 import { correctionUrl } from "@/lib/site";
 import type { Facilitator, JurisdictionOut } from "@/lib/types";
+import { contactHref, safeHref } from "@/lib/links";
 import { cn } from "@/lib/utils";
 
 const ICON = { email: Mail, phone: Phone, postal: MapPin, web: Globe, web_form: Send, portal: Globe };
@@ -61,7 +62,7 @@ export default function Directory() {
                     <div className="flex gap-2">
                       <Building2 className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
                       <div>
-                        <a href={a.website} target="_blank" rel="noreferrer" className="font-medium hover:text-accent">
+                        <a href={safeHref(a.website)} target="_blank" rel="noreferrer" className="font-medium hover:text-accent">
                           {a.name} <ExternalLink className="inline size-3" />
                         </a>
                         {a.name_en ? <p className="text-xs text-muted-foreground">{a.name_en}</p> : null}
@@ -76,14 +77,14 @@ export default function Directory() {
                       <ul className="mt-3 space-y-2 border-t pt-3">
                         {a.contacts.map((c) => {
                           const Icon = ICON[c.kind] ?? Globe;
-                          const href = c.kind === "email" ? `mailto:${c.value}` : c.kind === "phone" ? `tel:${c.value.replace(/\s/g, "")}` : c.kind === "postal" ? undefined : c.value;
+                          const href = contactHref(c.kind, c.value);
                           return (
                             <li key={c.value} className="flex gap-2">
                               <Icon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
                               <div>
                                 {href ? <a href={href} className="break-all text-accent hover:underline">{c.value}</a> : c.value}
                                 <p className="text-xs text-muted-foreground">
-                                  {c.purpose} Source: <a href={c.source.url} target="_blank" rel="noreferrer" className="underline underline-offset-2">{c.source.title}</a>, {formatDate(c.source.retrieved)}.
+                                  {c.purpose} Source: <a href={safeHref(c.source.url)} target="_blank" rel="noreferrer" className="underline underline-offset-2">{c.source.title}</a>, {formatDate(c.source.retrieved)}.
                                 </p>
                               </div>
                             </li>
@@ -101,7 +102,7 @@ export default function Directory() {
                 <ul className="mt-2 grid gap-3 md:grid-cols-2">
                   {firms.map((f) => (
                     <li key={f.id} className="rounded-lg border bg-surface p-4 text-sm">
-                      <a href={f.website} target="_blank" rel="noreferrer" className="font-medium hover:text-accent">
+                      <a href={safeHref(f.website)} target="_blank" rel="noreferrer" className="font-medium hover:text-accent">
                         {f.name} <ExternalLink className="inline size-3" />
                       </a>
                       <p className="mt-1 text-muted-foreground">{f.description}</p>

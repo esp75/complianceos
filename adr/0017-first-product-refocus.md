@@ -2,7 +2,7 @@
 
 **Status:** Accepted (2026-07-23)
 **Supersedes (as first-product definition):** the EU-Space-Act-obligation wedge implicit in ADR-0001–0016 scoping; those ADRs remain accepted for the layers that carry over.
-**Context docs:** full strategy analysis lives intentionally outside the repo (audit-surface rule, CLAUDE.md): `~/Documents/CLAUDE COWORK/OUTPUTS/celestia-mvp-rebuild-2026-07/STRATEGY_V2.md`.
+**Context docs:** the full strategy analysis lives intentionally outside the repo (audit-surface rule, CLAUDE.md).
 
 ## Context
 

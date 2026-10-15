@@ -125,3 +125,28 @@ def test_json_schema_export(tmp_path: Path) -> None:
     assert {p.name for p in paths} == {"jurisdiction.schema.json", "license.schema.json",
                                        "facilitator.schema.json"}
     assert '"applies_when"' in (tmp_path / "license.schema.json").read_text()
+
+
+@pytest.mark.parametrize(("kind", "value"), [
+    ("web_form", "javascript:alert(document.cookie)"),
+    ("web", "http://example.org/not-https"),
+    ("portal", "data:text/html,<script>x</script>"),
+    ("email", "javascript:alert(1)//@x.org"),
+    ("email", "not-an-email"),
+    ("phone", "call me maybe"),
+])
+def test_contact_values_must_match_their_kind(kind: str, value: str) -> None:
+    from app.planner.knowledge import ContactChannel
+
+    with pytest.raises(ValidationError):
+        ContactChannel.model_validate({"kind": kind, "value": value, "purpose": "p", "source": {
+            "title": "t", "url": "https://example.org", "retrieved": "2026-10-15"}})
+
+
+def test_valid_contact_values_pass() -> None:
+    from app.planner.knowledge import ContactChannel
+
+    src = {"title": "t", "url": "https://example.org", "retrieved": "2026-10-15"}
+    for kind, value in (("web_form", "https://spacecare.cnes.fr/contact/"), ("email", "info@space-agency.lu"),
+                        ("phone", "+352 288 482 10"), ("postal", "12C Impasse Drosbach, L-1882 Luxembourg")):
+        ContactChannel.model_validate({"kind": kind, "value": value, "purpose": "p", "source": src})

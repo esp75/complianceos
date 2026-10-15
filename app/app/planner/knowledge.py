@@ -23,6 +23,7 @@ import argparse
 import datetime as dt
 import json
 import os
+import re
 import sys
 from collections.abc import Iterator
 from enum import StrEnum
@@ -116,6 +117,20 @@ class ContactChannel(_Strict):
     value: str
     purpose: str
     source: Source
+
+    @model_validator(mode="after")
+    def _value_matches_kind(self) -> ContactChannel:
+        """Values are rendered as links, so they must be what their kind says: https URLs for web
+        channels, an address for email, digits for phone. Anything else (e.g. ``javascript:``) is
+        rejected at validation, before it can reach a page."""
+        v = self.value.strip()
+        if self.kind in ("web", "web_form", "portal") and not re.fullmatch(r"https://[^\s<>\"']+", v):
+            raise ValueError(f"{self.kind} contact must be an https:// URL, got {v!r}")
+        if self.kind == "email" and not re.fullmatch(r"[^@\s<>\"':/]+@[^@\s<>\"':/]+\.[A-Za-z]{2,}", v):
+            raise ValueError(f"email contact is not an email address: {v!r}")
+        if self.kind == "phone" and not re.fullmatch(r"\+?[0-9 ().-]{6,25}", v):
+            raise ValueError(f"phone contact is not a phone number: {v!r}")
+        return self
 
 
 class Authority(_Strict):

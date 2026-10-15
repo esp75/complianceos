@@ -65,6 +65,9 @@ class Settings(BaseSettings):
     # Comma-separated CIDRs that local mode also serves besides loopback (e.g. the compose network
     # the web container uses). Empty by default: private ranges are not trusted implicitly.
     local_allowed_networks: str = ""
+    # Extra host names local mode accepts in Host / X-Forwarded-Host besides localhost and loopback
+    # addresses (e.g. "api", the compose service name the web container proxies to).
+    local_allowed_hosts: str = ""
     # Planner tables (missions, applications, events, contacts). Defaults to the L2 KG DSN; when no
     # Postgres is reachable the planner falls back to an in-memory store (reported by /readyz).
     planner_dsn: str = ""

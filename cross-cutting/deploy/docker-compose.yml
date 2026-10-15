@@ -156,6 +156,8 @@ services:
       core:
         condition: service_started
     environment:
+      # Team mode (ADR-0018): planner routes use theopenlane users + OpenFGA checks.
+      - CELESTIA_AUTH_MODE=openlane
       - CELESTIA_OPENLANE_GRAPHQL_URL=http://core:17608/query
       - CELESTIA_OPENFGA_URL=http://openfga:8080
       - CELESTIA_OIDC_ISSUER_URL=http://dex:5556/dex

@@ -1,0 +1,19 @@
+# Secret-scan configuration. Extends the default rules; the allowlist below covers known
+# non-secrets, each with a reason.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Known non-secrets"
+paths = [
+  # Third-party skill reference docs: placeholder keys in examples (e.g. "sk-1234567890abcdef").
+  '''^\.claude/skills/''',
+  '''^\.agents/skills/''',
+]
+regexes = [
+  # Local dev values in the theopenlane dev config (TOTP seed, FGA token). The containers bind to
+  # 127.0.0.1 only and OpenFGA runs with --authn-method=none. Never reuse them; inject real values
+  # in any deployed environment.
+  '''change-me-local-only''',
+  '''change-me-local-only''',
+]

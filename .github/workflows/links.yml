@@ -1,0 +1,25 @@
+name: Citation links
+
+# Laws move. Once a week, check that every official URL in the knowledge pack still answers.
+on:
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+      - working-directory: app
+        run: uv sync --frozen
+      - name: Check cited URLs
+        working-directory: app
+        run: uv run python ../scripts/check-knowledge-links.py

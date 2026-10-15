@@ -1,0 +1,24 @@
+name: Add or extend a jurisdiction
+description: Propose a new country or a licence that is missing.
+labels: [data, jurisdiction]
+body:
+  - type: input
+    id: country
+    attributes:
+      label: Country or organisation
+    validations:
+      required: true
+  - type: textarea
+    id: licences
+    attributes:
+      label: Licences, authorisations or filings involved
+      description: For each, the authority and the legal basis (instrument and article), with official links.
+    validations:
+      required: true
+  - type: checkboxes
+    id: help
+    attributes:
+      label: Can you help?
+      options:
+        - label: I can write the YAML (see knowledge/README.md)
+        - label: I can review it as a practitioner

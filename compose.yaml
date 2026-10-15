@@ -1,0 +1,85 @@
+# ComplianceOS — one-command local run (ADR-0018 "lite" mode).
+#
+#   docker compose up --build        then open http://localhost:3000
+#
+# Three containers: Postgres (with pgvector + Apache AGE), the planner API, the web app. Everything is
+# published on 127.0.0.1 only. No login: local mode serves this machine and the compose network
+# below. For the multi-user stack (theopenlane + OpenFGA + Dex), see cross-cutting/deploy/.
+#
+# Optional settings come from a .env file next to this one (see .env.example).
+
+name: complianceos
+
+services:
+  db:
+    build:
+      context: cross-cutting/deploy
+      dockerfile: Dockerfile.kg-postgres
+    image: complianceos/kg-postgres:dev
+    command: postgres -c shared_preload_libraries=age
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local-dev-only}
+      POSTGRES_DB: kg
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d kg"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    networks: [complianceos]
+
+  api:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+    image: complianceos/api:dev
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      CELESTIA_AUTH_MODE: local
+      # Local mode has no login; it answers loopback plus this compose network (the web container
+      # and the host's published port both arrive from it).
+      CELESTIA_LOCAL_ALLOWED_NETWORKS: 172.29.88.0/24
+      CELESTIA_LOCAL_ALLOWED_HOSTS: api
+      CELESTIA_KG_DSN: postgresql://postgres:${POSTGRES_PASSWORD:-local-dev-only}@db:5432/kg
+      # Optional: signs exported dossiers (generate with `openssl rand -hex 32`).
+      CELESTIA_TRUST_SIGNING_SEED: ${TRUST_SIGNING_SEED:-}
+      # Optional: lets Claude write the brief's executive summary (citation-checked).
+      CELESTIA_ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      # Team-mode services are not part of this stack.
+      CELESTIA_OPENLANE_GRAPHQL_URL: http://localhost:1/query
+      CELESTIA_OREKIT_BASE_URL: http://localhost:1
+    ports:
+      - "127.0.0.1:8001:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/readyz')"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks: [complianceos]
+
+  web:
+    build:
+      context: web
+      args:
+        API_URL: http://api:8000
+        NEXT_PUBLIC_REPO_URL: ${REPO_URL:-}
+    image: complianceos/web:dev
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:3000:3000"
+    networks: [complianceos]
+
+networks:
+  complianceos:
+    ipam:
+      config:
+        - subnet: 172.29.88.0/24
+
+volumes:
+  db_data:

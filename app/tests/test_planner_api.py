@@ -24,6 +24,7 @@ from app.planner.store import MemoryPlannerStore
 
 TODAY = dt.date(2026, 10, 15)
 KB = load_knowledge()
+CLIENT = {"X-ComplianceOS-Client": "test"}
 
 
 class FakeLLM:
@@ -56,7 +57,7 @@ def local_mode(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
 @pytest.fixture
 async def client() -> AsyncIterator[httpx.AsyncClient]:
     transport = httpx.ASGITransport(app=make_app(seed="test-seed"))
-    async with httpx.AsyncClient(transport=transport, base_url="http://t") as c:
+    async with httpx.AsyncClient(transport=transport, base_url="http://localhost", headers=CLIENT) as c:
         yield c
 
 
@@ -110,13 +111,13 @@ async def test_invalid_profile_is_422(client: httpx.AsyncClient) -> None:
 async def test_brief_deterministic_and_ai_modes() -> None:
     good = FakeLLM("Start with the Luxembourg concession [cite:lu.media1991.art-20].")
     async with httpx.AsyncClient(transport=httpx.ASGITransport(app=make_app(llm=good)),
-                                 base_url="http://t") as c:
+                                 base_url="http://localhost", headers=CLIENT) as c:
         mid = await sample(c)
         assert (await c.post(f"/missions/{mid}/brief")).json()["mode"] == "deterministic"
         assert (await c.post(f"/missions/{mid}/brief", params={"ai": True})).json()["mode"] == "llm"
     invented = FakeLLM("Everything is approved [cite:fr.made-up.art-99].")
     async with httpx.AsyncClient(transport=httpx.ASGITransport(app=make_app(llm=invented)),
-                                 base_url="http://t") as c:
+                                 base_url="http://localhost", headers=CLIENT) as c:
         mid = await sample(c)
         r = await c.post(f"/missions/{mid}/brief", params={"ai": True})
         assert r.status_code == 422 and "citation grounding" in r.json()["detail"]
@@ -205,7 +206,7 @@ async def test_dossier_pdf_signed_and_verifiable(client: httpx.AsyncClient) -> N
 
 async def test_dossier_unsigned_without_key() -> None:
     async with httpx.AsyncClient(transport=httpx.ASGITransport(app=make_app(seed="")),
-                                 base_url="http://t") as c:
+                                 base_url="http://localhost", headers=CLIENT) as c:
         mid = await sample(c)
         r = await c.get(f"/missions/{mid}/dossier.pdf")
         assert r.status_code == 200 and r.headers["x-roadmap-signed"] == "false"
@@ -229,7 +230,7 @@ async def test_intro_emails(client: httpx.AsyncClient) -> None:
 
 async def test_local_mode_refuses_public_clients() -> None:
     transport = httpx.ASGITransport(app=make_app(), client=("8.8.8.8", 4242))
-    async with httpx.AsyncClient(transport=transport, base_url="http://t") as c:
+    async with httpx.AsyncClient(transport=transport, base_url="http://localhost", headers=CLIENT) as c:
         r = await c.get("/missions")
         assert r.status_code == 403 and "local mode" in r.json()["detail"]
 
@@ -266,7 +267,8 @@ async def test_team_mode_requires_workspace_token_and_permission(monkeypatch: py
         app = make_app()
         app.state.openlane = _Openlane()
         app.state.openfga = fga = _FGA(allow)
-        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://t") as c:
+        transport = httpx.ASGITransport(app=app)
+        async with httpx.AsyncClient(transport=transport, base_url="http://localhost", headers=CLIENT) as c:
             assert (await c.get("/missions")).status_code == 400
             assert (await c.get("/missions", headers={"X-Workspace": "01O"})).status_code == 401
             r = await c.get("/missions", headers={"X-Workspace": "01O", "Authorization": "Bearer good"})
@@ -278,14 +280,14 @@ async def test_team_mode_requires_workspace_token_and_permission(monkeypatch: py
 async def test_local_mode_does_not_trust_private_networks_by_default(
         monkeypatch: pytest.MonkeyPatch) -> None:
     transport = httpx.ASGITransport(app=make_app(), client=("10.0.0.5", 4242))
-    async with httpx.AsyncClient(transport=transport, base_url="http://t") as c:
+    async with httpx.AsyncClient(transport=transport, base_url="http://localhost", headers=CLIENT) as c:
         assert (await c.get("/missions")).status_code == 403
     monkeypatch.setenv("CELESTIA_LOCAL_ALLOWED_NETWORKS", "10.0.0.0/24, 172.30.0.0/24")
     get_settings.cache_clear()
-    async with httpx.AsyncClient(transport=transport, base_url="http://t") as c:
+    async with httpx.AsyncClient(transport=transport, base_url="http://localhost", headers=CLIENT) as c:
         assert (await c.get("/missions")).status_code == 200
     other = httpx.ASGITransport(app=make_app(), client=("10.0.1.5", 4242))
-    async with httpx.AsyncClient(transport=other, base_url="http://t") as c:
+    async with httpx.AsyncClient(transport=other, base_url="http://localhost", headers=CLIENT) as c:
         assert (await c.get("/missions")).status_code == 403
 
 
@@ -312,3 +314,41 @@ async def test_email_subject_is_single_line(client: httpx.AsyncClient) -> None:
     draft = (await client.post(f"/missions/{mid}/intro-email", json={
         "license_id": "lu-space-activity-authorisation", "recipient": "lu-lsa"})).json()
     assert "\r" not in draft["subject"] and "\n" not in draft["subject"]
+
+
+async def test_local_mode_checks_every_forwarded_hop() -> None:
+    """A proxy on loopback (the Next server) must not launder an outside client into local."""
+    transport = httpx.ASGITransport(app=make_app())
+    async with httpx.AsyncClient(transport=transport, base_url="http://localhost", headers=CLIENT) as c:
+        assert (await c.get("/missions", headers={"X-Forwarded-For": "192.168.1.23"})).status_code == 403
+        assert (await c.get("/missions", headers={"X-Forwarded-For": "127.0.0.1, 8.8.8.8"})).status_code == 403
+        assert (await c.get("/missions", headers={"X-Forwarded-For": "not-an-ip"})).status_code == 403
+        assert (await c.get("/missions", headers={"X-Forwarded-For": "127.0.0.1"})).status_code == 200
+        assert (await c.get("/missions", headers={"X-Forwarded-For": "::1"})).status_code == 200
+
+
+async def test_local_mode_refuses_non_local_hosts_and_rebinding() -> None:
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=make_app()), base_url="http://localhost") as c:
+        # A browser on another machine, through the Next proxy (no X-Forwarded-For, LAN host).
+        assert (await c.get("/missions", headers={"X-Forwarded-Host": "192.168.1.5:3000"})).status_code == 403
+        # A DNS-rebinding page: the browser sends the attacker's host name.
+        assert (await c.get("/missions", headers={"Host": "evil.example:8001"})).status_code == 403
+        assert (await c.get("/missions", headers={"X-Forwarded-Host": "localhost:3000"})).status_code == 200
+        assert (await c.get("/missions", headers={"Host": "[::1]:8001"})).status_code == 200
+
+
+async def test_local_mode_changes_need_the_client_header() -> None:
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=make_app()), base_url="http://localhost") as c:
+        r = await c.post("/missions/sample")
+        assert r.status_code == 403 and "x-complianceos-client" in r.json()["detail"]
+        assert (await c.get("/missions")).status_code == 200
+        assert (await c.post("/missions/sample", headers=CLIENT)).status_code == 201
+
+
+async def test_compose_service_name_is_an_allowed_host(monkeypatch: pytest.MonkeyPatch) -> None:
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=make_app()), base_url="http://api:8000") as c:
+        assert (await c.get("/missions")).status_code == 403
+    monkeypatch.setenv("CELESTIA_LOCAL_ALLOWED_HOSTS", "api")
+    get_settings.cache_clear()
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=make_app()), base_url="http://api:8000") as c:
+        assert (await c.get("/missions")).status_code == 200

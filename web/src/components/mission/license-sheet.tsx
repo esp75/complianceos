@@ -10,6 +10,7 @@ import { api } from "@/lib/api";
 import { formatDate, relative } from "@/lib/dates";
 import { BASIS, CATEGORY, RISK, STATUS } from "@/lib/labels";
 import { correctionUrl } from "@/lib/site";
+import { contactHref, safeHref } from "@/lib/links";
 import type { Authority, EmailDraft, Roadmap, RoadmapItem, TrackedApplication } from "@/lib/types";
 
 export function LicenseSheet({
@@ -199,7 +200,7 @@ function Body({ roadmap, item, missionId, tracked, onTrack, onOpenApplication }:
               return fac ? (
                 <li key={f} className="rounded-md border bg-surface p-3">
                   <div className="flex items-center justify-between gap-2">
-                    <a href={fac.website} target="_blank" rel="noreferrer" className="font-medium hover:text-accent">
+                    <a href={safeHref(fac.website)} target="_blank" rel="noreferrer" className="font-medium hover:text-accent">
                       {fac.name} <ExternalLink className="inline size-3" />
                     </a>
                     <EmailButton missionId={missionId} licenseId={item.license_id} recipient={f} label="Draft enquiry" />
@@ -271,7 +272,7 @@ function AuthorityCard({ authority, missionId, item }: { authority: Authority; m
           <div className="flex gap-2">
             <Building2 className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
             <div>
-              <a href={authority.website} target="_blank" rel="noreferrer" className="font-medium hover:text-accent">
+              <a href={safeHref(authority.website)} target="_blank" rel="noreferrer" className="font-medium hover:text-accent">
                 {authority.name}
               </a>
               {authority.name_en ? <p className="text-xs text-muted-foreground">{authority.name_en}</p> : null}
@@ -283,7 +284,7 @@ function AuthorityCard({ authority, missionId, item }: { authority: Authority; m
           <ul className="mt-3 space-y-2">
             {authority.contacts.map((c) => {
               const Icon = CHANNEL_ICON[c.kind] ?? Globe;
-              const href = c.kind === "email" ? `mailto:${c.value}` : c.kind === "phone" ? `tel:${c.value.replace(/\s/g, "")}` : c.kind === "postal" ? undefined : c.value;
+              const href = contactHref(c.kind, c.value);
               return (
                 <li key={`${c.kind}-${c.value}`} className="flex gap-2">
                   <Icon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />

@@ -6,6 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { formatDate } from "@/lib/dates";
 import { segments } from "@/lib/timeline";
 import type { Citation } from "@/lib/types";
+import { safeHref } from "@/lib/links";
 import { cn } from "@/lib/utils";
 
 /** A citation chip; opens the quoted law with its official source. */
@@ -45,7 +46,7 @@ export function CitationBody({ c }: { c: Citation }) {
         {translated && !original ? c.excerpt_en : c.excerpt}
       </blockquote>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-        <a href={c.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-accent hover:underline">
+        <a href={safeHref(c.url)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-accent hover:underline">
           Official text <ExternalLink className="size-3" />
         </a>
         <span>Retrieved {formatDate(c.retrieved)}</span>

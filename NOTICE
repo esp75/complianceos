@@ -1,0 +1,15 @@
+ComplianceOS
+Copyright 2026 Celestia Dynamics
+
+This product is maintained by Tidelink and contributors.
+
+Licensed under the Apache License, Version 2.0 (see LICENSE). The regulatory dataset in knowledge/
+is licensed under CC BY 4.0 (see knowledge/LICENSE.md); quoted legal excerpts in it keep their
+publishers' terms.
+
+This product builds on, and at build time may include, third-party open-source software, including:
+- theopenlane/core (Apache-2.0), Orekit (Apache-2.0), NASA openmct (Apache-2.0)
+- FastAPI, pydantic, httpx, asyncpg, cryptography, fpdf2 (see app/uv.lock)
+- Next.js, React, Radix UI, Tailwind CSS, lucide-react, SWR, Fontsource Inter and JetBrains Mono
+  (see web/bun.lock)
+See docs/license-matrix.md for the full dependency licence review.

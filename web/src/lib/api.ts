@@ -46,7 +46,9 @@ export async function request<T>(path: string, init?: RequestInit): Promise<T> {
   try {
     res = await fetch(`${API}${path}`, {
       ...init,
-      headers: { "Content-Type": "application/json", ...(init?.headers ?? {}) },
+      // The custom header marks requests from this app; the API requires it for changes in local
+      // mode, which other websites cannot send cross-site (CSRF protection).
+      headers: { "Content-Type": "application/json", "X-ComplianceOS-Client": "web", ...(init?.headers ?? {}) },
     });
   } catch {
     throw new ApiError(0, "Can't reach the planner API. Check that it is running, then try again.");

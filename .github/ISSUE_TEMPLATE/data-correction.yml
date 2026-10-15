@@ -1,0 +1,29 @@
+name: Data correction
+description: Something in a roadmap is wrong or out of date (a requirement, citation, duration, fee or contact).
+labels: [data]
+body:
+  - type: input
+    id: record
+    attributes:
+      label: Which record?
+      description: The licence or authority name, or the file under knowledge/ if you know it.
+    validations:
+      required: true
+  - type: textarea
+    id: wrong
+    attributes:
+      label: What is wrong?
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: Official source
+      description: Link to the law, official journal or regulator page that shows the correct information, with the relevant provision.
+    validations:
+      required: true
+  - type: dropdown
+    id: role
+    attributes:
+      label: Are you a licensing practitioner for this jurisdiction?
+      options: ["No", "Yes, and happy to review related records"]

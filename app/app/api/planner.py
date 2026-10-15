@@ -93,20 +93,54 @@ def _allowed_networks() -> list[ipaddress.IPv4Network | ipaddress.IPv6Network]:
     return [ipaddress.ip_network(n.strip(), strict=False) for n in raw.split(",") if n.strip()]
 
 
-def _local_client(request: Request) -> None:
-    """Local mode has no login, so it only answers loopback clients, plus networks the operator
-    lists explicitly in CELESTIA_LOCAL_ALLOWED_NETWORKS (e.g. the compose network the web container
-    sits on). Private ranges are NOT trusted by default: behind a reverse proxy or on a shared
-    network every caller would look private."""
-    host = request.client.host if request.client else ""
+def _trusted(host: str) -> bool:
     try:
-        ip = ipaddress.ip_address(host)
+        ip = ipaddress.ip_address(host.strip())
     except ValueError:
-        ip = None
-    if ip is not None and (ip.is_loopback or any(ip in net for net in _allowed_networks())):
-        return
-    raise HTTPException(status.HTTP_403_FORBIDDEN,
-                        detail="local mode only serves this machine; use team mode to share")
+        return False
+    return ip.is_loopback or any(ip in net for net in _allowed_networks())
+
+
+_LOCAL_NAMES = {"localhost", "127.0.0.1", "::1"}
+CLIENT_HEADER = "x-complianceos-client"
+_SAFE_METHODS = {"GET", "HEAD", "OPTIONS"}
+
+
+def _host_name(value: str) -> str:
+    v = value.strip().lower()
+    if v.startswith("["):  # [::1]:3000
+        return v[1:v.find("]")] if "]" in v else v
+    return v.rsplit(":", 1)[0] if v.count(":") == 1 else v
+
+
+def _local_host(value: str) -> bool:
+    name = _host_name(value)
+    extra = {h.strip().lower() for h in get_settings().local_allowed_hosts.split(",") if h.strip()}
+    return name in _LOCAL_NAMES or name.endswith(".localhost") or name in extra or _trusted(name)
+
+
+def _local_client(request: Request) -> None:
+    """Local mode has no login, so every request must provably come from this machine.
+
+    - The direct peer, and every X-Forwarded-For hop when a proxy sets one, must be loopback or in
+      CELESTIA_LOCAL_ALLOWED_NETWORKS. Private ranges are not trusted by default.
+    - Host and X-Forwarded-Host must be local names. The Next.js proxy does not send X-Forwarded-For,
+      so this is what refuses a browser on another machine (it arrives as http://<lan-ip>:3000) and
+      blocks DNS-rebinding pages.
+    - Changes need the X-ComplianceOS-Client header. Browsers cannot add it cross-site without a
+      CORS grant (never given), so other websites cannot drive a local instance (CSRF)."""
+    deny = HTTPException(status.HTTP_403_FORBIDDEN,
+                         detail="local mode only serves this machine; use team mode to share")
+    peer = request.client.host if request.client else ""
+    hops = [h for h in request.headers.get("x-forwarded-for", "").split(",") if h.strip()]
+    if not (_trusted(peer) and all(_trusted(h) for h in hops)):
+        raise deny
+    hosts = [request.headers.get("host", "")] + request.headers.getlist("x-forwarded-host")
+    if not all(_local_host(h) for h in hosts if h):
+        raise deny
+    if request.method not in _SAFE_METHODS and not request.headers.get(CLIENT_HEADER):
+        raise HTTPException(status.HTTP_403_FORBIDDEN,
+                            detail=f"missing {CLIENT_HEADER} header (required for changes in local mode)")
 
 
 async def _principal(request: Request, relation: str,

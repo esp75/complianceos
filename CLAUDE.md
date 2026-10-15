@@ -1,8 +1,14 @@
-# Celestia Dynamics — ComplianceOS v0.2
+# ComplianceOS — agent instructions
 
 ## Product
 
-EU-sovereign regulatory compliance SaaS for satellite operators. v0.2 evolves v0.1 by standing on three Apache-2.0 substrates (theopenlane/core, Orekit, openmct) rather than building L1/L3/L5 foundations from scratch. Citation-grounded RAG over a Postgres + Apache AGE + pgvector knowledge graph. Multi-tenant via Postgres RLS + OpenFGA. Ed25519 signing + Merkle audit chain + signed PAdES PDF evidence bundles for regulators. Solo build, ~3–4 months to MVP (down from 5–6 months in v0.1 thanks to vendored substrates), €18–34k cash including a paid external security review at Phase 5.
+ComplianceOS is an open-source regulatory path planner for satellite operators, maintained by
+Tidelink. Given a mission, it works out which licences, authorisations and ITU filings are needed
+in each country, why (citing the law), in what order and by when, and tracks the applications.
+It stands on Apache-2.0 substrates (theopenlane/core, Orekit, openmct) and an open, cited
+knowledge pack (`knowledge/`, ADR-0018). Citation-grounded drafting over Postgres + Apache AGE +
+pgvector. Multi-tenant team mode via OpenFGA; single-user local mode by default. Ed25519 signing +
+Merkle audit chain for exported evidence and dossiers.
 
 ## Sovereignty rules — non-negotiable (carried from v0.1)
 
@@ -66,17 +72,8 @@ Files with this header are excluded from `/codex` (which would forward content t
 
 ## Reference docs
 
-Strategic background and the source-of-truth build plan live outside this repo at:
-
-```
-~/Documents/CLAUDE COWORK/OUTPUTS/celestia-solo-build-plan/
-  SOLO_BUILD_PLAN.md
-  GSTACK_REASSESSMENT.md
-  OSS_STACK.md
-  INSTALL_PROMPT.md
-```
-
-If those files move, update this path. They are intentionally outside the repo so they don't become part of the audit-reviewed surface.
+Strategic background and the original build plan live outside this repository on purpose, so they
+don't become part of the audit-reviewed surface.
 
 ## Quick reference
 

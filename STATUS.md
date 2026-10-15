@@ -2,13 +2,12 @@
 
 **Date**: 2026-07-23
 **Phase**: STRATEGIC REFOCUS (ADR-0017) → Phase P1 of the new ROADMAP not yet started
-**Working dir**: `/Users/esponsor/Documents/Github/complianceOSv0.2/`
 
 ## 2026-07-23 — First-product refocus (ADR-0017)
 
 The first product is now **AI regulatory-affairs for satellite operators** (Market-Access
 Dossier → the Watch → program of record), pilot-first GTM. Full analysis lives outside the
-repo (audit-surface rule): `~/Documents/CLAUDE COWORK/OUTPUTS/celestia-mvp-rebuild-2026-07/STRATEGY_V2.md`.
+repo (audit-surface rule).
 
 - **Carries:** L1 substrate + tetrad, L2 KG + ingest (re-targeted at national telecom/space
   acts), L4 retrieval/drafting/citation-enforcer (becomes the dossier engine), trust layer
@@ -304,7 +303,7 @@ Brain score: 50 (capped at 50 in this pass because embedding generation runs asy
 
 ## How to resume
 
-Future Claude session: `cd /Users/esponsor/Documents/Github/complianceOSv0.2 && claude` — CLAUDE.md and `.claude/settings.json` will brief the next session. To navigate the architecture, search gbrain for `complianceos-overview` and traverse from there.
+Future Claude session: open the repository root in Claude Code — CLAUDE.md and `.claude/settings.json` will brief the next session. To navigate the architecture, search gbrain for `complianceos-overview` and traverse from there.
 
 ## How to nuke and start over
 

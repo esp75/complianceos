@@ -22,11 +22,19 @@ RUN uv sync --no-dev --no-install-project
 # L1 framework YAMLs that L2 ingest reads (ADR-0014). CELESTIA_FRAMEWORKS_DIR points here.
 COPY layers/L1-substrate/frameworks ./frameworks
 
+# Open knowledge pack the regulatory path planner reasons over (ADR-0018).
+COPY knowledge ./knowledge
+
 # App source last.
 COPY app/app ./app
 
 ENV PATH="/srv/.venv/bin:$PATH"
 ENV CELESTIA_FRAMEWORKS_DIR=/srv/frameworks
+ENV CELESTIA_KNOWLEDGE_DIR=/srv/knowledge
 EXPOSE 8000
+
+# Run as an unprivileged user.
+RUN useradd --system --uid 10001 --no-create-home app && chown -R app /srv
+USER app
 
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
