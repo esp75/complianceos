@@ -12,8 +12,11 @@ from contextlib import asynccontextmanager
 from typing import Any
 
 import asyncpg
+import jwt
 from fastapi import Depends, FastAPI, HTTPException, Request
 from pydantic import BaseModel
+
+from app.api.auth import Principal, current_principal
 
 OBLIGATIONS_SQL = """
     SELECT id, source, jurisdiction, article, text, rationale_code,
@@ -51,6 +54,11 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         app.state.pool = await asyncpg.create_pool(dsn, min_size=1, max_size=5)
     else:
         app.state.pool = None
+
+    issuer = os.environ.get("ZITADEL_ISSUER")
+    app.state.zitadel_issuer = issuer
+    app.state.zitadel_audience = os.environ.get("ZITADEL_AUDIENCE")
+    app.state.jwks_client = jwt.PyJWKClient(f"{issuer.rstrip('/')}/oauth/v2/keys") if issuer else None
     try:
         yield
     finally:
@@ -79,8 +87,10 @@ async def health() -> dict[str, str]:
 async def list_obligations(
     limit: int = 50,
     offset: int = 0,
+    principal: Principal = Depends(current_principal),
     pool: Any = Depends(get_pool),
 ) -> ObligationPage:
+    # principal.tenant is available here for the RLS step. The policy is not written yet.
     if not 1 <= limit <= 200:
         raise HTTPException(status_code=422, detail="limit must be between 1 and 200")
     if offset < 0:
