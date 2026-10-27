@@ -16,6 +16,8 @@ same clarity as teams that have a regulatory department.
 > **Information, not legal advice.** Every requirement links to the law it comes from and says
 > when it was last checked. Confirm with the competent authority before acting.
 
+> **[Watch the two-minute walkthrough (MP4)](https://github.com/esp75/complianceos/releases/download/v0.2.0/complianceos-demo.mp4)** — the sample mission, roadmap, timeline, tracker and brief.
+
 ## Quickstart
 
 You need Docker.
