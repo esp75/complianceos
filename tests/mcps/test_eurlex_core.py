@@ -34,6 +34,30 @@ def test_pick_act_stream_selects_en_act_not_annex() -> None:
     assert pick_act_stream_url(LISTING).endswith("/DOC_1")
 
 
+def test_pick_act_stream_forces_https() -> None:
+    assert pick_act_stream_url(LISTING).startswith("https://publications.europa.eu/")
+
+
+def test_pick_act_stream_rejects_foreign_host() -> None:
+    evil = LISTING.replace("http://publications.europa.eu", "https://attacker.example")
+    with pytest.raises(CelexError):
+        pick_act_stream_url(evil)
+
+
+def test_redirect_off_cellar_is_rejected(tmp_path: Path) -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/resource/celex/52025PC0335":
+            return httpx.Response(300, text=LISTING)
+        if request.url.host == "attacker.example":
+            return httpx.Response(200, text=BODY)
+        return httpx.Response(302, headers={"location": "https://attacker.example/x"})
+
+    client = EurLexClient(cache_dir=tmp_path, transport=httpx.MockTransport(handler))
+    with pytest.raises(CelexError):
+        client.fetch_celex("52025PC0335")
+    assert not any(tmp_path.iterdir())
+
+
 def test_pick_act_stream_raises_when_missing() -> None:
     with pytest.raises(CelexError):
         pick_act_stream_url("<html>nothing</html>")

@@ -83,7 +83,8 @@ def html_to_text(raw: str) -> str:
 
 
 _STREAM_HTML = re.compile(r'title="stream_name">([^<]*_EN_ACT_part1[^<]*\.html)<', re.IGNORECASE)
-_DOC_URL = re.compile(r'href="(http://publications\.europa\.eu/resource/cellar/[^"]+/DOC_\d+)"')
+_DOC_URL = re.compile(r'href="((?:https?)://publications\.europa\.eu/resource/cellar/[^"]+/DOC_\d+)"')
+ALLOWED_HOST = "publications.europa.eu"
 
 
 def pick_act_stream_url(listing: str) -> str:
@@ -97,8 +98,16 @@ def pick_act_stream_url(listing: str) -> str:
         name = _STREAM_HTML.search(block)
         url = _DOC_URL.search(block)
         if name and url:
-            return url.group(1)
+            return _secure_url(url.group(1))
     raise CelexError("no English act body stream in CELLAR listing")
+
+
+def _secure_url(url: str) -> str:
+    """Force https and require the CELLAR host. Listing URLs arrive as http://."""
+    parsed = httpx.URL(url)
+    if parsed.host != ALLOWED_HOST:
+        raise CelexError(f"unexpected host in CELLAR listing: {parsed.host}")
+    return str(parsed.copy_with(scheme="https"))
 
 
 class EurLexClient:
@@ -131,7 +140,8 @@ class EurLexClient:
         cache_file = self._cache_path(f"{celex}:{lang}")
         if cache_file.exists():
             raw = cache_file.read_text(encoding="utf-8")
-            url = raw.split("\n", 1)[0]
+            # Entries cached before the https fix still hold http:// URLs. Re-check on read.
+            url = _secure_url(raw.split("\n", 1)[0])
             return Document(celex, lang, url, html_to_text(raw.split("\n", 1)[1]))
 
         # Accept: text/html makes CELLAR return the 300 manifestation list. Without it
@@ -147,6 +157,10 @@ class EurLexClient:
         body = self._client.get(url)
         if body.status_code != 200:
             raise CelexError(f"CELLAR returned {body.status_code} for stream {url}")
+        # Redirects are followed, so check where the body actually came from.
+        final = body.url
+        if final.scheme != "https" or final.host != ALLOWED_HOST:
+            raise CelexError(f"stream redirected off CELLAR to {final}")
 
         self._cache_dir.mkdir(parents=True, exist_ok=True)
         cache_file.write_text(f"{url}\n{body.text}", encoding="utf-8")
