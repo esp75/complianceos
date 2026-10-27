@@ -4,7 +4,7 @@ ComplianceOS is maintained by **Tidelink**.
 
 | Role | Contact |
 |---|---|
-| Project lead | Maxime Kadr (_add GitHub handle_) |
+| Project lead | Maxime Kadr ([esp75](https://github.com/esp75)) |
 | Conduct reports | _set a dedicated address before publishing, e.g. conduct@your-domain_ |
 | Security reports | GitHub private vulnerability reporting (see [SECURITY.md](SECURITY.md)) |
 
