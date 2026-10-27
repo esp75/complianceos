@@ -1,29 +1,55 @@
 # Obligation schema for Celestia Dynamics reg-graph.
-# Pydantic-compatible. Loaded by app/api/rag/ and app/api/ingest/.
+#
+# SOURCE OF TRUTH: app/api/reggraph/models.py (pydantic v2). This file is the
+# human-readable view. If the two disagree, models.py wins and this file is wrong.
 # Max owns the content of every regulation file in this directory.
 
-version: 1
+version: 2
 
-# Top-level obligation record.
 obligation:
   required:
-    - id              # stable canonical ID, e.g. EU-SPACE-ACT-2024-ART-12-3
-    - source          # one of: eu_space_act | fcc_22_74 | itu_filings | iso_24113
-    - article         # human-readable citation
-    - text            # verbatim text of the obligation
-    - rationale_code  # controlled vocabulary, see rationale_codes.yaml
-    - effective_date  # ISO-8601
-    - applicability   # operator | manufacturer | launch_provider | ground_segment
+    - id              # stable canonical ID, e.g. EU-SPACE-ACT-ART-12-3 (uppercase, hyphen-separated)
+    - source          # eu_space_act | fcc_22_74 | itu_filings | iso_24113
+    - jurisdiction    # ISO-3166 alpha-2, "EU" or "INTERNATIONAL"
+    - article         # human-readable article/section label
+    - text            # obligation text (paraphrase or verbatim)
+    - rationale_code  # must exist in rationale_codes.yaml
+    - effective_date  # ISO-8601 date
+    - applicability   # list: operator | manufacturer | launch_provider | ground_segment
+    - citation        # see citation below
   optional:
-    - supersedes      # list of obligation IDs this replaces
-    - superseded_by   # set when this obligation is retired
-    - references      # list of related obligation IDs (graph edges)
-    - tags            # free-form, e.g. "debris-mitigation", "spectrum"
-    - jurisdiction    # ISO-3166 alpha-2 or "EU" or "INTERNATIONAL"
+    - valid_to            # ISO-8601 date; obligation no longer in force after this
+    - review_status       # draft (default) | author_reviewed | lawyer_reviewed
+    - applies_when        # applicability DSL expression
+    - evidence_required   # JSON-schema fragment for the evidence bundle
+    - retention_years     # integer >= 0
+    - response_window     # e.g. "24h", "10 working days"
+    - authority           # body that can demand the evidence
+    - supersedes          # list of obligation IDs this replaces
+    - superseded_by       # set when this obligation is retired
+    - references          # list of related obligation IDs
+    - tags                # free-form, e.g. "debris-mitigation", "spectrum"
 
-# Graph edge types for reg-graph (Apache AGE).
+citation:
+  required:
+    - kind          # celex | fcc_cfr | itu_rr | iso
+    - article       # article/section of the cited instrument
+  conditional:
+    - celex         # required when kind=celex; format NNNNN[A-Z]NNNN[(NN)]
+    - document_id   # required for non-celex kinds unless url is given
+    - url           # required for non-celex kinds unless document_id is given
+  optional:
+    - paragraph
+    - point
+    - consolidated_date  # version of the instrument the citation was checked against
+    - verified_at        # set by scripts/verify_citations.py
+    - verified_by        # eurlex_mcp | manual
+
+# Graph edge types for reg-graph (Apache AGE). Each name is the AGE edge label, upper-cased.
 edges:
   - implements       # obligation X implements treaty/standard Y
-  - conflicts_with   # X and Y contradict — must be resolved manually
+  - conflicts_with   # X and Y contradict; must be resolved manually
   - cited_by         # X is cited by case/decision Y
   - depends_on       # compliance with X requires Y first
+  - supersedes       # X replaces Y (mirrors Obligation.supersedes)
+  - references       # X refers to Y (mirrors Obligation.references)

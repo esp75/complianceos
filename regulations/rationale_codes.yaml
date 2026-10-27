@@ -22,3 +22,7 @@ codes:
     description: Object registration under the 1976 UN Registration Convention.
   EXPORT_CONTROL:
     description: ITAR / EU dual-use / Wassenaar obligations.
+  AUTHORISATION_SUPERVISION:
+    description: Operator authorisation, competent-authority supervision, inspection and on-demand information duties.
+  COLLISION_AVOIDANCE_SERVICES:
+    description: Conjunction screening, collision-risk thresholds and manoeuvre or notification actions.

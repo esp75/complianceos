@@ -4,12 +4,12 @@
 
 Celestia Dynamics is an EU-sovereign regulatory compliance SaaS for satellite operators. The stack is Postgres 17 + Apache AGE + pgvector + FastAPI + Next.js 14, deployed on Hetzner via Coolify, with ed25519 signing + Merkle audit chain, multi-tenant Postgres RLS, citation-forced RAG over a reg-graph knowledge graph, and signed PAdES PDF evidence bundles for regulators. Solo build, ~5–6 months to paying-customer-quality MVP, €18–34k cash including a paid external security review at Phase 5.
 
-## Sovereignty rules — non-negotiable
+## Sovereignty rules — retired 2026-10-27
 
-- EU-only infrastructure. Hetzner (Germany) for compute, EU-resident managed Postgres for production data.
-- No US-hosted services for application data or identity. No Supabase as backend, no Vercel hosting, no Auth0/Clerk, no Snowflake/Databricks.
-- PGLite (local SQLite-on-Postgres) for gstack agent memory. Never Supabase.
-- For LLM calls, prefer EU-jurisdiction endpoints. Document any US LLM call in `docs/THREAT_MODEL.md` under "Documented US LLM dependencies".
+EU-sovereignty rules were retired when the project was decided to be open-sourced.
+Hosting and identity providers are chosen for cost and fit, not jurisdiction.
+Free and self-hosted options are preferred where they do the job.
+Existing `docs/THREAT_MODEL.md` and `docs/ACCOUNTS_CHECKLIST.md` text still reflects the old rules and needs its own update.
 - Trust-layer files — `app/api/trust/**`, `app/api/rls/**`, `app/api/bundle/sign*.py` — are reserved for paid external review. Do NOT run `/codex` on them. They are marked with a header comment `# MARKED-FOR-EXTERNAL-REVIEW`.
 
 ## File-marking convention

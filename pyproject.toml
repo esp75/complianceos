@@ -33,10 +33,12 @@ dev = [
     "respx>=0.23.1",
     "ruff>=0.15.13",
     "semgrep>=1.85.0",
+    "types-pyyaml>=6.0.12.20260906",
 ]
 
 [tool.pytest.ini_options]
 testpaths = ["app", "mcps", "tests"]
+pythonpath = ["."]
 # `vendor` MUST stay excluded. vendor/skyfield/contrib/almanac2/test_almanac2.py
 # calls `load('de430t.bsp')` at module import time, which writes a 128 MB JPL
 # ephemeris file to cwd. Unbounded collection there filled the disk once already.
@@ -51,4 +53,10 @@ line-length = 100
 [tool.mypy]
 python_version = "3.12"
 strict = true
+explicit_package_bases = true
+mypy_path = "."
 exclude = ["vendor/", ".venv/", "node_modules/", "data/"]
+
+[[tool.mypy.overrides]]
+module = ["asyncpg", "asyncpg.*"]
+ignore_missing_imports = true
