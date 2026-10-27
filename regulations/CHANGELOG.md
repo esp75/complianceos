@@ -2,6 +2,14 @@
 
 Every change to the regulation files in this directory must be logged here with date, source, and rationale. The reg-graph is Celestia's unique leverage — its history must be auditable.
 
+## 2026-10-27 — Phase 1 batch 1: EU Space Act conjunction + debris (14 entries)
+
+- Source: EU Space Act **proposal** COM(2025) 335, CELEX 52025PC0335, English act body from CELLAR. Not adopted, not in force, not enforced. Every entry is tagged `proposal-not-adopted`.
+- Entries: Art. 64(1)-(5), 67(2), 68(1), 70(1)-(2), 103(1), (2), (5). Article existence checked live with `scripts/verify_citations.py` (14/14 ok). Paragraphs and wording not checked against the text.
+- Effective date set to 2025-06-25 (proposal date) as a placeholder. Verify before relying on it.
+- `review_status`: draft for all. No lawyer review recorded.
+- Remaining EU Space Act obligations (target 30-40 for the file), ISO 24113, FCC 22/74 and ITU filings are not yet authored.
+
 ## 2026-10-27 — Phase 1 schema v2
 
 - Schema moved to pydantic models in `app/api/reggraph/models.py`; `schema.yaml` is now the documented view (version 2).

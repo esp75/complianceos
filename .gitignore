@@ -46,3 +46,6 @@ Thumbs.db
 
 # Coolify deploy state
 infra/coolify/.state/
+
+# EUR-Lex / CELLAR fetch cache
+.cache/

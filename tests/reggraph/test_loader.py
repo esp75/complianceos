@@ -27,9 +27,18 @@ def _ob(ob_id: str, **overrides: object) -> Obligation:
     return Obligation.model_validate(base)
 
 
-def test_repo_regulations_load_with_zero_obligations() -> None:
-    # Phase 0 files are still empty; the loader must accept them.
-    assert load_corpus(REPO_REGULATIONS) == []
+def test_repo_regulations_load() -> None:
+    obligations = load_corpus(REPO_REGULATIONS)
+    assert obligations, "repo corpus should have at least the batch-1 EU Space Act entries"
+
+
+def test_every_eu_space_act_entry_is_marked_proposal_only() -> None:
+    # The EU Space Act is a Commission proposal. Nothing from it may read as adopted law.
+    eu = [o for o in load_corpus(REPO_REGULATIONS) if o.source == "eu_space_act"]
+    assert eu
+    for ob in eu:
+        assert "proposal-not-adopted" in ob.tags, ob.id
+        assert ob.citation.celex == "52025PC0335", ob.id
 
 
 def test_duplicate_ids_are_reported() -> None:

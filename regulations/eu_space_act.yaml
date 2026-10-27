@@ -1,7 +1,208 @@
-# EU Space Act — obligations.
-# AUTHORED BY MAX. Phase 1 of the build plan.
-# Format: see schema.yaml.
+# EU Space Act: obligations drawn from the Commission proposal COM(2025) 335, CELEX 52025PC0335.
+#
+# STATUS: PROPOSAL ONLY. Not adopted. Not in force. Not enforced.
+# Every entry carries the tag "proposal-not-adopted". Article numbers and wording may change
+# before adoption. Do not present these as current law.
+#
+# Phase 1 batch 1: conjunction handling (Art. 64, 67, 68, 103) and debris plans (Art. 70).
+# Remaining obligations of the file (target 30-40) are still to be authored.
+#
+# Text is paraphrased. Article and paragraph citations are checked with
+# scripts/verify_citations.py, which confirms the article exists, not the paraphrase.
+#
+# AUTHORED BY: Claude (draft). review_status is draft until Max reviews each entry.
 
 source: eu_space_act
 jurisdiction: EU
-obligations: []  # Phase 1 task: populate.
+
+obligations:
+  - id: EU-SPACE-ACT-ART-64-1
+    source: eu_space_act
+    jurisdiction: EU
+    article: "Art. 64(1)"
+    text: >
+      Union spacecraft operators must subscribe to the collision avoidance (CA) space services
+      of the Union CA space services provider (the SST provider under Art. 58(2) of Regulation (EU) 2021/696).
+    rationale_code: COLLISION_AVOIDANCE_SERVICES
+    effective_date: 2025-06-25
+    applicability: [operator]
+    citation: {kind: celex, celex: "52025PC0335", article: "64", paragraph: "1"}
+    tags: [proposal-not-adopted, conjunction]
+
+  - id: EU-SPACE-ACT-ART-64-2
+    source: eu_space_act
+    jurisdiction: EU
+    article: "Art. 64(2)"
+    text: >
+      The CA subscription must cover all mission phases, including orbit raising, in-space
+      operations (ISOS) and end of life. Re-entry is excluded.
+    rationale_code: COLLISION_AVOIDANCE_SERVICES
+    effective_date: 2025-06-25
+    applicability: [operator]
+    citation: {kind: celex, celex: "52025PC0335", article: "64", paragraph: "2"}
+    tags: [proposal-not-adopted, conjunction]
+
+  - id: EU-SPACE-ACT-ART-64-3A
+    source: eu_space_act
+    jurisdiction: EU
+    article: "Art. 64(3)(a)"
+    text: >
+      Inform the Union CA provider without delay of any planned change to operations.
+    rationale_code: COLLISION_AVOIDANCE_SERVICES
+    effective_date: 2025-06-25
+    applicability: [operator]
+    citation: {kind: celex, celex: "52025PC0335", article: "64", paragraph: "3", point: "a"}
+    tags: [proposal-not-adopted, conjunction]
+
+  - id: EU-SPACE-ACT-ART-64-3B
+    source: eu_space_act
+    jurisdiction: EU
+    article: "Art. 64(3)(b)"
+    text: >
+      Give the Union CA provider three months' notice before starting the disposal phase and
+      the end-of-life phase.
+    rationale_code: END_OF_LIFE
+    effective_date: 2025-06-25
+    applicability: [operator]
+    response_window: "3 months before start of disposal"
+    citation: {kind: celex, celex: "52025PC0335", article: "64", paragraph: "3", point: "b"}
+    tags: [proposal-not-adopted, conjunction, end-of-life]
+
+  - id: EU-SPACE-ACT-ART-64-3C
+    source: eu_space_act
+    jurisdiction: EU
+    article: "Art. 64(3)(c)"
+    text: >
+      Inform the Union CA provider without undue delay of any unplanned change to operations,
+      including problems during life or disposal that affect compliance with the Regulation.
+    rationale_code: COLLISION_AVOIDANCE_SERVICES
+    effective_date: 2025-06-25
+    applicability: [operator]
+    response_window: "without undue delay"
+    citation: {kind: celex, celex: "52025PC0335", article: "64", paragraph: "3", point: "c"}
+    tags: [proposal-not-adopted, conjunction]
+
+  - id: EU-SPACE-ACT-ART-64-4
+    source: eu_space_act
+    jurisdiction: EU
+    article: "Art. 64(4)"
+    text: >
+      Comply with the requirements in Annex IV, point 2, and cooperate with the Union CA provider
+      as set out there.
+    rationale_code: COLLISION_AVOIDANCE_SERVICES
+    effective_date: 2025-06-25
+    applicability: [operator]
+    citation: {kind: celex, celex: "52025PC0335", article: "64", paragraph: "4"}
+    tags: [proposal-not-adopted, conjunction, annex-iv]
+
+  - id: EU-SPACE-ACT-ART-64-5
+    source: eu_space_act
+    jurisdiction: EU
+    article: "Art. 64(5)"
+    text: >
+      On receiving a high interest event (HIE) alert, inform the Union CA provider without delay of
+      every action taken to avoid the collision, per Annex IV, point 2.
+    rationale_code: COLLISION_AVOIDANCE_SERVICES
+    effective_date: 2025-06-25
+    applicability: [operator]
+    response_window: "without delay"
+    citation: {kind: celex, celex: "52025PC0335", article: "64", paragraph: "5"}
+    tags: [proposal-not-adopted, conjunction, hie]
+
+  - id: EU-SPACE-ACT-ART-67-2
+    source: eu_space_act
+    jurisdiction: EU
+    article: "Art. 67(2)"
+    text: >
+      Report to the Agency the contact details of staff in charge of collision avoidance and
+      re-entry, for entry in the Union contact list database for HIE alerts.
+    rationale_code: AUTHORISATION_SUPERVISION
+    effective_date: 2025-06-25
+    applicability: [operator]
+    citation: {kind: celex, celex: "52025PC0335", article: "67", paragraph: "2"}
+    tags: [proposal-not-adopted, conjunction, contact-list]
+
+  - id: EU-SPACE-ACT-ART-68-1
+    source: eu_space_act
+    jurisdiction: EU
+    article: "Art. 68(1)"
+    text: >
+      Comply with the orbital traffic and coordination requirements in Annex IV, point 2. The
+      Commission will set the detailed rules by implementing act (Art. 68(2)), which is not yet
+      adopted, so the content of this duty is open.
+    rationale_code: COLLISION_AVOIDANCE_SERVICES
+    effective_date: 2025-06-25
+    applicability: [operator]
+    citation: {kind: celex, celex: "52025PC0335", article: "68", paragraph: "1"}
+    tags: [proposal-not-adopted, conjunction, depends-on-implementing-act]
+
+  - id: EU-SPACE-ACT-ART-103-1
+    source: eu_space_act
+    jurisdiction: EU
+    article: "Art. 103(1)"
+    text: >
+      When the CA provider has issued an HIE alert between two manoeuvrable spacecraft and
+      ordered a collision avoidance manoeuvre (CAM), the proposed CAM must: take the utmost account
+      of crewed vehicles; cut the initial collision risk by at least one order of magnitude below
+      the HIE alert threshold; and avoid unreasonable risk of secondary conjunctions.
+    rationale_code: COLLISION_AVOIDANCE_SERVICES
+    effective_date: 2025-06-25
+    applicability: [operator]
+    citation: {kind: celex, celex: "52025PC0335", article: "103", paragraph: "1"}
+    tags: [proposal-not-adopted, conjunction, hie, cam]
+
+  - id: EU-SPACE-ACT-ART-103-2
+    source: eu_space_act
+    jurisdiction: EU
+    article: "Art. 103(2)"
+    text: >
+      Where both spacecraft are registered with the same CA provider, the operators must try to
+      agree a CAM strategy under that provider's coordination within a reasonable time.
+    rationale_code: COLLISION_AVOIDANCE_SERVICES
+    effective_date: 2025-06-25
+    applicability: [operator]
+    citation: {kind: celex, celex: "52025PC0335", article: "103", paragraph: "2"}
+    tags: [proposal-not-adopted, conjunction, hie, cam]
+
+  - id: EU-SPACE-ACT-ART-103-5
+    source: eu_space_act
+    jurisdiction: EU
+    article: "Art. 103(5)"
+    text: >
+      Where contact with a non-registered spacecraft succeeds, work with the CA provider to
+      choose the best CAM, including exchanging the tools and methods used for risk calculation
+      and the data needed to avoid the collision.
+    rationale_code: COLLISION_AVOIDANCE_SERVICES
+    effective_date: 2025-06-25
+    applicability: [operator]
+    citation: {kind: celex, celex: "52025PC0335", article: "103", paragraph: "5"}
+    tags: [proposal-not-adopted, conjunction, hie, cam]
+
+  - id: EU-SPACE-ACT-ART-70-1
+    source: eu_space_act
+    jurisdiction: EU
+    article: "Art. 70(1)"
+    text: >
+      Limit planned debris generation during nominal operations, limit the risk of accidental
+      fragmentation, complete end-of-life disposal, implement a failure response plan, ensure
+      design reliability, and set up quality-control procedures. Each measure is specified in
+      Annex V.
+    rationale_code: DEBRIS_MITIGATION
+    effective_date: 2025-06-25
+    applicability: [operator]
+    citation: {kind: celex, celex: "52025PC0335", article: "70", paragraph: "1"}
+    tags: [proposal-not-adopted, debris, annex-v]
+
+  - id: EU-SPACE-ACT-ART-70-2
+    source: eu_space_act
+    jurisdiction: EU
+    article: "Art. 70(2)"
+    text: >
+      Draw up and keep three plans, and show they meet Art. 70(1): a debris control plan (Annex V,
+      point 4.1), an end-of-life disposal plan (point 4.2), and a failure response plan (point 4.3).
+    rationale_code: DEBRIS_MITIGATION
+    effective_date: 2025-06-25
+    applicability: [operator]
+    evidence_required: {type: object, required: [debris_control_plan, eol_disposal_plan, failure_response_plan]}
+    citation: {kind: celex, celex: "52025PC0335", article: "70", paragraph: "2"}
+    tags: [proposal-not-adopted, debris, annex-v, evidence]
