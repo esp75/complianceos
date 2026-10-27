@@ -21,7 +21,7 @@ same clarity as teams that have a regulatory department.
 You need Docker.
 
 ```bash
-git clone <this repository> complianceos && cd complianceos
+git clone https://github.com/esp75/complianceos.git && cd complianceos
 docker compose up --build
 ```
 
@@ -31,6 +31,17 @@ command again.
 
 Optional settings (dossier signing, Claude-written summaries) are listed in
 [`.env.example`](.env.example). Nothing leaves your machine unless you add an API key.
+
+## Documentation
+
+The documentation follows the [Diátaxis](https://diataxis.fr/) framework:
+
+| | |
+|---|---|
+| **[Tutorial](docs/tutorials/first-regulatory-path.md)** | Plan your first regulatory path, step by step |
+| **[How-to guides](docs/README.md#how-to-guides)** | Run tests, correct a jurisdiction, enable signed dossiers or Claude summaries |
+| **[Reference](docs/README.md#reference)** | HTTP API, configuration, knowledge-pack schema, coverage |
+| **[Explanation](docs/README.md#explanation)** | Architecture, why requirements cite the law, trust and signing, decisions |
 
 ## What it does
 

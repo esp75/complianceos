@@ -1,4 +1,4 @@
-# STATUS — ComplianceOS v0.2
+# Engineering log — ComplianceOS v0.2
 
 ## 2026-10-15 — Regulatory path planner shipped (ADR-0018), open-source ready
 
@@ -172,7 +172,7 @@ Repo is now git-initialized (branch `phase1-l1-substrate-first-slice`). Docker r
 - ✅ **M1** — infra up + BFF health proxy: `cross-cutting/deploy/docker-compose.yml`
   (postgres, openfga, redis, core@v1.20.6, riverboat, dex) + Celestia FastAPI BFF (`app/`).
   Verified: core `/ready` 200 (all subsystems OK), BFF `/readyz` 200 (503 when core down),
-  pytest green. See [docs/upstream-watch.md](./docs/upstream-watch.md) for image pins +
+  pytest green. See [docs/upstream-watch.md](../../docs/upstream-watch.md) for image pins +
   dev-only deviations (core-as-root for key gen, riverboat placeholder token).
 - ✅ **M2** — auth + OpenFGA tetrad: email/password auth (Dex SSO deferred to Phase 4 —
   needs per-org enforcement), BFF `/auth/me` + `/auth/can`, and the operator/insurer/
@@ -320,9 +320,9 @@ Brain score: 50 (capped at 50 in this pass because embedding generation runs asy
 
 1. **Go-service-behind-FastAPI** → ✅ Keep ADR-0001 as accepted. Dual-language commitment stands.
 2. **openmct + Next.js dual frontend** → ✅ Keep dual. ADR-0003 stands.
-3. **EU LLM endpoint plan** → ✅ Confirmed: both Anthropic-EU and Mistral are acceptable EU-sovereign options. **For MVP only Claude is used** as runtime LLM. Mistral is deferred to post-MVP behind a provider-router interface. See [ADR-0010](./adr/0010-mvp-llm-policy-claude-only.md).
+3. **EU LLM endpoint plan** → ✅ Confirmed: both Anthropic-EU and Mistral are acceptable EU-sovereign options. **For MVP only Claude is used** as runtime LLM. Mistral is deferred to post-MVP behind a provider-router interface. See [ADR-0010](../../adr/0010-mvp-llm-policy-claude-only.md).
 4. **ComplianceNLP retraining** → ✅ Solo-bootstrap small (100-provision) corpus first. Contracted-annotator option remains documented in ROADMAP risk register for Phase 3 expansion if solo bandwidth blocks.
-5. **External-review vendor** → ✅ **Quarkslab (FR) primary, Cure53 (DE) backup.** Decision rationale and Phase 5 prep checklist in [ADR-0011](./adr/0011-external-security-review-quarkslab.md). Trail of Bits dropped (US-jurisdiction conflict with EU sovereignty narrative).
+5. **External-review vendor** → ✅ **Quarkslab (FR) primary, Cure53 (DE) backup.** Decision rationale and Phase 5 prep checklist in [ADR-0011](../../adr/0011-external-security-review-quarkslab.md). Trail of Bits dropped (US-jurisdiction conflict with EU sovereignty narrative).
 
 ## How to resume
 

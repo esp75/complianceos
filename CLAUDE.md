@@ -84,4 +84,4 @@ don't become part of the audit-reviewed surface.
 - Layer specs: [`layers/*/README.md`](./layers/)
 - Vendor pins: [`external/VENDOR.md`](./external/VENDOR.md)
 - License matrix: [`docs/license-matrix.md`](./docs/license-matrix.md)
-- Current status: [`STATUS.md`](./STATUS.md)
+- Current status: [`docs/explanation/engineering-log.md`](docs/explanation/engineering-log.md)
