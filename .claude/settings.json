@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "project": {
     "name": "complianceOSv0.2",
-    "description": "EU-sovereign regulatory compliance SaaS for satellite operators",
+    "description": "Open-source regulatory path planner for satellite operators",
     "version": "0.2.0"
   },
   "skills": {
