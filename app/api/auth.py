@@ -42,8 +42,8 @@ def decode_token(token: str, key: Any, *, issuer: str, audience: str) -> Princip
 
 
 def current_principal(request: Request) -> Principal:
-    header = request.headers.get("authorization", "")
-    scheme, _, token = header.partition(" ")
+    auth_header = request.headers.get("authorization", "")
+    scheme, _, token = auth_header.partition(" ")
     if scheme.lower() != "bearer" or not token:
         raise HTTPException(status_code=401, detail="missing bearer token")
 
@@ -53,8 +53,17 @@ def current_principal(request: Request) -> Principal:
     if not issuer or not audience or jwks is None:
         raise HTTPException(status_code=503, detail="auth not configured")
 
+    # Reject malformed or unexpected headers before any network lookup, so an
+    # attacker cannot make the API fetch JWKS by sending junk tokens.
     try:
-        signing_key = jwks.get_signing_key_from_jwt(token)
+        jwt_header = jwt.get_unverified_header(token)
+    except jwt.PyJWTError as exc:
+        raise HTTPException(status_code=401, detail="malformed token") from exc
+    if jwt_header.get("alg") != "RS256" or not isinstance(jwt_header.get("kid"), str):
+        raise HTTPException(status_code=401, detail="unsupported token header")
+
+    try:
+        signing_key = jwks.get_signing_key(jwt_header["kid"])
     except jwt.PyJWTError as exc:
         raise HTTPException(status_code=401, detail="unknown signing key") from exc
     return decode_token(token, signing_key.key, issuer=issuer, audience=audience)

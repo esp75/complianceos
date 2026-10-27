@@ -58,7 +58,10 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     issuer = os.environ.get("ZITADEL_ISSUER")
     app.state.zitadel_issuer = issuer
     app.state.zitadel_audience = os.environ.get("ZITADEL_AUDIENCE")
-    app.state.jwks_client = jwt.PyJWKClient(f"{issuer.rstrip('/')}/oauth/v2/keys") if issuer else None
+    # Short timeout so a stalled issuer cannot hold request workers open.
+    app.state.jwks_client = (
+        jwt.PyJWKClient(f"{issuer.rstrip('/')}/oauth/v2/keys", timeout=5) if issuer else None
+    )
     try:
         yield
     finally:

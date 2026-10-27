@@ -21,6 +21,8 @@ services:
       POSTGRES_USER: celestia
       POSTGRES_PASSWORD: celestia_dev_only
       POSTGRES_DB: celestia
+      # Read by infra/postgres/init/02_zitadel_db.sql via \getenv. Set in infra/.env.
+      ZITADEL_DB_PASSWORD: ${ZITADEL_DB_PASSWORD:?set ZITADEL_DB_PASSWORD in infra/.env}
     ports:
       # Host 5433 → container 5432. 5432 is left for other projects' Postgres.
       - "5433:5432"
@@ -51,16 +53,19 @@ services:
       ZITADEL_DATABASE_POSTGRES_HOST: postgres
       ZITADEL_DATABASE_POSTGRES_PORT: 5432
       ZITADEL_DATABASE_POSTGRES_DATABASE: zitadel
-      ZITADEL_DATABASE_POSTGRES_USER_USERNAME: celestia
-      ZITADEL_DATABASE_POSTGRES_USER_PASSWORD: celestia_dev_only
+      # Dedicated zitadel role, not the celestia role. Password from infra/.env.
+      ZITADEL_DATABASE_POSTGRES_USER_USERNAME: zitadel
+      ZITADEL_DATABASE_POSTGRES_USER_PASSWORD: ${ZITADEL_DB_PASSWORD:?set ZITADEL_DB_PASSWORD in infra/.env}
       ZITADEL_DATABASE_POSTGRES_USER_SSL_MODE: disable
-      ZITADEL_DATABASE_POSTGRES_ADMIN_USERNAME: celestia
-      ZITADEL_DATABASE_POSTGRES_ADMIN_PASSWORD: celestia_dev_only
+      ZITADEL_DATABASE_POSTGRES_ADMIN_USERNAME: zitadel
+      ZITADEL_DATABASE_POSTGRES_ADMIN_PASSWORD: ${ZITADEL_DB_PASSWORD:?set ZITADEL_DB_PASSWORD in infra/.env}
       ZITADEL_DATABASE_POSTGRES_ADMIN_SSL_MODE: disable
     ports:
       - "8080:8080"
     profiles: ["full"]
 
+  # NOTE: the api connects as the POSTGRES_USER superuser (celestia). That is
+  # over-broad. Split into a least-privilege app role before any real data lands.
   api:
     build:
       context: ../app/api
