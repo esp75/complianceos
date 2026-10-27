@@ -41,31 +41,53 @@ Pick one item and notice four things:
 
 ## 4. Read the timeline
 
-Switch to the timeline. It works back from your launch date through prerequisites, so the ITU
-publication appears before the notification that depends on it. The **critical path** is highlighted:
-those items set your earliest launch date. Items with slack can slip without moving it.
+The timeline is at the top of the **Roadmap** tab. It is a Gantt chart: each bar is one licence, and
+the light part is preparation, the dark part is authority review. It works back from your launch date
+through prerequisites, so the ITU publication appears before the notification that depends on it.
+
+Items marked with a blue dot are on the **critical path**: they set your earliest launch date. Items
+with slack can slip without moving it. The legend under the chart explains the colours.
 
 Each duration is labelled as set in law, published practice, or an estimate. Check that label before
 you rely on a date.
 
 ## 5. Define your own mission
 
-Go to **New mission** (`/missions/new`). Enter your satellite count, orbit, the countries you will
-serve, and your launch date. The live preview on the right shows how the roadmap changes as you type.
+Go to **Missions → New mission** (`/missions/new`). The wizard has four steps:
 
-Choose **Create roadmap**. The mission is saved, and you can change its profile later from the edit
-page; the roadmap is recalculated from the profile each time.
+1. **Operator:** mission name, operator name, and the country where the operator is established.
+2. **Spacecraft & orbit:** orbit type, number of satellites and altitude.
+3. **Spectrum & services:** the services you provide (for example Earth observation) and frequency bands.
+4. **Markets & launch:** the countries you will serve, the launch site country, and the target launch date.
+
+Use **Next** and **Back** to move between steps. On the last step, choose **Create roadmap**. The
+mission is saved and its roadmap is calculated straight away. Use **Edit mission** later to change any
+of these answers.
 
 ## 6. Track an application
 
-On the mission's **Tracker** tab, each application moves through explicit states (for example from
-preparing to submitted). Submission and grant dates re-date any obligations that depend on them. The
-**Deadlines** and **Calendar** tabs show the dates, and the calendar exports to ICS for your diary.
+Open the **Tracker** tab. It shows the applications you have not yet tracked, and three columns:
+**To do**, **With the authority** and **Decided**. Choose **Track all** to add every item to
+**To do**. Each card shows its status (for example *Not started*)
+and the date you should start preparing.
+
+Once an application is with the authority or decided, record the real submission and grant dates. Those
+dates move the obligations that depend on them. The **Deadlines** tab lists every date, and **Calendar**
+(in the mission header) exports them to ICS for your diary.
 
 ## 7. Produce a brief and a dossier
 
-The **Brief** tab contains the summary, critical path, risks, the recommended sequence, and questions
-to ask each authority. The **Dossier** tab exports the same material as a PDF.
+The **Brief** tab has the summary, critical path, risks and the questions to ask each authority. Each
+legal statement in it links to the law. To export the same material as a PDF, use **Download dossier
+(PDF)** in the mission header.
+
+## Troubleshooting
+
+- **`docker compose up` fails with `docker-credential-desktop: not found`.** Your Docker config still
+  names a credential helper from a previous install. Remove the `credsStore` line from `~/.docker/config.json`.
+- **The stack is up but `localhost:3000` refuses the connection.** The Docker socket may have died while
+  colima reported running. Run `colima restart`, then `docker compose up -d`.
+- **The `core` image crash-loops on Apple Silicon.** Start colima with Rosetta: `colima start --vm-type vz --vz-rosetta`.
 
 ## What you learned
 
