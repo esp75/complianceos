@@ -1,12 +1,12 @@
 # ADR 0011 — External security review vendor: Quarkslab (primary), Cure53 (backup)
 
 **Status**: Accepted — 2026-05-15
-**Decision-makers**: Maxime Kadr (solo)
-**Resolves**: STATUS.md open question #5
+**Decision-makers**: Maintainer
+**Resolves**: engineering-log open question #5 ([docs/explanation/engineering-log.md](../docs/explanation/engineering-log.md))
 
 ## Context
 
-Per v0.1's CLAUDE.md, trust-layer code (`app/api/trust/**`, `app/api/rls/**`, `app/api/bundle/sign*.py`, plus L4 provenance) is reserved for paid external security review. Budget: €12k–€18k. Phase 5 (post-MVP, weeks 17–20).
+Per v0.1's CLAUDE.md, trust-layer code (`app/api/trust/**`, `app/api/rls/**`, `app/api/bundle/sign*.py`, plus L4 provenance) is reserved for paid external security review. Phase 5 (post-MVP, weeks 17–20).
 
 Three vendors were on the v0.1 shortlist:
 
@@ -44,7 +44,7 @@ Three vendors were on the v0.1 shortlist:
 
 **Negative**
 - Quarkslab's lead times are non-trivial (typically 4–8 weeks ahead). Need to book by end of Phase 3 to hit Phase 5.
-- Quarkslab quotes may be higher than Cure53 for equivalent scope. Need to scope-down to fit €12k–€18k budget. Mitigation: pre-scope the review tightly — only the marked-for-external-review surface, plus the Merkle chain integrity proofs.
+- Quarkslab quotes may be higher than Cure53 for equivalent scope. Mitigation: pre-scope the review tightly — only the marked-for-external-review surface, plus the Merkle chain integrity proofs.
 
 ## Action items (carry into Phase 3 / Phase 5 prep)
 

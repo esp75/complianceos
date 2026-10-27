@@ -84,6 +84,7 @@ totp:
   recoverycodecount: 16
   recoverycodelength: 8
   redis: true
+  # Dev placeholder. Generate a real value for any shared or deployed environment.
   secret: "change-me-local-only"
 
 authz:
@@ -93,6 +94,7 @@ authz:
   # dev: rewrite the embedded FGA model on changes; container restart needed to apply.
   createnewmodel: true
   credentials:
+    # Dev placeholder. OpenFGA runs with --authn-method=none locally; set a real token when deployed.
     apitoken: "change-me-local-only"
 
 sessions:

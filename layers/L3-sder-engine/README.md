@@ -26,7 +26,7 @@ Defensible orbital math powering insurer scoring and regulator-facing compliance
 
 ## Phase 2 deliverables (see ROADMAP.md)
 
-First slice complete (REST/JSON, ADR-0013). See `STATUS.md` for the M0–M7 log.
+First slice complete (REST/JSON, ADR-0013). See the [engineering log](../../docs/explanation/engineering-log.md) for the M0–M7 log.
 
 - [x] Orekit service: `propagate`, `conjunction`, `frame_convert` endpoints (REST/JSON)
 - [x] Python client library for FastAPI-side consumers (`app/app/clients/orekit.py`)

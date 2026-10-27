@@ -8,9 +8,9 @@
 > Still open from P1/P2: objection forecast, decision-maker map, the Watch (source monitoring), and
 > corpus ingest beyond the hand-researched knowledge pack.
 
-**First product:** AI regulatory-affairs for satellite operators — Market-Access Dossier → the Watch → program of record. Pilot-first GTM (3 founding pilots). Solo build; the build exists to serve pilot delivery, not the other way around.
+**First product:** AI regulatory-affairs for satellite operators — Market-Access Dossier → the Watch → program of record. The planner in this repository is the open-source core of that product.
 
-**Foundation status:** the original Phase 0–4 first slices are **complete** and recorded in STATUS.md (L1 substrate + tetrad; L2 KG + ingest; L4 retrieval/drafting/citation-enforcer; trust-layer signed bundles; L3 Orekit and L5 openmct slices now **parked** per ADR-0017). ~60–70% of built code carries into the new product.
+**Foundation status:** the original Phase 0–4 first slices are **complete** and recorded in the [engineering log](docs/explanation/engineering-log.md) (L1 substrate + tetrad; L2 KG + ingest; L4 retrieval/drafting/citation-enforcer; trust-layer signed bundles; L3 Orekit and L5 openmct slices now **parked** per ADR-0017). ~60–70% of built code carries into the new product.
 
 ## Phase P1 — Dossier pipeline (weeks 1–2) · serves: pilot deliverable #1
 

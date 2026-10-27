@@ -2,7 +2,7 @@
 
 **Status**: Accepted — 2026-05-15
 **Decision-makers**: Maxime Kadr (solo)
-**Resolves**: STATUS.md open question #3
+**Resolves**: engineering-log open question #3 ([docs/explanation/engineering-log.md](../docs/explanation/engineering-log.md))
 
 ## Context
 
