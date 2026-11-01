@@ -17,6 +17,7 @@ Authentication depends on ``CELESTIA_AUTH_MODE``:
 
 from __future__ import annotations
 
+import asyncio
 import datetime as dt
 import ipaddress
 from dataclasses import dataclass
@@ -68,6 +69,8 @@ from app.planner.watch import (
     RunSummary,
     run_watch,
 )
+
+WATCH_MIN_INTERVAL_S = 60.0  # one manual Watch run per minute per process
 
 router = APIRouter(tags=["planner"])
 
@@ -521,12 +524,23 @@ async def run_watch_now(request: Request, p: Write, store: Store, kb: KB) -> Run
     """Check every source in the pack once. Same trust model as every other change: local mode
     needs the client header; team mode needs ``can_create_evidence`` on the workspace. Scheduling
     with ``python -m app.planner.watch run`` is the recommended path."""
-    fetcher = cast("Fetcher | None", getattr(request.app.state, "watch_fetcher", None))
-    interval = float(getattr(request.app.state, "watch_host_interval", HOST_INTERVAL_S))
-    llm = cast("LLMProvider | None", getattr(request.app.state, "llm", None))
-    return await run_watch(kb, store, fetcher or HttpFetcher(), dt.datetime.now(dt.UTC),
-                           host_interval=interval,
-                           classifier=make_classifier(llm) if llm else None)
+    state = request.app.state
+    lock = cast("asyncio.Lock", state.__dict__.setdefault("watch_lock", asyncio.Lock()))
+    if lock.locked():
+        raise HTTPException(status.HTTP_409_CONFLICT, "a Watch run is already in progress")
+    cooldown = float(getattr(state, "watch_min_interval", WATCH_MIN_INTERVAL_S))
+    last = getattr(state, "watch_last_run", None)
+    now = dt.datetime.now(dt.UTC)
+    if last is not None and (now - last).total_seconds() < cooldown:
+        raise HTTPException(status.HTTP_429_TOO_MANY_REQUESTS,
+                            "the Watch ran moments ago; try again shortly")
+    fetcher = cast("Fetcher | None", getattr(state, "watch_fetcher", None))
+    interval = float(getattr(state, "watch_host_interval", HOST_INTERVAL_S))
+    llm = cast("LLMProvider | None", getattr(state, "llm", None))
+    async with lock:
+        state.watch_last_run = now
+        return await run_watch(kb, store, fetcher or HttpFetcher(), now, host_interval=interval,
+                               classifier=make_classifier(llm) if llm else None)
 
 
 # --- signed program history (ADR-0021) ---

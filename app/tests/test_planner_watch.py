@@ -314,6 +314,7 @@ async def client(pages: dict[str, str]) -> AsyncIterator[httpx.AsyncClient]:
     app.state.llm = None
     app.state.watch_fetcher = FakeFetcher(pages)
     app.state.watch_host_interval = 0
+    app.state.watch_min_interval = 0
     app.include_router(planner.router)
     transport = httpx.ASGITransport(app=app)
     async with httpx.AsyncClient(transport=transport, base_url="http://localhost",
@@ -547,3 +548,20 @@ def test_every_feed_licence_belongs_to_its_jurisdiction() -> None:
     for j in KB.jurisdictions.values():
         for f in j.feeds:
             assert all(KB.licenses[lid].jurisdiction == j.id for lid in f.license_ids)
+
+
+async def test_manual_run_is_rate_limited_and_not_concurrent(client: httpx.AsyncClient) -> None:
+    """Review finding: any writer could hammer POST /watch/run (fetches, LLM calls, racing runs)."""
+    transport = client._transport  # type: ignore[attr-defined]
+    app = transport.app
+    app.state.watch_min_interval = 3600
+    assert (await client.post("/watch/run")).status_code == 200
+    assert (await client.post("/watch/run")).status_code == 429
+
+    app.state.watch_min_interval = 0
+    lock = app.state.watch_lock
+    await lock.acquire()
+    try:
+        assert (await client.post("/watch/run")).status_code == 409
+    finally:
+        lock.release()
