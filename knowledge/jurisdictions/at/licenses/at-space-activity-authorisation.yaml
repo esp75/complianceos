@@ -1,0 +1,263 @@
+id: at-space-activity-authorisation
+jurisdiction: at
+name: Space activity approval
+name_local: Genehmigung von Weltraumaktivitäten
+authority: at-weltraumbehoerde
+category: space_activity
+summary: >-
+  Space activities need the approval of the competent federal minister (the Weltraumbehörde). The law
+  applies to activities on Austrian territory, on Austrian-registered ships or aircraft, and to operators
+  that are Austrian nationals or legal persons with their seat in Austria. The operator must show reliability,
+  capability and expertise, debris and end-of-life provisions, ITU compliance and liability insurance
+  of at least EUR 60 million per event, and the minister must decide within six months of receipt.
+applies_when:
+  any:
+  - field: operator_country
+    eq: AT
+    because: >-
+      The Act applies to operators that are legal persons with their seat in Austria (or Austrian nationals),
+      wherever the activity takes place.
+    cite:
+    - at.wrg2011.par-1
+  - field: control_country
+    eq: AT
+    because: You will operate or control the space object from Austrian territory.
+    cite:
+    - at.wrg2011.par-1
+  - field: launch_country
+    eq: AT
+    because: You plan to launch from Austrian territory.
+    cite:
+    - at.wrg2011.par-1
+legal_basis:
+- id: at.wrg2011.par-1
+  instrument: >-
+    Bundesgesetz über die Genehmigung von Weltraumaktivitäten und die Einrichtung eines Weltraumregisters
+    (Weltraumgesetz), BGBl. I Nr. 132/2011
+  provision: § 1(1)
+  url: https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20007598
+  retrieved: '2026-11-01'
+  language: de
+  excerpt: >-
+    (1) Dieses Bundesgesetz ist auf Weltraumaktivitäten anzuwenden, die 1. auf österreichischem Staatsgebiet,
+    2. auf in Österreich registrierten Schiffen oder Flugzeugen oder 3. von einem Betreiber, der österreichischer
+    Staatsbürger oder eine juristische Person mit Sitz im Inland ist, durchgeführt werden.
+  excerpt_en: >-
+    This Act applies to space activities carried out 1. on Austrian territory, 2. on ships or aircraft
+    registered in Austria, or 3. by an operator that is an Austrian national or a legal person with its
+    seat in Austria. (Unofficial translation.)
+- id: at.wrg2011.par-3
+  instrument: >-
+    Bundesgesetz über die Genehmigung von Weltraumaktivitäten und die Einrichtung eines Weltraumregisters
+    (Weltraumgesetz), BGBl. I Nr. 132/2011
+  provision: § 3
+  url: https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20007598
+  retrieved: '2026-11-01'
+  language: de
+  excerpt: >-
+    Weltraumaktivitäten bedürfen der Genehmigung der Bundesministerin/des Bundesministers für Verkehr,
+    Innovation und Technologie. Genehmigungspflichten nach anderen Vorschriften als nach diesem Bundesgesetz
+    bleiben davon unberührt.
+  excerpt_en: >-
+    Space activities require the approval of the federal minister for transport, innovation and technology.
+    Approval requirements under other legislation are unaffected. (Unofficial translation; the ministry
+    has since been renamed, see the authority record.)
+- id: at.wrg2011.par-4-1
+  instrument: >-
+    Bundesgesetz über die Genehmigung von Weltraumaktivitäten und die Einrichtung eines Weltraumregisters
+    (Weltraumgesetz), BGBl. I Nr. 132/2011
+  provision: § 4(1), points 1, 6, 7 and 8
+  url: https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20007598
+  retrieved: '2026-11-01'
+  language: de
+  excerpt: >-
+    (1) Die Genehmigung nach § 3 ist zu erteilen, wenn 1. der Betreiber die nötige Zuverlässigkeit, Leistungsfähigkeit
+    und Fachkenntnis besitzt, um die Weltraumaktivität durchzuführen, [...] 6. der Betreiber die Vorgaben
+    über Orbitalposition und Frequenzzuteilung der Internationalen Fernmeldeunion (ITU) erfüllt, 7. der
+    Betreiber eine Haftpflichtversicherung gemäß Abs. 4 abgeschlossen hat und 8. der Betreiber Vorsorge
+    für die planmäßige Beendigung der Weltraumaktivität getroffen hat.
+  excerpt_en: >-
+    The approval is to be granted if 1. the operator has the necessary reliability, capability and expertise
+    [...] 6. the operator meets the ITU requirements on orbital position and frequency assignment, 7.
+    the operator has taken out liability insurance under paragraph 4, and 8. the operator has made provision
+    for the planned end of the space activity. (Unofficial translation.)
+- id: at.wrg2011.par-4-3
+  instrument: >-
+    Bundesgesetz über die Genehmigung von Weltraumaktivitäten und die Einrichtung eines Weltraumregisters
+    (Weltraumgesetz), BGBl. I Nr. 132/2011
+  provision: § 4(3), second sentence
+  url: https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20007598
+  retrieved: '2026-11-01'
+  language: de
+  excerpt: >-
+    Die Bundesministerin/Der Bundesminister für Verkehr, Innovation und Technologie entscheidet über den
+    Antrag auf Genehmigung ohne unnötigen Aufschub, spätestens aber sechs Monate nach dessen Einlangen.
+  excerpt_en: >-
+    The minister decides on the application without unnecessary delay, at the latest six months after
+    it is received. (Unofficial translation.)
+- id: at.wrg2011.par-4-4
+  instrument: >-
+    Bundesgesetz über die Genehmigung von Weltraumaktivitäten und die Einrichtung eines Weltraumregisters
+    (Weltraumgesetz), BGBl. I Nr. 132/2011
+  provision: § 4(4), first sentence
+  url: https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20007598
+  retrieved: '2026-11-01'
+  language: de
+  excerpt: >-
+    (4) Der Betreiber hat zur Deckung seiner Haftpflicht für Personen- oder Sachschaden eine Haftpflichtversicherung
+    über eine Mindestversicherungssumme von 60 000 000 Euro für jeden Versicherungsfall, ohne Ausschluss
+    oder zeitliche Begrenzung der Nachhaftung, abzuschließen.
+  excerpt_en: >-
+    To cover liability for personal injury or property damage the operator must take out liability insurance
+    with a minimum sum insured of EUR 60,000,000 per insured event, without exclusion or time limit on
+    the tail liability. (Unofficial translation.)
+- id: at.wrg2011.par-5
+  instrument: >-
+    Bundesgesetz über die Genehmigung von Weltraumaktivitäten und die Einrichtung eines Weltraumregisters
+    (Weltraumgesetz), BGBl. I Nr. 132/2011
+  provision: § 5, first sentence
+  url: https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20007598
+  retrieved: '2026-11-01'
+  language: de
+  excerpt: >-
+    Der Betreiber hat dem Stand der Technik entsprechend und unter Berücksichtigung der international
+    anerkannten Richtlinien zur Vermeidung von .
+  excerpt_en: >-
+    The operator must make provision to avoid space debris in line with the state of the art and internationally
+    recognised guidelines. (Unofficial translation.)
+- id: at.wrg2011.par-8
+  instrument: >-
+    Bundesgesetz über die Genehmigung von Weltraumaktivitäten und die Einrichtung eines Weltraumregisters
+    (Weltraumgesetz), BGBl. I Nr. 132/2011
+  provision: § 8
+  url: https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20007598
+  retrieved: '2026-11-01'
+  language: de
+  excerpt: >-
+    Ein Wechsel des Betreibers bedarf der Genehmigung durch die Bundesministerin/den Bundesminister für
+    Verkehr, Innovation und Technologie. Der Betreiberwechsel ist unter den Voraussetzungen des § 4 zu
+    genehmigen.
+  excerpt_en: >-
+    A change of operator requires approval of the minister. It is to be approved under the conditions
+    of section 4. (Unofficial translation.)
+- id: at.wrv2015.par-2-1
+  instrument: Weltraumverordnung, BGBl. II Nr. 36/2015 (as amended by BGBl. II Nr. 90/2018)
+  provision: § 2(1), points 4, 5, 7 and 8
+  url: https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20009102
+  retrieved: '2026-11-01'
+  language: de
+  excerpt: >-
+    (1) Zum Nachweis der nötigen Zuverlässigkeit, Leistungsfähigkeit und Fachkenntnis zur Durchführung
+    der Weltraumaktivität (§ 4 Abs. 1 Z 1 des Weltraumgesetzes) sind vom Betreiber beizulegen: [...] 4.
+    ein Nachweis der finanziellen Leistungsfähigkeit samt Kosten- und Finanzierungsplan der Weltraumaktivität,
+    5. sämtliche Verträge im Zusammenhang mit der Weltraumaktivität, insbesondere Startvertrag und Zulieferverträge,
+    [...] 7. ein Nachweis, welcher die technischen Details der Weltraumaktivität darstellt, insbesondere
+    das angestrebte Frequenzspektrum und die Orbitalposition, die Energieversorgung, die Beschreibung
+    der vorgesehenen Nutzlast, die Kommunikationsstrategie, die technischen Details der Bodenstation,
+    verwendete Technologien auf Subsystemebene und 8. Unterlagen über die Dauer und Beendigung der Weltraumaktivität.
+  excerpt_en: >-
+    To prove reliability, capability and expertise the operator attaches: [...] proof of financial capability
+    with a cost and financing plan of the space activity, all contracts relating to the activity, in particular
+    the launch contract and supplier contracts [...] proof of the technical details of the activity, in
+    particular the intended frequency spectrum and orbital position, power supply, payload description,
+    communication strategy, ground-station details and subsystem technologies, and documents on the duration
+    and end of the activity. (Unofficial translation, abridged.)
+- id: at.wrv2015.par-6-1
+  instrument: Weltraumverordnung, BGBl. II Nr. 36/2015 (as amended by BGBl. II Nr. 90/2018)
+  provision: § 6(1)
+  url: https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20009102
+  retrieved: '2026-11-01'
+  language: de
+  excerpt: >-
+    (1) Der Betreiber hat die Informationen nach § 10 des Weltraumgesetzes und die in Abs. 2 und 3 angeführten
+    Informationen unverzüglich nach dem Start, spätestens aber nach zwei Wochen, sowohl in deutscher als
+    auch in englischer Sprache zu übermitteln.
+  excerpt_en: >-
+    The operator must submit the information under section 10 of the Space Act and the information in
+    paragraphs 2 and 3 immediately after launch, at the latest after two weeks, in both German and English.
+    (Unofficial translation.)
+- id: at.wrv2015.par-8
+  instrument: Weltraumverordnung, BGBl. II Nr. 36/2015 (as amended by BGBl. II Nr. 90/2018)
+  provision: § 8
+  url: https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20009102
+  retrieved: '2026-11-01'
+  language: de
+  excerpt: Die Gebühren für das Genehmigungs- und Registrierungsverfahren betragen 6 500 Euro.
+  excerpt_en: >-
+    The fee for the approval and registration procedure is EUR 6,500. (Unofficial translation.)
+needed_by: launch
+preparation:
+  min_weeks: 8
+  typical_weeks: 16
+  max_weeks: 30
+  basis: estimate
+  note: >-
+    The application file is large (security check, contracts, technical dossier, insurance, end-of-life
+    plan). The planner's own estimate; the law sets no preparation time.
+review:
+  min_weeks: 26
+  typical_weeks: 26
+  max_weeks: 26
+  basis: statutory
+  note: >-
+    The law fixes a maximum of six months from receipt, not a minimum. The plan uses the maximum to be
+    safe; the authority may ask for missing documents during the procedure.
+  cite:
+  - at.wrg2011.par-4-3
+documents:
+- >-
+  Security-check certificate (or reliability check) for the operator or its responsible representative
+  (Weltraumverordnung §2(1) point 1)
+- >-
+  Proof of qualifications, list of previous space-technology activities, proof of financial capability
+  with cost and financing plan (§2(1) points 2 to 4)
+- >-
+  All contracts relating to the activity, in particular the launch contract; if not available at application,
+  say so and give reasons (§2(1) point 5, §4(6))
+- >-
+  Concept of task, purpose and aim, and the technical dossier: frequency spectrum, orbital position, power
+  supply, payload, communication strategy, ground station, subsystems (§2(1) points 6 and 7)
+- >-
+  Documents on duration and end of the activity, space-debris provisions, emergency plans, Earth-observation
+  data and resolution if applicable (§2(1) point 8, §2(2) to (4))
+- >-
+  Evidence of liability insurance of at least EUR 60,000,000 per event, or an application for a reduced
+  sum or exemption for science, research or education (Weltraumgesetz §4(4), Weltraumverordnung §3)
+fees: >-
+  Procedure fee EUR 6,500 for approval and registration (Weltraumverordnung §8). The operator also bears
+  the cost of the security check and of any experts the ministry appoints (§7).
+obligations:
+- id: at-registration-particulars
+  name: Send registration particulars after launch
+  description: >-
+    Send the registry information (Weltraumgesetz §10 plus the extra items in Weltraumverordnung §6) in
+    German and English, immediately after launch and at the latest after two weeks.
+  anchor: launch
+  offset:
+    weeks: 2
+  kind: hard
+  cite:
+  - at.wrv2015.par-6-1
+- id: at-operator-change-approval
+  name: Get approval before changing operator
+  description: >-
+    A change of operator needs the minister's approval, granted under the same conditions as the original
+    approval.
+  anchor: granted
+  kind: soft
+  cite:
+  - at.wrg2011.par-8
+requires_local_presence: false
+status: draft
+last_verified: '2026-11-01'
+sources:
+- title: RIS — Weltraumgesetz (consolidated federal law)
+  url: https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20007598
+  retrieved: '2026-11-01'
+- title: RIS — Weltraumverordnung (consolidated federal law)
+  url: https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20009102
+  retrieved: '2026-11-01'
+- title: BMIMI — Weltraumbehörde
+  url: >-
+    https://www.bmimi.gv.at/themen/innovation/fti-themen/weltraum-und-luftfahrttechnologien/weltraum/oesterreich/weltraumbehoerde.html
+  retrieved: '2026-11-01'

@@ -1,0 +1,38 @@
+id: at
+name: Austria
+kind: national
+country: AT
+summary: >-
+  Space activities need the approval of the federal minister responsible for space, exercised by the Weltraumbehörde
+  in the Federal Ministry for Innovation, Mobility and Infrastructure (BMIMI), under the Weltraumgesetz
+  of 2011 and the Weltraumverordnung of 2015. Austria also keeps a national register of space objects.
+  Only the space-activity approval is covered here: Austria's frequency and ITU filing route has not yet
+  been researched.
+authorities:
+- id: at-weltraumbehoerde
+  name: Weltraumbehörde, Bundesministerium für Innovation, Mobilität und Infrastruktur (BMIMI)
+  name_en: Austrian Space Authority, Federal Ministry for Innovation, Mobility and Infrastructure
+  roles:
+  - space_activity_licensing
+  - registration
+  website: >-
+    https://www.bmimi.gv.at/themen/innovation/fti-themen/weltraum-und-luftfahrttechnologien/weltraum/oesterreich/weltraumbehoerde.html
+  contacts:
+  - kind: web
+    value: >-
+      https://www.bmimi.gv.at/themen/innovation/fti-themen/weltraum-und-luftfahrttechnologien/weltraum/oesterreich/weltraumbehoerde.html
+    purpose: >-
+      Department III/6 (Weltraumangelegenheiten und Luftfahrttechnologien) lists its staff and direct
+      contacts here.
+    source:
+      title: BMIMI — Weltraumbehörde
+      url: >-
+        https://www.bmimi.gv.at/themen/innovation/fti-themen/weltraum-und-luftfahrttechnologien/weltraum/oesterreich/weltraumbehoerde.html
+      retrieved: '2026-11-01'
+  notes: >-
+    The laws still name the "Bundesministerin/Bundesminister für Verkehr, Innovation und Technologie";
+    the ministry has since been renamed and the BMIMI site presents itself as the Austrian space ministry
+    and, as Weltraumbehörde, the body that approves and supervises space activities and registers space
+    objects.
+status: draft
+last_verified: '2026-11-01'

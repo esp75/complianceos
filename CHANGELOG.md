@@ -28,6 +28,10 @@ All notable changes to ComplianceOS are documented here. Format: [Keep a Changel
 - Per-workspace Watch alert recipients (`GET`/`PUT /alerts/recipients`) and a Workspace page with
   the recipients editor and the pilot usage report. The deployment-wide list is the fallback.
 
+- Austria joins the knowledge pack (draft): the space activity approval under the Weltraumgesetz
+  and Weltraumverordnung, read from the RIS open-data API, with the BMIMI Weltraumbehörde as the
+  authority. Germany is not covered: it has no general space law and its routes are unresearched.
+
 ### Changed
 - `POST /watch/run` allows one run at a time (409) and one per minute per process (429).
 - `verify_history` checks the fingerprint matches the embedded key and accepts a

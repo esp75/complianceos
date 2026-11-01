@@ -53,6 +53,26 @@ excerpt against an exact copy and say so here.
 - FCC Space Bureau and NOAA CRSRA pages for authority descriptions and contact pages.
 - **Needs a human:** FCC processing times are estimates (no regulatory time limit).
 
+### Austria
+- Weltraumgesetz (BGBl. I Nr. 132/2011) §§1, 3, 4, 5, 8 and Weltraumverordnung (BGBl. II Nr. 36/2015,
+  as amended by BGBl. II Nr. 90/2018) §§2, 6, 8 read from the RIS open-data API
+  (`data.bka.gv.at/ris/api`, per-paragraph XML) on 1 November 2026 and quoted from that text.
+  `ris.bka.gv.at` itself refuses automated requests (HTTP 503), so the cited URLs are the
+  consolidated-law pages for people; the Watch will report them unreachable until a fetchable
+  route is found.
+- Authority: the BMIMI "Weltraumbehörde" page (Department III/6) states that it approves and
+  supervises space activities and keeps the register. The laws still name the "Bundesministerin/
+  Bundesminister für Verkehr, Innovation und Technologie"; the ministry has been renamed.
+  Named staff and direct lines are published on that page but deliberately not copied here.
+- Timing: the six-month decision limit (§4(3)) is the only statutory figure. Preparation time is
+  the planner's estimate.
+- **Not covered:** Austria's frequency assignment and ITU filing route, the Weltraumregister
+  procedure beyond the post-launch submission, and any sectoral approvals (e.g. Earth observation
+  data rules). **Germany is not covered at all**: it has no general space-activity law and its
+  routes (frequency assignment, satellite data security law) have not been researched.
+- **Needs a human:** confirm the BMIMI is the competent authority in practice and that §13
+  (supervision, current version) and the fee in §8 have not been amended since 2018.
+
 ### Facilitators
 - Each firm's description is taken from its own website or publication, linked in `source`.
 - Listing is neutral: no ranking and no paid placement. To be listed, corrected or removed, open

@@ -12,7 +12,7 @@ import { BANDS, COUNTRIES, ORBITS, SERVICES, countryName } from "@/lib/labels";
 import type { FrequencyBand, MissionProfile, OrbitRegime, RadioService, Roadmap } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-const COVERED = ["FR", "GB", "LU", "US"];
+const COVERED = ["AT", "FR", "GB", "LU", "US"];
 const STEPS = ["Operator", "Spacecraft & orbit", "Spectrum & services", "Markets & launch"] as const;
 
 export function emptyProfile(): MissionProfile {

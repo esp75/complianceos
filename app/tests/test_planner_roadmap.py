@@ -176,6 +176,22 @@ def test_lu_obligations_are_dated() -> None:
     assert len(annual) == 10 and annual[1].due.year == annual[0].due.year + 1
 
 
+def test_austrian_operator_gets_the_space_approval_and_it_is_dated_and_cited() -> None:
+    m = mission(operator_country="AT")
+    assert "at-space-activity-authorisation" in ids(m)
+    r = build_roadmap(KB, m, TODAY)
+    item = next(i for i in r.items if i.license_id == "at-space-activity-authorisation")
+    assert item.review.basis == "statutory" and item.review.typical_weeks == 26
+    reg = next(o for o in item.obligations if o.id == "at-registration-particulars")
+    assert reg.when == "2 weeks after launch"
+    assert {"at.wrg2011.par-4-3", "at.wrv2015.par-8"} <= set(r.citations)
+
+
+def test_austrian_launch_or_control_also_triggers_it_for_a_foreign_operator() -> None:
+    assert "at-space-activity-authorisation" in ids(mission(operator_country="LU", control_country="AT"))
+    assert "at-space-activity-authorisation" not in ids(mission(operator_country="LU"))
+
+
 # --- brief ---
 
 class FakeLLM:
