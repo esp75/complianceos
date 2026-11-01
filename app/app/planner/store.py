@@ -84,6 +84,12 @@ CREATE TABLE IF NOT EXISTS planner_usage_event (
 );
 CREATE INDEX IF NOT EXISTS planner_usage_ws_idx ON planner_usage_event (workspace, at);
 
+CREATE TABLE IF NOT EXISTS planner_alert_recipients (
+    workspace   TEXT PRIMARY KEY,
+    recipients  TEXT[] NOT NULL DEFAULT '{}',
+    updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 CREATE TABLE IF NOT EXISTS planner_contact (
     id              BIGSERIAL PRIMARY KEY,
     application_id  TEXT NOT NULL REFERENCES planner_application (id) ON DELETE CASCADE,
@@ -148,6 +154,8 @@ class PlannerStore(Protocol):
     async def create_mission(self, workspace: str, profile: MissionProfile) -> Mission: ...
     async def list_workspaces(self) -> list[str]: ...
     async def add_usage_event(self, workspace: str, actor: str, kind: str, at: dt.datetime) -> None: ...
+    async def alert_recipients(self, workspace: str) -> list[str]: ...
+    async def set_alert_recipients(self, workspace: str, recipients: list[str]) -> None: ...
     async def usage_events(self, workspace: str, since: dt.datetime) -> list[tuple[str, dt.datetime]]: ...
     async def last_history_root(self, workspace: str) -> str | None: ...
     async def add_history_checkpoint(self, workspace: str, merkle_root: str, prev_root: str | None,
@@ -193,6 +201,7 @@ class MemoryPlannerStore:
         self._watch_changes: list[WatchChange] = []
         self._checkpoints: list[tuple[str, str, str | None, int]] = []
         self._usage: list[tuple[str, str, str, dt.datetime]] = []
+        self._recipients: dict[str, list[str]] = {}
         self._seq = itertools.count(1)
 
     def _owns(self, workspace: str, mission_id: str) -> bool:
@@ -213,6 +222,12 @@ class MemoryPlannerStore:
 
     async def add_usage_event(self, workspace: str, actor: str, kind: str, at: dt.datetime) -> None:
         self._usage.append((workspace, actor, kind, at))
+
+    async def alert_recipients(self, workspace: str) -> list[str]:
+        return list(self._recipients.get(workspace, []))
+
+    async def set_alert_recipients(self, workspace: str, recipients: list[str]) -> None:
+        self._recipients[workspace] = list(recipients)
 
     async def usage_events(self, workspace: str, since: dt.datetime) -> list[tuple[str, dt.datetime]]:
         return [(k, at) for w, _, k, at in self._usage if w == workspace and at >= since]
@@ -374,6 +389,17 @@ class PostgresPlannerStore:
         await self._p().execute(
             "INSERT INTO planner_usage_event (workspace, actor, kind, at) VALUES ($1, $2, $3, $4)",
             workspace, actor, kind, at)
+
+    async def alert_recipients(self, workspace: str) -> list[str]:
+        row = await self._p().fetchval(
+            "SELECT recipients FROM planner_alert_recipients WHERE workspace = $1", workspace)
+        return [] if row is None else [str(r) for r in row]
+
+    async def set_alert_recipients(self, workspace: str, recipients: list[str]) -> None:
+        await self._p().execute(
+            "INSERT INTO planner_alert_recipients (workspace, recipients) VALUES ($1, $2) "
+            "ON CONFLICT (workspace) DO UPDATE SET recipients = EXCLUDED.recipients, "
+            "updated_at = now()", workspace, recipients)
 
     async def usage_events(self, workspace: str, since: dt.datetime) -> list[tuple[str, dt.datetime]]:
         rows = await self._p().fetch(

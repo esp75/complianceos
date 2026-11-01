@@ -30,3 +30,6 @@ export type JurisdictionSummary = S["JurisdictionSummary"];
 export type OrbitRegime = S["OrbitRegime"];
 export type RadioService = S["RadioService"];
 export type FrequencyBand = S["FrequencyBand"];
+
+export type UsageSummary = S["UsageSummary"];
+export type Recipients = S["RecipientsOut"];

@@ -146,3 +146,15 @@ async def test_usage_events_round_trip(store: PlannerStore) -> None:
     got = await store.usage_events(w, at - dt.timedelta(days=1))
     assert [(k, a) for k, a in got] == [("session_start", at)]
     assert await store.usage_events(w, at + dt.timedelta(days=1)) == []
+
+
+async def test_alert_recipients_are_per_workspace(store: PlannerStore) -> None:
+    a, b = f"w-{uuid.uuid4().hex}", f"w-{uuid.uuid4().hex}"
+    assert await store.alert_recipients(a) == []
+    await store.set_alert_recipients(a, ["ops@a.eu", "legal@a.eu"])
+    await store.set_alert_recipients(b, ["x@b.eu"])
+    await store.set_alert_recipients(b, ["y@b.eu"])  # replaces
+    assert await store.alert_recipients(a) == ["ops@a.eu", "legal@a.eu"]
+    assert await store.alert_recipients(b) == ["y@b.eu"]
+    await store.set_alert_recipients(a, [])
+    assert await store.alert_recipients(a) == []

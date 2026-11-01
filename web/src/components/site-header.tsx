@@ -5,6 +5,7 @@ const NAV = [
   { href: "/", label: "Missions" },
   { href: "/directory", label: "Directory" },
   { href: "/data", label: "Data & sources" },
+  { href: "/workspace", label: "Workspace" },
 ];
 
 export function SiteHeader() {

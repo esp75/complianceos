@@ -10,6 +10,7 @@ import type {
   JurisdictionOut,
   Mission,
   MissionProfile,
+  Recipients,
   Roadmap,
   TrackedApplication,
   WatchRun,
@@ -93,6 +94,8 @@ export const api = {
     request<TrackedApplication>(`/applications/${id}`, { method: "PATCH", body: JSON.stringify(patch) }),
   addContact: (id: string, contact: ContactIn) =>
     request<Contact>(`/applications/${id}/contacts`, { method: "POST", body: JSON.stringify(contact) }),
+  setRecipients: (recipients: string[]) =>
+    request<Recipients>("/alerts/recipients", { method: "PUT", body: JSON.stringify({ recipients }) }),
   runWatch: () => request<WatchRun>("/watch/run", { method: "POST" }),
   introEmail: (missionId: string, licenseId: string, recipient: string) =>
     request<EmailDraft>(`/missions/${missionId}/intro-email`, {
@@ -110,6 +113,8 @@ export const paths = {
   watch: (id: string) => `/missions/${id}/watch`,
   events: (appId: string) => `/applications/${appId}/events`,
   contacts: (appId: string) => `/applications/${appId}/contacts`,
+  recipients: "/alerts/recipients",
+  usage: (days: number) => `/usage/summary?days=${days}`,
   jurisdictions: "/knowledge/jurisdictions",
   facilitators: "/knowledge/facilitators",
   calendar: (id: string) => `${API}/missions/${id}/calendar.ics`,

@@ -39,6 +39,7 @@ from app.clients.openfga import OpenFGAClient
 from app.config import get_settings
 from app.l4.citations import CitationError
 from app.llm.base import LLMError, LLMProvider
+from app.planner.alerts import clean_recipients
 from app.planner.brief import Brief, build_brief
 from app.planner.classify import make_classifier
 from app.planner.digest import WatchItem, watch_items
@@ -568,6 +569,32 @@ async def mission_history(mission_id: str, p: Read, store: Store,
 
 UsageKind = Literal["session_start", "mission_viewed", "watch_viewed", "alert_opened",
                     "dossier_exported"]
+
+
+class RecipientsIn(BaseModel):
+    recipients: list[str]
+
+
+class RecipientsOut(BaseModel):
+    recipients: list[str]
+    fallback_to_deployment_list: bool
+
+
+@router.get("/alerts/recipients")
+async def get_alert_recipients(p: Read, store: Store) -> RecipientsOut:
+    """Who receives this workspace's Watch digest. Empty means the deployment-wide list is used."""
+    own = await store.alert_recipients(p.workspace)
+    return RecipientsOut(recipients=own, fallback_to_deployment_list=not own)
+
+
+@router.put("/alerts/recipients")
+async def set_alert_recipients(body: RecipientsIn, p: Write, store: Store) -> RecipientsOut:
+    try:
+        cleaned = clean_recipients(body.recipients)
+    except ValueError as exc:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, str(exc)) from exc
+    await store.set_alert_recipients(p.workspace, cleaned)
+    return RecipientsOut(recipients=cleaned, fallback_to_deployment_list=not cleaned)
 
 
 class UsageIn(BaseModel):

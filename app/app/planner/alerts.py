@@ -6,6 +6,7 @@ which tracked applications cite it; like the Watch it draws no conclusion beyond
 from __future__ import annotations
 
 import asyncio
+import re
 import smtplib
 import ssl
 from collections.abc import Callable
@@ -15,6 +16,24 @@ from pydantic import BaseModel
 
 from app.config import Settings
 from app.planner.digest import WatchItem
+
+MAX_RECIPIENTS = 20
+_EMAIL = re.compile(r"^[^\s@<>,;\"']+@[^\s@<>,;\"']+\.[^\s@<>,;\"']+$")
+
+
+def clean_recipients(raw: list[str]) -> list[str]:
+    """Lower-cased, de-duplicated addresses. Raises ValueError on anything that is not a plain
+    address (no names, no lists, no whitespace), so a value can never add mail headers."""
+    out: list[str] = []
+    for r in raw:
+        addr = r.strip().lower()
+        if len(addr) > 254 or not _EMAIL.match(addr):
+            raise ValueError(f"not a plain email address: {r[:60]!r}")
+        if addr not in out:
+            out.append(addr)
+    if len(out) > MAX_RECIPIENTS:
+        raise ValueError(f"at most {MAX_RECIPIENTS} recipients")
+    return out
 
 
 class AlertConfig(BaseModel):
@@ -29,9 +48,10 @@ class AlertConfig(BaseModel):
 
     @classmethod
     def from_settings(cls, s: Settings) -> AlertConfig | None:
-        """None when alerts are not fully configured (no host, sender or recipients)."""
+        """None when mail is not configured (no host or sender). The deployment recipients are a
+        fallback and may be empty: workspaces can set their own."""
         recipients = [r.strip() for r in s.alert_recipients.split(",") if r.strip()]
-        if not (s.smtp_host and s.alert_from and recipients):
+        if not (s.smtp_host and s.alert_from):
             return None
         return cls(host=s.smtp_host, port=s.smtp_port, user=s.smtp_user, password=s.smtp_password,
                    security=s.smtp_security, sender=s.alert_from, recipients=recipients,

@@ -565,3 +565,51 @@ async def test_manual_run_is_rate_limited_and_not_concurrent(client: httpx.Async
         assert (await client.post("/watch/run")).status_code == 409
     finally:
         lock.release()
+
+
+# --- per-workspace alert recipients ---
+
+async def test_recipients_api_validates_and_cleans(client: httpx.AsyncClient) -> None:
+    got = (await client.get("/alerts/recipients")).json()
+    assert got == {"recipients": [], "fallback_to_deployment_list": True}
+    ok = await client.put("/alerts/recipients",
+                          json={"recipients": [" Ops@Client.eu ", "ops@client.eu", "b@c.eu"]})
+    assert ok.status_code == 200 and ok.json()["recipients"] == ["ops@client.eu", "b@c.eu"]
+    assert (await client.get("/alerts/recipients")).json()["fallback_to_deployment_list"] is False
+    for bad in (["a@b.eu\nBcc: x@y.eu"], ["Name <a@b.eu>"], ["a@b.eu, c@d.eu"], ["nope"],
+                [f"u{i}@x.eu" for i in range(21)]):
+        assert (await client.put("/alerts/recipients", json={"recipients": bad})).status_code == 422
+
+
+async def test_digest_goes_to_each_workspaces_own_recipients(
+        monkeypatch: pytest.MonkeyPatch, pages: dict[str, str]) -> None:
+    from app.planner import alerts as alerts_mod
+    from app.planner.sample import sample_mission
+    from app.planner.watch import _alert
+
+    monkeypatch.setenv("CELESTIA_SMTP_HOST", "smtp.test")
+    monkeypatch.setenv("CELESTIA_ALERT_FROM", "watch@x.eu")
+    monkeypatch.setenv("CELESTIA_ALERT_RECIPIENTS", "default@x.eu")
+    get_settings.cache_clear()
+    store = MemoryPlannerStore()
+    for ws in ("tenant-a", "tenant-b", "tenant-c"):
+        m = await store.create_mission(ws, sample_mission(NOW.date()))
+        await store.create_application(ws, m.id, WATCHED_LICENSE)
+    await store.set_alert_recipients("tenant-a", ["a@a.eu"])
+    await store.set_alert_recipients("tenant-b", ["b@b.eu"])  # tenant-c falls back to default
+
+    await run_watch(KB, store, FakeFetcher(pages), NOW, host_interval=0)
+    moved = sorted(str(c.url) for c in KB.licenses[WATCHED_LICENSE].legal_basis)[0]
+    pages[moved] = page("new wording after an amendment")
+    summary = await run_watch(KB, store, FakeFetcher(pages), LATER, host_interval=0)
+
+    sent: list[tuple[str, ...]] = []
+
+    async def fake_send(cfg: AlertConfig, items: list[object], sender: object = None) -> bool:
+        sent.append(tuple(cfg.recipients))
+        return True
+
+    monkeypatch.setattr(alerts_mod, "send_digest", fake_send)
+    assert await _alert(KB, store, summary) == 0
+    assert sorted(sent) == [("a@a.eu",), ("b@b.eu",), ("default@x.eu",)]
+    get_settings.cache_clear()

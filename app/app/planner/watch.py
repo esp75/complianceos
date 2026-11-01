@@ -399,18 +399,31 @@ async def _alert(kb: KnowledgeBase, store: PlannerStore, summary: RunSummary) ->
 
     cfg = AlertConfig.from_settings(get_settings())
     if cfg is None:
-        print("alerts are not configured (CELESTIA_SMTP_HOST, _ALERT_FROM, _ALERT_RECIPIENTS)",
+        print("alerts are not configured (CELESTIA_SMTP_HOST and _ALERT_FROM)",
               file=sys.stderr)
         return 2
-    items = []
+    failed = False
+    sent_items = 0
     for workspace in await store.list_workspaces():
-        items.extend(await watch_items(store, workspace, kb, None, changes=summary.changes))
-    try:
-        sent = await send_digest(cfg, items)
-    except (OSError, smtplib.SMTPException) as exc:
-        print(f"alert email failed ({type(exc).__name__}); changes are recorded", file=sys.stderr)
+        items = await watch_items(store, workspace, kb, None, changes=summary.changes)
+        if not items:
+            continue
+        # A workspace's own recipients win; the deployment list is only the fallback, so one
+        # tenant's digest goes to another tenant's people only if nobody configured otherwise.
+        own = await store.alert_recipients(workspace)
+        target = cfg.model_copy(update={"recipients": own}) if own else cfg
+        if not target.recipients:
+            continue
+        try:
+            if await send_digest(target, items):
+                sent_items += len(items)
+        except (OSError, smtplib.SMTPException) as exc:
+            failed = True
+            print(f"alert email failed for a workspace ({type(exc).__name__}); changes are recorded",
+                  file=sys.stderr)
+    if failed:
         return 1
-    print(f"alert sent: {len(items)} item(s)" if sent else "no tracked application affected; no alert")
+    print(f"alert sent: {sent_items} item(s)" if sent_items else "no tracked application affected; no alert")
     return 0
 
 
