@@ -21,6 +21,17 @@ All notable changes to ComplianceOS are documented here. Format: [Keep a Changel
 - Dossier (ADR-0022): "Likely friction points" and "Who decides" sections, both citation-enforced;
   a basis label (statute, practice, estimate, derived) on risk and path paragraphs; a Markdown
   reviewer package with a per-licence checklist (`GET /missions/{id}/dossier.md`).
+- Signed dossier: the Ed25519 signature now covers the roadmap **and** the brief (friction points,
+  decision makers, basis labels), not the roadmap alone. `GET /missions/{id}/dossier.signed.json`
+  serves the signed data; the Markdown package ends with the SHA-256 and signature. The PDF's
+  attachment is now `dossier-signed.json` (format `complianceos-dossier/1`).
+- Per-workspace Watch alert recipients (`GET`/`PUT /alerts/recipients`) and a Workspace page with
+  the recipients editor and the pilot usage report. The deployment-wide list is the fallback.
+
+### Changed
+- `POST /watch/run` allows one run at a time (409) and one per minute per process (429).
+- `verify_history` checks the fingerprint matches the embedded key and accepts a
+  `trusted_fingerprint` to pin the signer; the embedded key alone proves integrity, not origin.
 
 ## [0.2.0] — 2026-05-15 — "Stand on Giants"
 

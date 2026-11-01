@@ -28,7 +28,7 @@ from app.api.trust.signing import sign
 from app.planner.brief import Brief
 from app.planner.plan import Deadline, Roadmap, RoadmapItem
 
-SIDECAR_NAME = "roadmap-signed.json"
+SIDECAR_NAME = "dossier-signed.json"
 _DISCLAIMER = ("Information, not legal advice. Records marked draft have been researched from "
                "official sources but not yet reviewed by a licensing practitioner. Confirm "
                "requirements with the competent authority before acting.")
@@ -110,9 +110,29 @@ class SignatureInfo(BaseModel):
     note: str
 
 
-def canonical_roadmap(roadmap: Roadmap) -> bytes:
-    return json.dumps(roadmap.model_dump(mode="json"), sort_keys=True, separators=(",", ":"),
-                      ensure_ascii=False).encode("utf-8")
+DOSSIER_FORMAT = "complianceos-dossier/1"
+
+
+def canonical_dossier(roadmap: Roadmap, brief: Brief) -> bytes:
+    """The bytes that are signed: the roadmap and the cited brief sections, together, so a
+    delivered dossier cannot have its prose (friction points, decision makers, basis labels)
+    changed without the signature breaking."""
+    doc = {"format": DOSSIER_FORMAT, "roadmap": roadmap.model_dump(mode="json"),
+           "brief": brief.model_dump(mode="json")}
+    return json.dumps(doc, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+
+
+def signed_document(roadmap: Roadmap, brief: Brief, *, workspace: str,
+                    keystore: KeyStore | None) -> tuple[bytes, SignatureInfo, dict[str, Any]]:
+    """(sidecar JSON bytes, signature info, signature fields). The sidecar holds the signed
+    content plus ``sha256`` and, when a key is configured, ``signature_hex`` and
+    ``public_key_hex``: enough to verify offline."""
+    payload = canonical_dossier(roadmap, brief)
+    info, sig = _sign(payload, keystore, workspace)
+    content = json.loads(payload)
+    sidecar = json.dumps({**content, "sha256": info.sha256, **sig}, sort_keys=True,
+                         separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    return sidecar, info, sig
 
 
 def _sign(payload: bytes, keystore: KeyStore | None, workspace: str) -> tuple[SignatureInfo, dict[str, Any]]:
@@ -180,8 +200,7 @@ def _item_block(pdf: FPDF, r: Roadmap, i: RoadmapItem) -> None:
 
 def dossier_pdf(roadmap: Roadmap, brief: Brief, *, workspace: str,
                 keystore: KeyStore | None) -> tuple[bytes, SignatureInfo]:
-    payload = canonical_roadmap(roadmap)
-    info, sig = _sign(payload, keystore, workspace)
+    sidecar, info, _ = signed_document(roadmap, brief, workspace=workspace, keystore=keystore)
 
     pdf = _Doc()
     when = dt.datetime.combine(roadmap.generated_on, dt.time(), tzinfo=dt.UTC)
@@ -217,16 +236,15 @@ def dossier_pdf(roadmap: Roadmap, brief: Brief, *, workspace: str,
 
     _h(pdf, "Integrity")
     pdf.set_font("Courier", "", 7)
-    pdf.multi_cell(0, 4, f"Roadmap SHA-256: {info.sha256}", new_x="LMARGIN", new_y="NEXT",
+    pdf.multi_cell(0, 4, f"Dossier SHA-256: {info.sha256}", new_x="LMARGIN", new_y="NEXT",
                    wrapmode=WrapMode.CHAR)
     if info.signed:
         pdf.multi_cell(0, 4, f"Ed25519 key fingerprint: {info.fingerprint}", new_x="LMARGIN",
                        new_y="NEXT", wrapmode=WrapMode.CHAR)
-    _p(pdf, f"{info.note} The attached '{SIDECAR_NAME}' holds the exact roadmap"
-            f"{', signature and public key' if info.signed else ''} so it can be checked offline.", 8)
+    _p(pdf, f"{info.note} The attached '{SIDECAR_NAME}' holds the exact roadmap and"
+            f" brief{', signature and public key' if info.signed else ''} so it can be checked"
+            " offline.", 8)
 
-    sidecar = json.dumps({"roadmap": json.loads(payload), "sha256": info.sha256, **sig},
-                         sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
     pdf.embed_file(bytes=sidecar, basename=SIDECAR_NAME, mime_type="application/json",
                    creation_date=when, modification_date=when)
     return bytes(pdf.output()), info

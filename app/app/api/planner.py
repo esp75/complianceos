@@ -43,7 +43,7 @@ from app.planner.alerts import clean_recipients
 from app.planner.brief import Brief, build_brief
 from app.planner.classify import make_classifier
 from app.planner.digest import WatchItem, watch_items
-from app.planner.exports import EmailDraft, calendar_ics, dossier_pdf, intro_email
+from app.planner.exports import EmailDraft, calendar_ics, dossier_pdf, intro_email, signed_document
 from app.planner.history import HistoryDocument, build_history
 from app.planner.knowledge import Facilitator, Jurisdiction, KnowledgeBase, License
 from app.planner.mission import MissionProfile
@@ -476,13 +476,48 @@ async def mission_dossier(
     return Response(content=pdf, media_type="application/pdf", headers=headers)
 
 
-@router.get("/missions/{mission_id}/dossier.md")
-async def mission_review_package(mission_id: str, p: Read, store: Store, kb: KB, today: Today) -> Response:
-    """The dossier as Markdown with a reviewer checklist, stable between exports (ADR-0022)."""
+@router.get("/missions/{mission_id}/dossier.signed.json")
+async def mission_signed_dossier(
+    mission_id: str, p: Read, store: Store, kb: KB, today: Today,
+    keystore: Annotated[KeyStore | None, Depends(get_planner_keystore)],
+) -> Response:
+    """The signed deliverable on its own: roadmap and brief, SHA-256, and (with a key configured)
+    the Ed25519 signature and public key. Check it offline against the key fingerprint you were
+    given separately; the embedded key alone proves integrity, not who signed."""
     m = await _mission(store, p, mission_id)
     roadmap = build_roadmap(kb, m.profile, today)
-    return Response(content=dossier_markdown(roadmap, await build_brief(roadmap)),
-                    media_type="text/markdown; charset=utf-8", headers={
+    sidecar, info, _ = signed_document(roadmap, await build_brief(roadmap),
+                                       workspace=p.workspace, keystore=keystore)
+    headers = {"Content-Disposition": f'attachment; filename="dossier-signed-{mission_id[:8]}.json"',
+               "X-Dossier-Signed": "true" if info.signed else "false"}
+    if info.fingerprint:
+        headers["X-Dossier-Key-Fingerprint"] = info.fingerprint
+    return Response(content=sidecar, media_type="application/json", headers=headers)
+
+
+@router.get("/missions/{mission_id}/dossier.md")
+async def mission_review_package(
+    mission_id: str, p: Read, store: Store, kb: KB, today: Today,
+    keystore: Annotated[KeyStore | None, Depends(get_planner_keystore)],
+) -> Response:
+    """The dossier as Markdown with a reviewer checklist, stable between exports (ADR-0022). Ends
+    with the SHA-256 and signature of the dossier the text was rendered from."""
+    m = await _mission(store, p, mission_id)
+    roadmap = build_roadmap(kb, m.profile, today)
+    brief = await build_brief(roadmap)
+    _, info, sig = signed_document(roadmap, brief, workspace=p.workspace, keystore=keystore)
+    integrity = ["", "## Integrity", "",
+                 "The signature covers the dossier data (roadmap and brief) this text was rendered "
+                 "from, not the Markdown itself. Compare the fingerprint with one you were given "
+                 "separately; fetch `dossier.signed.json` to verify it offline.", "",
+                 f"- SHA-256: `{info.sha256}`"]
+    if info.signed:
+        integrity += [f"- Ed25519 key fingerprint: `{info.fingerprint}`",
+                      f"- Signature: `{sig['signature_hex']}`"]
+    else:
+        integrity.append("- Unsigned: no signing key is configured on this server.")
+    body = dossier_markdown(roadmap, brief).rstrip("\n") + "\n" + "\n".join(integrity) + "\n"
+    return Response(content=body, media_type="text/markdown; charset=utf-8", headers={
         "Content-Disposition": f'attachment; filename="licensing-review-{mission_id[:8]}.md"'})
 
 

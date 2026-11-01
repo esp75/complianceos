@@ -98,8 +98,13 @@ export default function MissionPage({ params }: { params: { id: string } }) {
             </a>
           </Button>
           <Button asChild size="sm">
-            <a href={paths.reviewPackage(id)}>
+            <a href={paths.reviewPackage(id)} onClick={() => recordUsage("dossier_exported")}>
               <FileDown /> Review package
+            </a>
+          </Button>
+          <Button asChild size="sm">
+            <a href={paths.signedDossier(id)} onClick={() => recordUsage("dossier_exported")}>
+              <FileDown /> Signed data (JSON)
             </a>
           </Button>
           {confirmDelete ? (

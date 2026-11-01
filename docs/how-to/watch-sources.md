@@ -23,6 +23,10 @@ PDF, say), and `unreachable` means the source did not answer. PDFs with text are
 
 Run it daily from cron (or a compose job with the same command):
 
+**Who gets the email.** Each workspace sets its own recipients on the Workspace page (or
+`PUT /alerts/recipients`): its digest goes only to them. A workspace with none set falls back to
+`CELESTIA_ALERT_RECIPIENTS`, so on a shared deployment have every client set their own list.
+
 ```cron
 30 6 * * *  cd /path/to/complianceOSv0.2/app && uv run python -m app.planner.watch run >> /var/log/watch.log 2>&1
 ```
@@ -37,7 +41,7 @@ CELESTIA_SMTP_HOST=smtp.example.eu
 CELESTIA_SMTP_PORT=587            # starttls; use CELESTIA_SMTP_SECURITY=ssl for port 465
 CELESTIA_SMTP_USER=...  CELESTIA_SMTP_PASSWORD=...
 CELESTIA_ALERT_FROM=watch@example.eu
-CELESTIA_ALERT_RECIPIENTS=you@example.eu,colleague@example.eu
+CELESTIA_ALERT_RECIPIENTS=you@example.eu,colleague@example.eu   # fallback only, see below
 CELESTIA_PUBLIC_WEB_URL=https://planner.example.eu   # optional, for the link in the email
 ```
 

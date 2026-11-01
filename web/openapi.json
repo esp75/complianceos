@@ -2408,13 +2408,86 @@
     }
    }
   },
+  "/missions/{mission_id}/dossier.signed.json": {
+   "get": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "Mission Signed Dossier",
+    "description": "The signed deliverable on its own: roadmap and brief, SHA-256, and (with a key configured)\nthe Ed25519 signature and public key. Check it offline against the key fingerprint you were\ngiven separately; the embedded key alone proves integrity, not who signed.",
+    "operationId": "mission_signed_dossier_missions__mission_id__dossier_signed_json_get",
+    "parameters": [
+     {
+      "name": "mission_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Mission Id"
+      }
+     },
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/missions/{mission_id}/dossier.md": {
    "get": {
     "tags": [
      "planner"
     ],
     "summary": "Mission Review Package",
-    "description": "The dossier as Markdown with a reviewer checklist, stable between exports (ADR-0022).",
+    "description": "The dossier as Markdown with a reviewer checklist, stable between exports (ADR-0022). Ends\nwith the SHA-256 and signature of the dossier the text was rendered from.",
     "operationId": "mission_review_package_missions__mission_id__dossier_md_get",
     "parameters": [
      {

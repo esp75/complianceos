@@ -543,6 +543,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/missions/{mission_id}/dossier.signed.json": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Mission Signed Dossier
+         * @description The signed deliverable on its own: roadmap and brief, SHA-256, and (with a key configured)
+         *     the Ed25519 signature and public key. Check it offline against the key fingerprint you were
+         *     given separately; the embedded key alone proves integrity, not who signed.
+         */
+        get: operations["mission_signed_dossier_missions__mission_id__dossier_signed_json_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/missions/{mission_id}/dossier.md": {
         parameters: {
             query?: never;
@@ -552,7 +574,8 @@ export interface paths {
         };
         /**
          * Mission Review Package
-         * @description The dossier as Markdown with a reviewer checklist, stable between exports (ADR-0022).
+         * @description The dossier as Markdown with a reviewer checklist, stable between exports (ADR-0022). Ends
+         *     with the SHA-256 and signature of the dossier the text was rendered from.
          */
         get: operations["mission_review_package_missions__mission_id__dossier_md_get"];
         put?: never;
@@ -3266,6 +3289,40 @@ export interface operations {
         };
     };
     mission_dossier_missions__mission_id__dossier_pdf_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-workspace"?: string | null;
+                authorization?: string | null;
+            };
+            path: {
+                mission_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    mission_signed_dossier_missions__mission_id__dossier_signed_json_get: {
         parameters: {
             query?: never;
             header?: {

@@ -119,6 +119,7 @@ export const paths = {
   facilitators: "/knowledge/facilitators",
   calendar: (id: string) => `${API}/missions/${id}/calendar.ics`,
   dossier: (id: string) => `${API}/missions/${id}/dossier.pdf`,
+  signedDossier: (id: string) => `${API}/missions/${id}/dossier.signed.json`,
   reviewPackage: (id: string) => `${API}/missions/${id}/dossier.md`,
 };
 

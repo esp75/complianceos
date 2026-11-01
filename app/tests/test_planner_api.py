@@ -16,7 +16,7 @@ from app.api.trust.keystore import DerivedKeyStore
 from app.api.trust.signing import verify
 from app.config import get_settings
 from app.planner.brief import build_brief
-from app.planner.exports import SIDECAR_NAME, canonical_roadmap, dossier_pdf
+from app.planner.exports import SIDECAR_NAME, dossier_pdf
 from app.planner.knowledge import load_knowledge
 from app.planner.plan import build_roadmap
 from app.planner.sample import sample_mission
@@ -195,13 +195,43 @@ async def test_dossier_pdf_signed_and_verifiable(client: httpx.AsyncClient) -> N
 
     roadmap = build_roadmap(KB, sample_mission(TODAY), TODAY)
     keystore = DerivedKeyStore(b"test-seed")
-    pdf, info = dossier_pdf(roadmap, await build_brief(roadmap), workspace="local", keystore=keystore)
+    _, info = dossier_pdf(roadmap, await build_brief(roadmap), workspace="local", keystore=keystore)
     assert info.signed and info.fingerprint == keystore.fingerprint("workspace:local")
-    from app.planner.exports import _sign
 
-    _, sig = _sign(canonical_roadmap(roadmap), keystore, "local")
-    assert verify(canonical_roadmap(roadmap), bytes.fromhex(sig["signature_hex"]),
-                  keystore.public_key("workspace:local"))
+
+def _verify_sidecar(doc: dict[str, object]) -> bool:
+    """What an outside checker does: rebuild the signed bytes from the document's own content."""
+    import json
+
+    from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
+
+    content = {k: doc[k] for k in ("format", "roadmap", "brief")}
+    payload = json.dumps(content, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+    pub = Ed25519PublicKey.from_public_bytes(bytes.fromhex(str(doc["public_key_hex"])))
+    return verify(payload, bytes.fromhex(str(doc["signature_hex"])), pub)
+
+
+async def test_signed_dossier_covers_the_brief_not_just_the_roadmap(client: httpx.AsyncClient) -> None:
+    """Review gap: friction points and decision makers were outside the signature."""
+    mid = await sample(client)
+    r = await client.get(f"/missions/{mid}/dossier.signed.json")
+    assert r.status_code == 200 and r.headers["x-dossier-signed"] == "true"
+    doc = r.json()
+    assert doc["format"] == "complianceos-dossier/1" and _verify_sidecar(doc)
+    assert r.headers["x-dossier-key-fingerprint"]
+
+    titles = [sec["title"] for sec in doc["brief"]["sections"]]
+    assert "Likely friction points" in titles and "Who decides" in titles
+
+    doc["brief"]["sections"][0]["paragraphs"][0] += " (edited after signing)"
+    assert not _verify_sidecar(doc)
+
+
+async def test_review_package_ends_with_the_dossier_signature(client: httpx.AsyncClient) -> None:
+    mid = await sample(client)
+    md = (await client.get(f"/missions/{mid}/dossier.md")).text
+    doc = (await client.get(f"/missions/{mid}/dossier.signed.json")).json()
+    assert "## Integrity" in md and doc["sha256"] in md and doc["signature_hex"] in md
 
 
 async def test_dossier_unsigned_without_key() -> None:
