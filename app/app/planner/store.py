@@ -47,10 +47,12 @@ CREATE TABLE IF NOT EXISTS planner_application (
     granted_on    DATE,
     reference     TEXT NOT NULL DEFAULT '',
     notes         TEXT NOT NULL DEFAULT '',
+    owner         TEXT NOT NULL DEFAULT '',
     created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
     UNIQUE (mission_id, license_id)
 );
+ALTER TABLE planner_application ADD COLUMN IF NOT EXISTS owner TEXT NOT NULL DEFAULT '';
 
 CREATE TABLE IF NOT EXISTS planner_application_event (
     id              BIGSERIAL PRIMARY KEY,
@@ -348,11 +350,11 @@ def _mission(row: asyncpg.Record) -> Mission:
 def _application(row: asyncpg.Record) -> Application:
     return Application(**{k: row[k] for k in (
         "id", "mission_id", "license_id", "status", "submitted_on", "granted_on", "reference",
-        "notes", "created_at", "updated_at")})
+        "notes", "owner", "created_at", "updated_at")})
 
 
 _APP_COLS = ("a.id, a.mission_id, a.license_id, a.status, a.submitted_on, a.granted_on, "
-             "a.reference, a.notes, a.created_at, a.updated_at")
+             "a.reference, a.notes, a.owner, a.created_at, a.updated_at")
 
 
 class PostgresPlannerStore:
@@ -482,11 +484,11 @@ class PostgresPlannerStore:
         async with self._p().acquire() as conn, conn.transaction():
             row = await conn.fetchrow(
                 "UPDATE planner_application a SET status = $3, submitted_on = $4, granted_on = $5, "
-                "reference = $6, notes = $7, updated_at = now() FROM planner_mission m "
+                "reference = $6, notes = $7, owner = $8, updated_at = now() FROM planner_mission m "
                 "WHERE m.id = a.mission_id AND m.workspace = $1 AND a.id = $2 "
                 f"RETURNING {_APP_COLS}",
                 workspace, app.id, app.status.value, app.submitted_on, app.granted_on,
-                app.reference, app.notes)
+                app.reference, app.notes, app.owner)
             if row is None:
                 raise KeyError(app.id)
             await conn.execute(

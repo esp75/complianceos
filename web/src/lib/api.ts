@@ -114,6 +114,7 @@ export const paths = {
   events: (appId: string) => `/applications/${appId}/events`,
   contacts: (appId: string) => `/applications/${appId}/contacts`,
   program: "/program",
+  watchAll: "/watch/changes",
   recipients: "/alerts/recipients",
   usage: (days: number) => `/usage/summary?days=${days}`,
   jurisdictions: "/knowledge/jurisdictions",

@@ -82,9 +82,9 @@ async def test_application_events_and_contacts(store: PlannerStore) -> None:
 
     sub = apply_update(app, status=AppStatus.SUBMITTED, submitted_on=dt.date(2026, 9, 1),
                        granted_on=None, today=TODAY)
-    saved = await store.save_application(w, sub.model_copy(update={"reference": "R-1"}),
+    saved = await store.save_application(w, sub.model_copy(update={"reference": "R-1", "owner": "Dana"}),
                                          "status", app.status, "filed")
-    assert saved.status == AppStatus.SUBMITTED and saved.reference == "R-1"
+    assert saved.status == AppStatus.SUBMITTED and saved.reference == "R-1" and saved.owner == "Dana"
     assert saved.submitted_on == dt.date(2026, 9, 1)
 
     c = await store.add_contact(w, app.id, ContactIn(

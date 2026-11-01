@@ -388,7 +388,7 @@ async def test_compose_service_name_is_an_allowed_host(monkeypatch: pytest.Monke
 
 async def test_program_folds_missions_into_markets(client: httpx.AsyncClient) -> None:
     empty = (await client.get("/program")).json()
-    assert empty == {"missions": 0, "markets": [], "upcoming": []}
+    assert empty == {"missions": 0, "markets": [], "owners": [], "upcoming": []}
 
     mid = await sample(client)
     second = await client.post("/missions", json={
@@ -408,3 +408,12 @@ async def test_program_folds_missions_into_markets(client: httpx.AsyncClient) ->
     assert by["lu"]["tracked"] == 1 and by["lu"]["in_progress"] == 1 and by["lu"]["granted"] == 0
     assert by["at"]["licences"] == 1 and by["at"]["tracked"] == 0
     assert prog["upcoming"] and all(not d["overdue"] for d in prog["upcoming"])
+    assert prog["owners"] == [{"owner": "", "open": 1, "overdue": 0, "jurisdictions": ["lu"]}]
+
+    # Assigning the application moves it out of the unassigned bucket; blank clears it again.
+    patched = await client.patch(f"/applications/{app_id}", json={"owner": "  Dana  "})
+    assert patched.json()["application"]["owner"] == "Dana"
+    owners = (await client.get("/program")).json()["owners"]
+    assert owners == [{"owner": "Dana", "open": 1, "overdue": 0, "jurisdictions": ["lu"]}]
+    await client.patch(f"/applications/{app_id}", json={"owner": ""})
+    assert (await client.get("/program")).json()["owners"][0]["owner"] == ""

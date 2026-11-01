@@ -5,6 +5,9 @@ All notable changes to ComplianceOS are documented here. Format: [Keep a Changel
 ## [Unreleased]
 
 ### Added
+- Application owners: `PATCH /applications/{id}` takes `owner`; `GET /program` adds a per-owner
+  workload (open, overdue, markets). The Workspace page shows an Owners table and a cross-mission
+  Source changes list.
 - The Watch v0 (ADR-0019): checks every source the knowledge pack cites, records changes and
   unreachable or non-HTML sources, and links each change to the workspace's tracked applications.
   API: `GET /watch/changes`, `GET /missions/{id}/watch`, `POST /watch/run`. CLI:

@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, Select, Textarea } from "@/components/ui/field";
 import { api, paths, useApi } from "@/lib/api";
 import { formatDate } from "@/lib/dates";
-import type { Program, Recipients, UsageSummary } from "@/lib/types";
+import type { Program, Recipients, UsageSummary, WatchItem } from "@/lib/types";
 
 /** What each usage event means in plain words. The planner stores the kind only, never content. */
 const KINDS: [string, string][] = [
@@ -29,6 +29,8 @@ export default function WorkspacePage() {
         </p>
       </div>
       <Markets />
+      <Owners />
+      <SourceChanges />
       <AlertRecipients />
       <UsageReport />
     </div>
@@ -188,6 +190,85 @@ function Markets() {
               </table>
             </div>
           </>
+        ) : null}
+      </CardContent>
+    </Card>
+  );
+}
+
+/** Who is carrying what across every mission, so one person's overload is visible. */
+function Owners() {
+  const { data } = useApi<Program>(paths.program);
+  if (!data || data.owners.length === 0) return null;
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Owners</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="text-left text-xs text-muted-foreground">
+              <th className="py-1 pr-3 font-medium">Owner</th>
+              <th className="py-1 pr-3 text-right font-medium">Open</th>
+              <th className="py-1 pr-3 text-right font-medium">Overdue</th>
+              <th className="py-1 font-medium">Markets</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.owners.map((o) => (
+              <tr key={o.owner} className="border-t">
+                <td className={`py-2 pr-3 ${o.owner ? "font-medium" : "text-muted-foreground"}`}>
+                  {o.owner || "Unassigned"}
+                </td>
+                <td className="py-2 pr-3 text-right tabular-nums">{o.open}</td>
+                <td className={`py-2 pr-3 text-right tabular-nums ${o.overdue ? "font-medium text-alarm" : ""}`}>
+                  {o.overdue}
+                </td>
+                <td className="py-2">{o.jurisdictions.map((j) => j.toUpperCase()).join(", ") || "-"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p className="mt-3 text-xs text-muted-foreground">Set an owner in the application panel of each mission.</p>
+      </CardContent>
+    </Card>
+  );
+}
+
+/** Source changes that touch any mission in this workspace, newest first (ADR-0019). */
+function SourceChanges() {
+  const { data, error } = useApi<WatchItem[]>(paths.watchAll);
+  const items = (data ?? []).slice(0, 10);
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Source changes</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        <ApiNotice error={error} />
+        {data && data.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No changes to the sources behind your tracked applications.</p>
+        ) : null}
+        {items.length > 0 ? (
+          <ul className="divide-y text-sm">
+            {items.map(({ change: c, affected, jurisdictions }) => (
+              <li key={c.id} className="space-y-1 py-2">
+                <div className="text-xs tabular-nums text-muted-foreground">
+                  {formatDate(c.detected_at)} · {jurisdictions.join(", ").toUpperCase()} ·{" "}
+                  {c.kind === "changed" ? "Source changed" : c.kind === "published" ? "New publication" : "Unreachable"}
+                </div>
+                <a href={c.url} target="_blank" rel="noopener noreferrer" className="break-all underline-offset-4 hover:underline">
+                  {c.url}
+                </a>
+                <div className="flex flex-wrap gap-x-3 text-xs">
+                  {[...new Set(affected.map((a) => a.mission_id))].map((id) => (
+                    <Link key={id} href={`/missions/${id}`} className="underline">Open the mission</Link>
+                  ))}
+                </div>
+              </li>
+            ))}
+          </ul>
         ) : null}
       </CardContent>
     </Card>

@@ -837,6 +837,11 @@ export interface components {
              */
             notes: string;
             /**
+             * Owner
+             * @default
+             */
+            owner: string;
+            /**
              * Created At
              * Format: date-time
              */
@@ -887,6 +892,11 @@ export interface components {
             reference?: string | null;
             /** Notes */
             notes?: string | null;
+            /**
+             * Owner
+             * @description who runs this application
+             */
+            owner?: string | null;
             /**
              * Note
              * @description why — recorded in the event log
@@ -1695,6 +1705,8 @@ export interface components {
             missions: number;
             /** Markets */
             markets: components["schemas"]["ProgramMarket"][];
+            /** Owners */
+            owners: components["schemas"]["ProgramOwner"][];
             /** Upcoming */
             upcoming: components["schemas"]["ProgramDeadline"][];
         };
@@ -1744,6 +1756,20 @@ export interface components {
             /** Overdue */
             overdue: number;
             next_deadline: components["schemas"]["ProgramDeadline"] | null;
+        };
+        /**
+         * ProgramOwner
+         * @description Workload of one person across every mission; ``owner`` is empty for unassigned.
+         */
+        ProgramOwner: {
+            /** Owner */
+            owner: string;
+            /** Open */
+            open: number;
+            /** Overdue */
+            overdue: number;
+            /** Jurisdictions */
+            jurisdictions: string[];
         };
         /**
          * RadioService

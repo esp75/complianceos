@@ -322,6 +322,7 @@ class ApplicationPatch(BaseModel):
     granted_on: dt.date | None = None
     reference: str | None = Field(default=None, max_length=200)
     notes: str | None = Field(default=None, max_length=5000)
+    owner: str | None = Field(default=None, max_length=200, description="who runs this application")
     note: str = Field(default="", max_length=1000, description="why — recorded in the event log")
 
 
@@ -379,6 +380,8 @@ async def update_application(app_id: str, body: ApplicationPatch, p: Write, stor
         changes["reference"] = body.reference
     if body.notes is not None:
         changes["notes"] = body.notes
+    if body.owner is not None:
+        changes["owner"] = body.owner.strip()
     updated = updated.model_copy(update=changes)
     kind: Literal["status", "update"] = "status" if updated.status != a.status else "update"
     saved = await store.save_application(p.workspace, updated, kind, a.status, body.note)

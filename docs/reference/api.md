@@ -44,7 +44,7 @@ The planner endpoints are the ones most users need. They have no path prefix.
 | GET | `/missions/{mission_id}/calendar.ics` | Calendar export |
 | GET | `/missions/{mission_id}/dossier.pdf` | Dossier PDF (signed when a seed is set; the signature covers roadmap and brief) |
 | GET | `/missions/{mission_id}/dossier.signed.json` | The signed dossier data on its own, for offline verification |
-| GET | `/program` | The workspace's missions folded into one row per jurisdiction, plus the next dates |
+| GET | `/program` | The workspace's missions folded into one row per jurisdiction, plus the per-owner workload and the next dates |
 | GET, PUT | `/alerts/recipients` | This workspace's Watch digest recipients (empty = deployment default) |
 
 ## The Watch

@@ -3492,6 +3492,12 @@
       "title": "Notes",
       "default": ""
      },
+     "owner": {
+      "type": "string",
+      "maxLength": 200,
+      "title": "Owner",
+      "default": ""
+     },
      "created_at": {
       "type": "string",
       "format": "date-time",
@@ -3645,6 +3651,19 @@
        }
       ],
       "title": "Notes"
+     },
+     "owner": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 200
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Owner",
+      "description": "who runs this application"
      },
      "note": {
       "type": "string",
@@ -5574,6 +5593,13 @@
       "type": "array",
       "title": "Markets"
      },
+     "owners": {
+      "items": {
+       "$ref": "#/components/schemas/ProgramOwner"
+      },
+      "type": "array",
+      "title": "Owners"
+     },
      "upcoming": {
       "items": {
        "$ref": "#/components/schemas/ProgramDeadline"
@@ -5586,6 +5612,7 @@
     "required": [
      "missions",
      "markets",
+     "owners",
      "upcoming"
     ],
     "title": "Program"
@@ -5707,6 +5734,38 @@
      "next_deadline"
     ],
     "title": "ProgramMarket"
+   },
+   "ProgramOwner": {
+    "properties": {
+     "owner": {
+      "type": "string",
+      "title": "Owner"
+     },
+     "open": {
+      "type": "integer",
+      "title": "Open"
+     },
+     "overdue": {
+      "type": "integer",
+      "title": "Overdue"
+     },
+     "jurisdictions": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Jurisdictions"
+     }
+    },
+    "type": "object",
+    "required": [
+     "owner",
+     "open",
+     "overdue",
+     "jurisdictions"
+    ],
+    "title": "ProgramOwner",
+    "description": "Workload of one person across every mission; ``owner`` is empty for unassigned."
    },
    "RadioService": {
     "type": "string",

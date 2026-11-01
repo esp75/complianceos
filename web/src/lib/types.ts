@@ -35,3 +35,4 @@ export type UsageSummary = S["UsageSummary"];
 export type Recipients = S["RecipientsOut"];
 export type Program = S["Program"];
 export type ProgramMarket = S["ProgramMarket"];
+export type ProgramOwner = S["ProgramOwner"];

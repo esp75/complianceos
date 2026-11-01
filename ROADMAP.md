@@ -37,8 +37,8 @@
 
 - [ ] Dossier pipeline cost/time reduction (target: ≤1 founder-day/dossier): section templates per jurisdiction archetype, reusable corpus, extraction QA harness
 - [ ] Objection-pattern layer v1: structured objection/decision-maker records per jurisdiction accumulating in the KG (the compounding asset)
-- [ ] Billing + subscription plumbing (EU provider), MoU→contract conversion flow
-- [~] Multi-jurisdiction workspace (the S2→S3 bridge: one client, N markets) — the Markets view (`GET /program`) shipped; **open:** per-market ownership/assignees and a cross-mission Watch digest
+- [x] ~~Billing + subscription plumbing~~ dropped: the project is free and open source
+- [~] Multi-jurisdiction workspace (the S2→S3 bridge: one client, N markets) — the Markets view (`GET /program`), per-application owners with a workload table, and a cross-mission source-changes list shipped; **open:** per-market (not per-application) ownership, if pilots ask
 - [ ] `/cso` pass + RLS hardening on client-facing surfaces (licensing state is competitively sensitive — the sovereignty pitch must be true)
 
 **DoD:** a converted client is billed, multi-market, monitored, with signed history — no founder heroics in the loop.
