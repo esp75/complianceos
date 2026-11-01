@@ -6,8 +6,8 @@ summary: >-
   Space activities need the approval of the federal minister responsible for space, exercised by the Weltraumbehörde
   in the Federal Ministry for Innovation, Mobility and Infrastructure (BMIMI), under the Weltraumgesetz
   of 2011 and the Weltraumverordnung of 2015. Austria also keeps a national register of space objects.
-  Only the space-activity approval is covered here: Austria's frequency and ITU filing route has not yet
-  been researched.
+  Covered: the space-activity approval and the radio licence for a ground station (TKG 2021). Austria's
+  ITU satellite filing route has not yet been researched.
 authorities:
 - id: at-weltraumbehoerde
   name: Weltraumbehörde, Bundesministerium für Innovation, Mobilität und Infrastruktur (BMIMI)
@@ -34,5 +34,23 @@ authorities:
     the ministry has since been renamed and the BMIMI site presents itself as the Austrian space ministry
     and, as Weltraumbehörde, the body that approves and supervises space activities and registers space
     objects.
+- id: at-fernmeldebuero
+  name: Fernmeldebüro
+  name_en: Telecommunications Office (Fernmeldebüro)
+  roles:
+  - earth_station_licensing
+  - spectrum_management
+  website: https://www.fb.gv.at/
+  contacts:
+  - kind: web
+    value: https://www.fb.gv.at/
+    purpose: Forms, rules and contact details of the Fernmeldebüro (the telecommunications authority of Austria).
+    source:
+      title: Fernmeldebüro — Fernmeldebehörde der Republik Österreich
+      url: https://www.fb.gv.at/
+      retrieved: '2026-11-01'
+  notes: >-
+    Named as the deciding authority for radio licences in TKG 2021 § 34(2) and § 13(7). Only the website
+    was verified; no postal address or email is listed.
 status: draft
 last_verified: '2026-11-01'
