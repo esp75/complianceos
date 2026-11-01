@@ -202,8 +202,9 @@ def dossier_pdf(roadmap: Roadmap, brief: Brief, *, workspace: str,
         if not section.paragraphs:
             continue
         _h(pdf, section.title)
-        for para in section.paragraphs:
-            _p(pdf, _strip_markers(para))
+        for n, para in enumerate(section.paragraphs):
+            label = section.labels[n] if n < len(section.labels) and section.labels[n] else ""
+            _p(pdf, (f"[{label}] " if label else "") + _strip_markers(para))
 
     if roadmap.warnings:
         _h(pdf, "Warnings")

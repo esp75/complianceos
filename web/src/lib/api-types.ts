@@ -543,6 +543,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/missions/{mission_id}/dossier.md": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Mission Review Package
+         * @description The dossier as Markdown with a reviewer checklist, stable between exports (ADR-0022).
+         */
+        get: operations["mission_review_package_missions__mission_id__dossier_md_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/missions/{mission_id}/intro-email": {
         parameters: {
             query?: never;
@@ -554,6 +574,147 @@ export interface paths {
         put?: never;
         /** Draft Intro Email */
         post: operations["draft_intro_email_missions__mission_id__intro_email_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/watch/changes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Watch Changes
+         * @description Source changes that touch this workspace's tracked applications, newest first.
+         */
+        get: operations["watch_changes_watch_changes_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/missions/{mission_id}/watch": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Mission Watch */
+        get: operations["mission_watch_missions__mission_id__watch_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/watch/run": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Run Watch Now
+         * @description Check every source in the pack once. Same trust model as every other change: local mode
+         *     needs the client header; team mode needs ``can_create_evidence`` on the workspace. Scheduling
+         *     with ``python -m app.planner.watch run`` is the recommended path.
+         */
+        post: operations["run_watch_now_watch_run_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/history/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Export History
+         * @description Signed export of every application event in this workspace. Each export records a
+         *     checkpoint and names the previous export's Merkle root, so earlier history cannot be dropped
+         *     unnoticed. Unsigned (and not checkpointed) when the server has no signing key.
+         */
+        post: operations["export_history_history_export_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/missions/{mission_id}/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Mission History
+         * @description Signed export of one mission's events. A view of part of the history: it is not chained.
+         */
+        get: operations["mission_history_missions__mission_id__history_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/usage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Record Usage
+         * @description Record that something was used. Only the kind, workspace, actor and time are stored.
+         */
+        post: operations["record_usage_usage_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/usage/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Usage Summary
+         * @description Counts per kind and the number of days with any activity, for the last ``days`` days.
+         */
+        get: operations["usage_summary_usage_summary_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -734,6 +895,8 @@ export interface components {
             paragraphs: string[];
             /** Grounded */
             grounded: boolean;
+            /** Labels */
+            labels?: ("statute" | "practice" | "estimate" | "derived" | "")[];
         };
         /**
          * Citation
@@ -1085,6 +1248,33 @@ export interface components {
              */
             listed_since: string;
         };
+        /**
+         * Feed
+         * @description An official publication feed (RSS/Atom) the Watch follows for new instruments (ADR-0020).
+         *
+         *     Only entries whose title or summary contain one of ``keywords`` are reported, and only for
+         *     applications tracking one of ``license_ids``. Feeds are curated here, never supplied by users.
+         */
+        Feed: {
+            /** Id */
+            id: string;
+            /** Title */
+            title: string;
+            /**
+             * Url
+             * Format: uri
+             */
+            url: string;
+            /** Keywords */
+            keywords: string[];
+            /** License Ids */
+            license_ids: string[];
+            /**
+             * Retrieved
+             * Format: date
+             */
+            retrieved: string;
+        };
         /** FilingInput */
         FilingInput: {
             /** Network Name */
@@ -1117,6 +1307,41 @@ export interface components {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
+        /**
+         * HistoryDocument
+         * @description The signed export. ``signature_hex`` covers ``canonical(manifest)``.
+         */
+        HistoryDocument: {
+            /** Manifest */
+            manifest: {
+                [key: string]: unknown;
+            };
+            /**
+             * Signature Hex
+             * @default
+             */
+            signature_hex: string;
+            /**
+             * Public Key Hex
+             * @default
+             */
+            public_key_hex: string;
+            /**
+             * Fingerprint
+             * @default
+             */
+            fingerprint: string;
+            /**
+             * Signed
+             * @default false
+             */
+            signed: boolean;
+            /**
+             * Note
+             * @default
+             */
+            note: string;
+        };
         /** Jurisdiction */
         Jurisdiction: {
             /** Id */
@@ -1142,6 +1367,8 @@ export interface components {
             last_verified: string;
             /** Reviewed By */
             reviewed_by?: string | null;
+            /** Feeds */
+            feeds?: components["schemas"]["Feed"][];
         };
         /** JurisdictionOut */
         JurisdictionOut: {
@@ -1569,6 +1796,46 @@ export interface components {
             /** Cite */
             cite?: string[];
         };
+        /** RunSummary */
+        RunSummary: {
+            /**
+             * Checked
+             * @default 0
+             */
+            checked: number;
+            /**
+             * Baselined
+             * @default 0
+             */
+            baselined: number;
+            /**
+             * Unchanged
+             * @default 0
+             */
+            unchanged: number;
+            /**
+             * Changed
+             * @default 0
+             */
+            changed: number;
+            /**
+             * Published
+             * @default 0
+             */
+            published: number;
+            /**
+             * Unreachable
+             * @default 0
+             */
+            unreachable: number;
+            /**
+             * Unsupported
+             * @default 0
+             */
+            unsupported: number;
+            /** Changes */
+            changes?: components["schemas"]["WatchChange"][];
+        };
         /** Source */
         Source: {
             /** Title */
@@ -1611,6 +1878,30 @@ export interface components {
             /** Contacts */
             contacts: number;
         };
+        /** UsageIn */
+        UsageIn: {
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "session_start" | "mission_viewed" | "watch_viewed" | "alert_opened" | "dossier_exported";
+        };
+        /** UsageSummary */
+        UsageSummary: {
+            /**
+             * Since
+             * Format: date-time
+             */
+            since: string;
+            /** Days */
+            days: number;
+            /** Counts */
+            counts: {
+                [key: string]: number;
+            };
+            /** Active Days */
+            active_days: number;
+        };
         /** ValidationError */
         ValidationError: {
             /** Location */
@@ -1623,6 +1914,85 @@ export interface components {
             input?: unknown;
             /** Context */
             ctx?: Record<string, never>;
+        };
+        /** WatchAffected */
+        WatchAffected: {
+            /** Application Id */
+            application_id: string;
+            /** Mission Id */
+            mission_id: string;
+            /** License Id */
+            license_id: string;
+            status: components["schemas"]["AppStatus"];
+        };
+        /** WatchChange */
+        WatchChange: {
+            /** Id */
+            id: string;
+            /** Url */
+            url: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "changed" | "unreachable" | "published";
+            /**
+             * Detected At
+             * Format: date-time
+             */
+            detected_at: string;
+            /** Previous Hash */
+            previous_hash?: string | null;
+            /** New Hash */
+            new_hash?: string | null;
+            /**
+             * Size Delta
+             * @default 0
+             */
+            size_delta: number;
+            /**
+             * Words Added
+             * @default 0
+             */
+            words_added: number;
+            /**
+             * Words Removed
+             * @default 0
+             */
+            words_removed: number;
+            /**
+             * Detail
+             * @default
+             */
+            detail: string;
+            /** Materiality */
+            materiality?: ("substantive" | "editorial" | "unclear") | null;
+            /**
+             * Ai Summary
+             * @default
+             */
+            ai_summary: string;
+        };
+        /**
+         * WatchItem
+         * @description A source change, and the tracked applications of this workspace whose licences cite it.
+         *     ``advice`` is the only conclusion the Watch draws: re-verify the cited provision.
+         */
+        WatchItem: {
+            change: components["schemas"]["WatchChange"];
+            /** License Ids */
+            license_ids: string[];
+            /** Citation Ids */
+            citation_ids: string[];
+            /** Jurisdictions */
+            jurisdictions: string[];
+            /** Affected */
+            affected: components["schemas"]["WatchAffected"][];
+            /**
+             * Advice
+             * @default Re-verify the cited provision before relying on it; the Watch does not judge the change.
+             */
+            advice: string;
         };
         /** WindowModel */
         WindowModel: {
@@ -2896,6 +3266,40 @@ export interface operations {
             };
         };
     };
+    mission_review_package_missions__mission_id__dossier_md_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-workspace"?: string | null;
+                authorization?: string | null;
+            };
+            path: {
+                mission_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     draft_intro_email_missions__mission_id__intro_email_post: {
         parameters: {
             query?: never;
@@ -2921,6 +3325,238 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["EmailDraft"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    watch_changes_watch_changes_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-workspace"?: string | null;
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WatchItem"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    mission_watch_missions__mission_id__watch_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-workspace"?: string | null;
+                authorization?: string | null;
+            };
+            path: {
+                mission_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WatchItem"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_watch_now_watch_run_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-workspace"?: string | null;
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunSummary"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    export_history_history_export_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-workspace"?: string | null;
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoryDocument"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    mission_history_missions__mission_id__history_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-workspace"?: string | null;
+                authorization?: string | null;
+            };
+            path: {
+                mission_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoryDocument"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    record_usage_usage_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-workspace"?: string | null;
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UsageIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    usage_summary_usage_summary_get: {
+        parameters: {
+            query?: {
+                days?: number;
+            };
+            header?: {
+                "x-workspace"?: string | null;
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UsageSummary"];
                 };
             };
             /** @description Validation Error */

@@ -3,7 +3,7 @@
 import { AlertTriangle, CalendarPlus, ChevronRight, FileDown, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ApiNotice } from "@/components/api-notice";
 import { ApplicationSheet } from "@/components/mission/application-sheet";
 import { BriefView } from "@/components/mission/brief";
@@ -12,13 +12,14 @@ import { LicenseSheet } from "@/components/mission/license-sheet";
 import { NextActions } from "@/components/mission/next-actions";
 import { Timeline } from "@/components/mission/timeline";
 import { Tracker } from "@/components/mission/tracker";
+import { Watch } from "@/components/mission/watch";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { api, paths, useApi } from "@/lib/api";
+import { api, paths, recordUsage, useApi } from "@/lib/api";
 import { formatDate, relative } from "@/lib/dates";
 import { BASIS, CATEGORY, ORBITS, RISK, STATUS, countryName } from "@/lib/labels";
-import type { DeadlineOut, Mission, Roadmap, RoadmapItem, TrackedApplication } from "@/lib/types";
+import type { DeadlineOut, Mission, Roadmap, RoadmapItem, TrackedApplication, WatchItem } from "@/lib/types";
 
 export default function MissionPage({ params }: { params: { id: string } }) {
   const id = params.id;
@@ -27,10 +28,16 @@ export default function MissionPage({ params }: { params: { id: string } }) {
   const roadmap = useApi<Roadmap>(paths.roadmap(id));
   const apps = useApi<TrackedApplication[]>(paths.applications(id));
   const deadlines = useApi<DeadlineOut[]>(paths.deadlines(id));
+  const watch = useApi<WatchItem[]>(paths.watch(id));
   const [licenseId, setLicenseId] = useState<string | null>(null);
   const [appId, setAppId] = useState<string | null>(null);
   const [tab, setTab] = useState("roadmap");
   const [confirmDelete, setConfirmDelete] = useState(false);
+
+  useEffect(() => recordUsage("mission_viewed"), [id]);
+  useEffect(() => {
+    if (tab === "watch") recordUsage("watch_viewed");
+  }, [tab]);
 
   const refresh = async () => {
     await Promise.all([apps.mutate(), deadlines.mutate()]);
@@ -86,8 +93,13 @@ export default function MissionPage({ params }: { params: { id: string } }) {
             </a>
           </Button>
           <Button asChild size="sm" variant="primary">
-            <a href={paths.dossier(id)}>
+            <a href={paths.dossier(id)} onClick={() => recordUsage("dossier_exported")}>
               <FileDown /> Download dossier (PDF)
+            </a>
+          </Button>
+          <Button asChild size="sm">
+            <a href={paths.reviewPackage(id)}>
+              <FileDown /> Review package
             </a>
           </Button>
           {confirmDelete ? (
@@ -134,6 +146,9 @@ export default function MissionPage({ params }: { params: { id: string } }) {
           </TabsTrigger>
           <TabsTrigger value="deadlines">
             Deadlines {overdue ? <Badge tone="alarm">{overdue}</Badge> : null}
+          </TabsTrigger>
+          <TabsTrigger value="watch">
+            Watch {watch.data?.length ? <Badge tone="warn">{watch.data.length}</Badge> : null}
           </TabsTrigger>
           <TabsTrigger value="brief">Brief</TabsTrigger>
         </TabsList>
@@ -200,6 +215,10 @@ export default function MissionPage({ params }: { params: { id: string } }) {
 
         <TabsContent value="deadlines" className="mt-6">
           {deadlines.data ? <Deadlines missionId={id} roadmap={r} deadlines={deadlines.data} onOpen={setLicenseId} /> : null}
+        </TabsContent>
+
+        <TabsContent value="watch" className="mt-6">
+          <Watch roadmap={r} items={watch.data ?? []} onRun={() => watch.mutate()} onOpen={setLicenseId} />
         </TabsContent>
 
         <TabsContent value="brief" className="mt-6">

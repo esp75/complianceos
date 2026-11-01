@@ -1,5 +1,61 @@
 # Engineering log — ComplianceOS v0.2
 
+## 2026-11-01 — P1/P2 completion pass (ADR-0021, ADR-0022)
+
+- **Signed program history** (`app/planner/history.py`): Merkle export of application events,
+  Ed25519-signed with the dossier's workspace key, chained to the previous export. Uses the trust
+  primitives without editing any `MARKED-FOR-EXTERNAL-REVIEW` file. Not anchored in `trust_bundle`
+  (that needs a trust-layer change; deferred until after the external review).
+- **Pilot usage events**: `POST /usage`, `GET /usage/summary`; web sends session, mission, Watch and
+  alert-link events. Content is never recorded.
+- **Dossier**: "Likely friction points" and "Who decides" sections (citation-enforced), basis labels,
+  Markdown reviewer package with checklist. Friction is derived from recorded rules only; it makes no
+  claim about how regulators have objected before.
+- **Not done, and why**: DE and AT corpus. For AT, the Weltraumgesetz §§1-5, 8 text was fetched from
+  the RIS open-data API and read, but the current ministry name (the old BMK site redirects to
+  bmimi.gv.at), the Weltraumverordnung (documents, fees) and the ITU-filing and frequency route were
+  not verified, and RIS and FFG started bot-blocking. A partial record would put unverified metadata
+  into a pack whose value is that every line is sourced, so nothing was added. DE has no general
+  space-activity licence; its route (BNetzA frequency assignment, ITU filing) needs the same research.
+- Backend 238 passed, 9 skipped (Postgres contract tests need `CELESTIA_PG_TEST_DSN`; Docker's
+  daemon was unreachable, so none of the new SQL has run). ruff, mypy --strict, tsc, lint, bun test
+  and build clean. `/cso` and `/review` have not been run.
+
+## 2026-11-01 — The Watch: alerts, PDFs, feeds, triage (ADR-0020)
+
+- **Alert email**: `watch run --alert` sends one SMTP digest of changes that touch tracked
+  applications. No relay is baked in; EU relay is the operator's choice. Not sent through a real
+  relay in this session: tested with an injected sender.
+- **PDFs**: pypdf text extraction. A live read of the three cited PDFs worked (the Luxembourg one
+  needed an empty-password decrypt). Watchable sources are now 19 of 23; the four Légifrance pages
+  remain blocked.
+- **Feeds**: `feeds` in `jurisdiction.yaml` (strict model, cross-checked against the jurisdiction's
+  licences, JSON schema regenerated). GB (legislation.gov.uk) and US (Federal Register, FCC) read
+  and parsed live; keyword matching returned plausible hits. Other jurisdictions have no verified
+  feed yet, so none was added.
+- **Triage**: advisory Claude label and summary on changed pages, off without an API key. Tested with
+  a fake model only; never run against the live endpoint.
+- Backend 223 passed, 7 skipped; ruff, mypy --strict, tsc, lint, bun test and build clean.
+  Postgres-backed paths (including the two new columns and `list_workspaces`) are still unrun.
+
+## 2026-11-01 — The Watch v0 (ADR-0019)
+
+- **Source set** derived from the pack: every distinct citation URL (23 at this date), never a
+  user-supplied URL.
+- **Detection**: normalised visible text, SHA-256, word-level diff for size. Outages, unsupported
+  (non-HTML) sources and changes are three separate outcomes; the first successful check is a
+  baseline.
+- **Surfaces**: `planner_watch_source` / `planner_watch_change` tables (both stores, contract test
+  added), `GET /watch/changes`, `GET /missions/{id}/watch`, `POST /watch/run`, the CLI, and a Watch
+  tab on the mission page.
+- **Verified**: backend `pytest` 210 passed, 7 skipped (the Postgres contract runs only with
+  `CELESTIA_PG_TEST_DSN`); ruff, mypy --strict; `tsc --noEmit`, `next lint`, `bun test` (10), `bun run build`.
+- **Live reachability pass** (2026-11-01, one read-only run over the 23 cited URLs): 16 watchable,
+  4 Légifrance pages HTTP 403, 3 PDFs unsupported. Légifrance needs an official route; tracked as
+  a follow-up in ADR-0019.
+- **Not verified**: the Postgres SQL against a live database (no Postgres was reachable from the
+  dev machine; Docker's socket was down). The contract test is ready for `CELESTIA_PG_TEST_DSN`.
+
 ## 2026-10-15 — Regulatory path planner shipped (ADR-0018), open-source ready
 
 - **Knowledge pack** (`knowledge/`, CC BY 4.0): ITU, France, Luxembourg, UK, US. 16 licences and 40

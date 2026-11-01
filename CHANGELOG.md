@@ -2,6 +2,26 @@
 
 All notable changes to ComplianceOS are documented here. Format: [Keep a Changelog](https://keepachangelog.com/).
 
+## [Unreleased]
+
+### Added
+- The Watch v0 (ADR-0019): checks every source the knowledge pack cites, records changes and
+  unreachable or non-HTML sources, and links each change to the workspace's tracked applications.
+  API: `GET /watch/changes`, `GET /missions/{id}/watch`, `POST /watch/run`. CLI:
+  `python -m app.planner.watch run|changes`. Web: a Watch tab on each mission.
+- Watch alerts and sources (ADR-0020): `run --alert` emails a digest of changes that touch tracked
+  applications over a configurable SMTP relay; PDF sources are read; the pack can list official
+  RSS/Atom `feeds` (GB and US ship) that report new matching publications; changed pages get an
+  advisory Claude triage label when an Anthropic key is set.
+
+- Signed program history and pilot usage (ADR-0021): `POST /history/export` returns an Ed25519-signed
+  Merkle export of application events that names the previous export's root;
+  `GET /missions/{id}/history`; `POST /usage` and `GET /usage/summary` count feature use.
+
+- Dossier (ADR-0022): "Likely friction points" and "Who decides" sections, both citation-enforced;
+  a basis label (statute, practice, estimate, derived) on risk and path paragraphs; a Markdown
+  reviewer package with a per-licence checklist (`GET /missions/{id}/dossier.md`).
+
 ## [0.2.0] — 2026-05-15 — "Stand on Giants"
 
 Strategic shift from "build everything" (v0.1) to "fork three Apache-2.0 substrates and add the space-specific layer on top."

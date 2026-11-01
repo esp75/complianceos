@@ -3,6 +3,7 @@
 Knowledge (read-only, public): jurisdictions, licences, facilitators.
 Missions: create / list / update / delete a mission profile, get its roadmap and brief.
 Tracking: applications per licence, status changes, contact log, deadlines, calendar, dossier.
+The Watch (ADR-0019): changes in the sources the pack cites, scoped to each workspace's applications.
 
 Authentication depends on ``CELESTIA_AUTH_MODE``:
 
@@ -38,10 +39,14 @@ from app.config import get_settings
 from app.l4.citations import CitationError
 from app.llm.base import LLMError, LLMProvider
 from app.planner.brief import Brief, build_brief
+from app.planner.classify import make_classifier
+from app.planner.digest import WatchItem, watch_items
 from app.planner.exports import EmailDraft, calendar_ics, dossier_pdf, intro_email
+from app.planner.history import HistoryDocument, build_history
 from app.planner.knowledge import Facilitator, Jurisdiction, KnowledgeBase, License
 from app.planner.mission import MissionProfile
 from app.planner.plan import Deadline, Roadmap, RoadmapItem, build_roadmap
+from app.planner.review import dossier_markdown
 from app.planner.sample import sample_mission
 from app.planner.store import DuplicateError, Mission, PlannerStore
 from app.planner.tracker import (
@@ -55,6 +60,13 @@ from app.planner.tracker import (
     apply_update,
     next_action,
     redate_obligations,
+)
+from app.planner.watch import (
+    HOST_INTERVAL_S,
+    Fetcher,
+    HttpFetcher,
+    RunSummary,
+    run_watch,
 )
 
 router = APIRouter(tags=["planner"])
@@ -460,6 +472,16 @@ async def mission_dossier(
     return Response(content=pdf, media_type="application/pdf", headers=headers)
 
 
+@router.get("/missions/{mission_id}/dossier.md")
+async def mission_review_package(mission_id: str, p: Read, store: Store, kb: KB, today: Today) -> Response:
+    """The dossier as Markdown with a reviewer checklist, stable between exports (ADR-0022)."""
+    m = await _mission(store, p, mission_id)
+    roadmap = build_roadmap(kb, m.profile, today)
+    return Response(content=dossier_markdown(roadmap, await build_brief(roadmap)),
+                    media_type="text/markdown; charset=utf-8", headers={
+        "Content-Disposition": f'attachment; filename="licensing-review-{mission_id[:8]}.md"'})
+
+
 class EmailRequest(BaseModel):
     license_id: str
     recipient: str = Field(description="authority id or facilitator id")
@@ -478,3 +500,88 @@ async def draft_intro_email(mission_id: str, body: EmailRequest, p: Read, store:
     except KeyError as exc:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT,
                             detail="recipient is not an authority or facilitator in this roadmap") from exc
+
+
+# --- the Watch (ADR-0019) ---
+
+@router.get("/watch/changes")
+async def watch_changes(p: Read, store: Store, kb: KB) -> list[WatchItem]:
+    """Source changes that touch this workspace's tracked applications, newest first."""
+    return await watch_items(store, p.workspace, kb, None)
+
+
+@router.get("/missions/{mission_id}/watch")
+async def mission_watch(mission_id: str, p: Read, store: Store, kb: KB) -> list[WatchItem]:
+    await _mission(store, p, mission_id)
+    return await watch_items(store, p.workspace, kb, [mission_id])
+
+
+@router.post("/watch/run")
+async def run_watch_now(request: Request, p: Write, store: Store, kb: KB) -> RunSummary:
+    """Check every source in the pack once. Same trust model as every other change: local mode
+    needs the client header; team mode needs ``can_create_evidence`` on the workspace. Scheduling
+    with ``python -m app.planner.watch run`` is the recommended path."""
+    fetcher = cast("Fetcher | None", getattr(request.app.state, "watch_fetcher", None))
+    interval = float(getattr(request.app.state, "watch_host_interval", HOST_INTERVAL_S))
+    llm = cast("LLMProvider | None", getattr(request.app.state, "llm", None))
+    return await run_watch(kb, store, fetcher or HttpFetcher(), dt.datetime.now(dt.UTC),
+                           host_interval=interval,
+                           classifier=make_classifier(llm) if llm else None)
+
+
+# --- signed program history (ADR-0021) ---
+
+@router.post("/history/export")
+async def export_history(p: Write, store: Store,
+                         keystore: Annotated[KeyStore | None, Depends(get_planner_keystore)],
+                         ) -> HistoryDocument:
+    """Signed export of every application event in this workspace. Each export records a
+    checkpoint and names the previous export's Merkle root, so earlier history cannot be dropped
+    unnoticed. Unsigned (and not checkpointed) when the server has no signing key."""
+    return await build_history(store, p.workspace, keystore, dt.datetime.now(dt.UTC))
+
+
+@router.get("/missions/{mission_id}/history")
+async def mission_history(mission_id: str, p: Read, store: Store,
+                          keystore: Annotated[KeyStore | None, Depends(get_planner_keystore)],
+                          ) -> HistoryDocument:
+    """Signed export of one mission's events. A view of part of the history: it is not chained."""
+    await _mission(store, p, mission_id)
+    return await build_history(store, p.workspace, keystore, dt.datetime.now(dt.UTC), mission_id)
+
+
+# --- pilot usage (ADR-0021) ---
+
+UsageKind = Literal["session_start", "mission_viewed", "watch_viewed", "alert_opened",
+                    "dossier_exported"]
+
+
+class UsageIn(BaseModel):
+    kind: UsageKind
+
+
+class UsageSummary(BaseModel):
+    since: dt.datetime
+    days: int
+    counts: dict[str, int]
+    active_days: int
+
+
+@router.post("/usage", status_code=status.HTTP_204_NO_CONTENT)
+async def record_usage(body: UsageIn, p: Write, store: Store) -> Response:
+    """Record that something was used. Only the kind, workspace, actor and time are stored."""
+    await store.add_usage_event(p.workspace, p.user, body.kind, dt.datetime.now(dt.UTC))
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.get("/usage/summary")
+async def usage_summary(p: Read, store: Store, days: Annotated[int, Query(ge=1, le=365)] = 30,
+                        ) -> UsageSummary:
+    """Counts per kind and the number of days with any activity, for the last ``days`` days."""
+    since = dt.datetime.now(dt.UTC) - dt.timedelta(days=days)
+    events = await store.usage_events(p.workspace, since)
+    counts: dict[str, int] = {}
+    for kind, _ in events:
+        counts[kind] = counts.get(kind, 0) + 1
+    return UsageSummary(since=since, days=days, counts=counts,
+                        active_days=len({at.astimezone(dt.UTC).date() for _, at in events}))

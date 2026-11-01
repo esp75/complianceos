@@ -12,6 +12,7 @@ import type {
   MissionProfile,
   Roadmap,
   TrackedApplication,
+  WatchRun,
 } from "./types";
 
 /** Browser calls go to this origin; Next.js forwards /api/* to the planner API (next.config.mjs). */
@@ -64,6 +65,13 @@ export function useApi<T>(path: string | null, config?: SWRConfiguration<T>) {
   return useSWR<T, ApiError>(path, fetcher, { revalidateOnFocus: false, ...config });
 }
 
+export type UsageKind = "session_start" | "mission_viewed" | "watch_viewed" | "alert_opened" | "dossier_exported";
+
+/** Pilot usage (ADR-0021): which feature was used, never what it contained. Failures are ignored. */
+export function recordUsage(kind: UsageKind): void {
+  void request<void>("/usage", { method: "POST", body: JSON.stringify({ kind }) }).catch(() => undefined);
+}
+
 export const api = {
   missions: () => request<Mission[]>("/missions"),
   createMission: (profile: MissionProfile) =>
@@ -85,6 +93,7 @@ export const api = {
     request<TrackedApplication>(`/applications/${id}`, { method: "PATCH", body: JSON.stringify(patch) }),
   addContact: (id: string, contact: ContactIn) =>
     request<Contact>(`/applications/${id}/contacts`, { method: "POST", body: JSON.stringify(contact) }),
+  runWatch: () => request<WatchRun>("/watch/run", { method: "POST" }),
   introEmail: (missionId: string, licenseId: string, recipient: string) =>
     request<EmailDraft>(`/missions/${missionId}/intro-email`, {
       method: "POST",
@@ -98,12 +107,14 @@ export const paths = {
   roadmap: (id: string) => `/missions/${id}/roadmap`,
   applications: (id: string) => `/missions/${id}/applications`,
   deadlines: (id: string) => `/missions/${id}/deadlines`,
+  watch: (id: string) => `/missions/${id}/watch`,
   events: (appId: string) => `/applications/${appId}/events`,
   contacts: (appId: string) => `/applications/${appId}/contacts`,
   jurisdictions: "/knowledge/jurisdictions",
   facilitators: "/knowledge/facilitators",
   calendar: (id: string) => `${API}/missions/${id}/calendar.ics`,
   dossier: (id: string) => `${API}/missions/${id}/dossier.pdf`,
+  reviewPackage: (id: string) => `${API}/missions/${id}/dossier.md`,
 };
 
 export type { ApplicationEvent, Contact, DeadlineOut, Facilitator, JurisdictionOut };

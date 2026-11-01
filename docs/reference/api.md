@@ -44,6 +44,31 @@ The planner endpoints are the ones most users need. They have no path prefix.
 | GET | `/missions/{mission_id}/calendar.ics` | Calendar export |
 | GET | `/missions/{mission_id}/dossier.pdf` | Dossier PDF (signed when a seed is set) |
 
+## The Watch
+
+Changes in the public sources the knowledge pack cites, filtered to what the workspace tracks ([ADR-0019](../../adr/0019-the-watch-v0.md)).
+
+| Method | Path | Purpose |
+|---|---|---|
+| GET | `/watch/changes` | Source changes that touch this workspace's applications, newest first |
+| GET | `/missions/{mission_id}/watch` | The same, for one mission |
+| POST | `/watch/run` | Check every cited source once and record changes (`can_create_evidence` in team mode) |
+
+## Reviewer package
+
+| Method | Path | Purpose |
+|---|---|---|
+| GET | `/missions/{mission_id}/dossier.md` | Dossier as stable Markdown with a reviewer checklist ([ADR-0022](../../adr/0022-dossier-sections-and-review-package.md)) |
+
+## History and usage
+
+| Method | Path | Purpose |
+|---|---|---|
+| POST | `/history/export` | Signed, checkpointed export of every application event in the workspace ([ADR-0021](../../adr/0021-signed-history-and-pilot-usage.md)) |
+| GET | `/missions/{mission_id}/history` | Signed export for one mission (not chained) |
+| POST | `/usage` | Record that a feature was used (`kind` only) |
+| GET | `/usage/summary?days=30` | Counts per kind and active days |
+
 ## Other
 
 | Method | Path | Purpose |
