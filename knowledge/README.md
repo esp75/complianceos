@@ -5,7 +5,7 @@ mission needs, why, in what order and by when. Every requirement points to the t
 comes from.
 
 ```
-jurisdictions/<id>/jurisdiction.yaml    the authorities and their official contact channels
+jurisdictions/<id>/jurisdiction.yaml    the authorities, their contact channels, and optional official feeds
 jurisdictions/<id>/licenses/<id>.yaml   one licence, authorisation or filing per file
 facilitators/<id>.yaml                  firms that help operators through licensing
 schema/                                 JSON Schema for editor autocompletion

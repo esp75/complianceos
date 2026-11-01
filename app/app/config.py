@@ -72,6 +72,21 @@ class Settings(BaseSettings):
     # Postgres is reachable the planner falls back to an in-memory store (reported by /readyz).
     planner_dsn: str = ""
 
+    # --- Watch alert email (ADR-0019 / ADR-0020) ---
+    # Plain SMTP to any relay you choose; EU-hosted relays only (sovereignty rules). Alerts are off
+    # until smtp_host, alert_from and alert_recipients are all set. Credentials are env-only.
+    smtp_host: str = ""
+    smtp_port: int = 587
+    smtp_user: str = ""
+    smtp_password: str = ""
+    # "starttls" (port 587), "ssl" (port 465) or "none" (a local relay only).
+    smtp_security: Literal["starttls", "ssl", "none"] = "starttls"
+    alert_from: str = ""
+    # Comma-separated addresses that receive the digest of changes touching tracked applications.
+    alert_recipients: str = ""
+    # Base URL of the web app, used for links in the email. Optional.
+    public_web_url: str = ""
+
     # --- HTTP client tuning ---
     upstream_timeout_seconds: float = 10.0
 

@@ -17,6 +17,7 @@ import pytest
 from app.planner.sample import sample_mission
 from app.planner.store import DuplicateError, MemoryPlannerStore, PlannerStore, PostgresPlannerStore
 from app.planner.tracker import AppStatus, ContactIn, apply_update
+from app.planner.watch import FetchResult, decide
 
 TODAY = dt.date(2026, 10, 15)
 PG_DSN = os.environ.get("CELESTIA_PG_TEST_DSN")
@@ -98,3 +99,50 @@ async def test_application_events_and_contacts(store: PlannerStore) -> None:
 
     assert await store.delete_mission(w, m.id)
     assert await store.get_application(w, app.id) is None
+
+
+async def test_watch_state_and_changes_round_trip(store: PlannerStore) -> None:
+    # The Watch tables are global (public sources), so every run uses a fresh URL.
+    url = f"https://example.gov/{uuid.uuid4().hex}"
+    now = dt.datetime(2026, 11, 1, 9, 0, tzinfo=dt.UTC)
+    first, none = decide(None, FetchResult(url=url, ok=True, html="<p>rule one</p>"), now)
+    assert none is None
+    await store.save_source_state(first)
+    assert await store.get_source_state(url) == first
+
+    state, change = decide(first, FetchResult(url=url, ok=True, html="<p>rule two</p>"),
+                           now + dt.timedelta(days=1))
+    assert change is not None
+    await store.save_source_state(state)
+    await store.add_watch_change(change)
+    assert await store.get_source_state(url) == state
+    assert await store.list_watch_changes([url]) == [change]
+    assert await store.list_watch_changes([f"https://example.gov/{uuid.uuid4().hex}"]) == []
+
+
+async def test_history_checkpoints_and_workspace_listing(store: PlannerStore) -> None:
+    w = f"w-{uuid.uuid4().hex}"
+    assert await store.last_history_root(w) is None
+    await store.create_mission(w, sample_mission(TODAY))
+    assert w in await store.list_workspaces()
+    await store.add_history_checkpoint(w, "aa" * 32, None, 3)
+    await store.add_history_checkpoint(w, "bb" * 32, "aa" * 32, 5)
+    assert await store.last_history_root(w) == "bb" * 32
+    assert await store.last_history_root(f"w-{uuid.uuid4().hex}") is None
+    # Watch changes carry the advisory triage fields through storage.
+    url = f"https://example.gov/{uuid.uuid4().hex}"
+    from app.planner.watch import WatchChange
+    c = WatchChange(id=uuid.uuid4().hex, url=url, kind="changed",
+                    detected_at=dt.datetime(2026, 11, 1, tzinfo=dt.UTC), materiality="substantive",
+                    ai_summary="Fee raised.")
+    await store.add_watch_change(c)
+    assert await store.list_watch_changes([url]) == [c]
+
+
+async def test_usage_events_round_trip(store: PlannerStore) -> None:
+    w = f"w-{uuid.uuid4().hex}"
+    at = dt.datetime(2026, 11, 1, 9, tzinfo=dt.UTC)
+    await store.add_usage_event(w, "local", "session_start", at)
+    got = await store.usage_events(w, at - dt.timedelta(days=1))
+    assert [(k, a) for k, a in got] == [("session_start", at)]
+    assert await store.usage_events(w, at + dt.timedelta(days=1)) == []

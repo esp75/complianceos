@@ -31,3 +31,11 @@ authorities:
       verification (see knowledge/VERIFICATION.md).
 status: draft
 last_verified: 2026-10-15
+
+feeds:
+  - id: gb-legislation-new
+    title: legislation.gov.uk — new legislation
+    url: https://www.legislation.gov.uk/new/data.feed
+    keywords: [Space Industry, Outer Space, Wireless Telegraphy, Space Activities]
+    license_ids: [gb-orbital-operator-licence, gb-ofcom-earth-station-licence, gb-ofcom-satellite-filing]
+    retrieved: 2026-11-01

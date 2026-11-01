@@ -18,6 +18,7 @@ import datetime as dt
 import itertools
 import json
 import uuid
+from collections.abc import Iterable
 from typing import Literal, Protocol, cast
 
 import asyncpg
@@ -25,6 +26,7 @@ from pydantic import BaseModel
 
 from app.planner.mission import MissionProfile
 from app.planner.tracker import Application, ApplicationEvent, AppStatus, Contact, ContactIn
+from app.planner.watch import SourceState, WatchChange
 
 PLANNER_SCHEMA_SQL = """
 CREATE TABLE IF NOT EXISTS planner_mission (
@@ -61,6 +63,27 @@ CREATE TABLE IF NOT EXISTS planner_application_event (
 );
 CREATE INDEX IF NOT EXISTS planner_event_app_idx ON planner_application_event (application_id, id);
 
+-- Signed program history (ADR-0021): each export links to the previous export's Merkle root.
+CREATE TABLE IF NOT EXISTS planner_history_checkpoint (
+    id           BIGSERIAL PRIMARY KEY,
+    workspace    TEXT NOT NULL,
+    merkle_root  TEXT NOT NULL,
+    prev_root    TEXT,
+    event_count  INTEGER NOT NULL,
+    created_at   TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS planner_history_ws_idx ON planner_history_checkpoint (workspace, id);
+
+-- Pilot usage events (ADR-0021): what a workspace did, nothing about what it contains.
+CREATE TABLE IF NOT EXISTS planner_usage_event (
+    id         BIGSERIAL PRIMARY KEY,
+    workspace  TEXT NOT NULL,
+    actor      TEXT NOT NULL,
+    kind       TEXT NOT NULL,
+    at         TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS planner_usage_ws_idx ON planner_usage_event (workspace, at);
+
 CREATE TABLE IF NOT EXISTS planner_contact (
     id              BIGSERIAL PRIMARY KEY,
     application_id  TEXT NOT NULL REFERENCES planner_application (id) ON DELETE CASCADE,
@@ -73,6 +96,35 @@ CREATE TABLE IF NOT EXISTS planner_contact (
     created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS planner_contact_app_idx ON planner_contact (application_id, on_date);
+
+-- The Watch (ADR-0019) watches public sources, so these tables are global, not per workspace.
+-- Each workspace sees only the changes that touch its own applications (see api/planner.py).
+CREATE TABLE IF NOT EXISTS planner_watch_source (
+    url             TEXT PRIMARY KEY,
+    status          TEXT NOT NULL,
+    content_hash    TEXT,
+    length          INTEGER NOT NULL DEFAULT 0,
+    body            TEXT NOT NULL DEFAULT '',
+    error           TEXT NOT NULL DEFAULT '',
+    checked_at      TIMESTAMPTZ NOT NULL
+);
+CREATE TABLE IF NOT EXISTS planner_watch_change (
+    id              TEXT PRIMARY KEY,
+    url             TEXT NOT NULL,
+    kind            TEXT NOT NULL,
+    detected_at     TIMESTAMPTZ NOT NULL,
+    previous_hash   TEXT,
+    new_hash        TEXT,
+    size_delta      INTEGER NOT NULL DEFAULT 0,
+    words_added     INTEGER NOT NULL DEFAULT 0,
+    words_removed   INTEGER NOT NULL DEFAULT 0,
+    detail          TEXT NOT NULL DEFAULT '',
+    materiality     TEXT,
+    ai_summary      TEXT NOT NULL DEFAULT ''
+);
+ALTER TABLE planner_watch_change ADD COLUMN IF NOT EXISTS materiality TEXT;
+ALTER TABLE planner_watch_change ADD COLUMN IF NOT EXISTS ai_summary TEXT NOT NULL DEFAULT '';
+CREATE INDEX IF NOT EXISTS planner_watch_change_url_idx ON planner_watch_change (url, detected_at);
 """
 
 EventKind = Literal["created", "status", "update", "contact"]
@@ -94,6 +146,12 @@ class PlannerStore(Protocol):
     kind: str
 
     async def create_mission(self, workspace: str, profile: MissionProfile) -> Mission: ...
+    async def list_workspaces(self) -> list[str]: ...
+    async def add_usage_event(self, workspace: str, actor: str, kind: str, at: dt.datetime) -> None: ...
+    async def usage_events(self, workspace: str, since: dt.datetime) -> list[tuple[str, dt.datetime]]: ...
+    async def last_history_root(self, workspace: str) -> str | None: ...
+    async def add_history_checkpoint(self, workspace: str, merkle_root: str, prev_root: str | None,
+                                     event_count: int) -> None: ...
     async def list_missions(self, workspace: str) -> list[Mission]: ...
     async def get_mission(self, workspace: str, mission_id: str) -> Mission | None: ...
     async def update_mission(self, workspace: str, mission_id: str,
@@ -108,6 +166,11 @@ class PlannerStore(Protocol):
     async def list_events(self, workspace: str, app_id: str) -> list[ApplicationEvent]: ...
     async def add_contact(self, workspace: str, app_id: str, contact: ContactIn) -> Contact: ...
     async def list_contacts(self, workspace: str, app_id: str) -> list[Contact]: ...
+    async def get_source_state(self, url: str) -> SourceState | None: ...
+    async def save_source_state(self, state: SourceState) -> None: ...
+    async def add_watch_change(self, change: WatchChange) -> None: ...
+    async def list_watch_changes(self, urls: Iterable[str] | None = None,
+                                 limit: int = 200) -> list[WatchChange]: ...
 
 
 def _now() -> dt.datetime:
@@ -126,6 +189,10 @@ class MemoryPlannerStore:
         self._apps: dict[str, Application] = {}
         self._events: list[ApplicationEvent] = []
         self._contacts: list[Contact] = []
+        self._watch_states: dict[str, SourceState] = {}
+        self._watch_changes: list[WatchChange] = []
+        self._checkpoints: list[tuple[str, str, str | None, int]] = []
+        self._usage: list[tuple[str, str, str, dt.datetime]] = []
         self._seq = itertools.count(1)
 
     def _owns(self, workspace: str, mission_id: str) -> bool:
@@ -143,6 +210,23 @@ class MemoryPlannerStore:
         m = Mission(id=_new_id(), workspace=workspace, profile=profile, created_at=now, updated_at=now)
         self._missions[m.id] = m
         return m
+
+    async def add_usage_event(self, workspace: str, actor: str, kind: str, at: dt.datetime) -> None:
+        self._usage.append((workspace, actor, kind, at))
+
+    async def usage_events(self, workspace: str, since: dt.datetime) -> list[tuple[str, dt.datetime]]:
+        return [(k, at) for w, _, k, at in self._usage if w == workspace and at >= since]
+
+    async def last_history_root(self, workspace: str) -> str | None:
+        roots = [c[1] for c in self._checkpoints if c[0] == workspace]
+        return roots[-1] if roots else None
+
+    async def add_history_checkpoint(self, workspace: str, merkle_root: str, prev_root: str | None,
+                                     event_count: int) -> None:
+        self._checkpoints.append((workspace, merkle_root, prev_root, event_count))
+
+    async def list_workspaces(self) -> list[str]:
+        return sorted({m.workspace for m in self._missions.values()})
 
     async def list_missions(self, workspace: str) -> list[Mission]:
         return sorted((m for m in self._missions.values() if m.workspace == workspace),
@@ -221,6 +305,21 @@ class MemoryPlannerStore:
         return sorted((c for c in self._contacts if c.application_id == app_id),
                       key=lambda c: (c.on_date, c.id))
 
+    async def get_source_state(self, url: str) -> SourceState | None:
+        return self._watch_states.get(url)
+
+    async def save_source_state(self, state: SourceState) -> None:
+        self._watch_states[state.url] = state
+
+    async def add_watch_change(self, change: WatchChange) -> None:
+        self._watch_changes.append(change)
+
+    async def list_watch_changes(self, urls: Iterable[str] | None = None,
+                                 limit: int = 200) -> list[WatchChange]:
+        wanted = set(urls) if urls is not None else None
+        out = [c for c in self._watch_changes if wanted is None or c.url in wanted]
+        return sorted(out, key=lambda c: c.detected_at, reverse=True)[:limit]
+
 
 def _mission(row: asyncpg.Record) -> Mission:
     profile = row["profile"]
@@ -270,6 +369,33 @@ class PostgresPlannerStore:
             "INSERT INTO planner_mission (id, workspace, profile) VALUES ($1, $2, $3::jsonb) "
             "RETURNING *", _new_id(), workspace, profile.model_dump_json())
         return _mission(row)
+
+    async def add_usage_event(self, workspace: str, actor: str, kind: str, at: dt.datetime) -> None:
+        await self._p().execute(
+            "INSERT INTO planner_usage_event (workspace, actor, kind, at) VALUES ($1, $2, $3, $4)",
+            workspace, actor, kind, at)
+
+    async def usage_events(self, workspace: str, since: dt.datetime) -> list[tuple[str, dt.datetime]]:
+        rows = await self._p().fetch(
+            "SELECT kind, at FROM planner_usage_event WHERE workspace = $1 AND at >= $2 "
+            "ORDER BY at", workspace, since)
+        return [(r["kind"], r["at"]) for r in rows]
+
+    async def last_history_root(self, workspace: str) -> str | None:
+        row = await self._p().fetchval(
+            "SELECT merkle_root FROM planner_history_checkpoint WHERE workspace = $1 "
+            "ORDER BY id DESC LIMIT 1", workspace)
+        return None if row is None else str(row)
+
+    async def add_history_checkpoint(self, workspace: str, merkle_root: str, prev_root: str | None,
+                                     event_count: int) -> None:
+        await self._p().execute(
+            "INSERT INTO planner_history_checkpoint (workspace, merkle_root, prev_root, event_count) "
+            "VALUES ($1, $2, $3, $4)", workspace, merkle_root, prev_root, event_count)
+
+    async def list_workspaces(self) -> list[str]:
+        rows = await self._p().fetch("SELECT DISTINCT workspace FROM planner_mission ORDER BY workspace")
+        return [r["workspace"] for r in rows]
 
     async def list_missions(self, workspace: str) -> list[Mission]:
         rows = await self._p().fetch(
@@ -374,3 +500,35 @@ class PostgresPlannerStore:
             "WHERE m.workspace = $1 AND c.application_id = $2 ORDER BY c.on_date, c.id",
             workspace, app_id)
         return [Contact(**dict(r)) for r in rows]
+
+    async def get_source_state(self, url: str) -> SourceState | None:
+        row = await self._p().fetchrow("SELECT * FROM planner_watch_source WHERE url = $1", url)
+        return SourceState(**dict(row)) if row else None
+
+    async def save_source_state(self, state: SourceState) -> None:
+        await self._p().execute(
+            "INSERT INTO planner_watch_source (url, status, content_hash, length, body, error, "
+            "checked_at) VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (url) DO UPDATE SET "
+            "status = EXCLUDED.status, content_hash = EXCLUDED.content_hash, "
+            "length = EXCLUDED.length, body = EXCLUDED.body, error = EXCLUDED.error, "
+            "checked_at = EXCLUDED.checked_at",
+            state.url, state.status, state.content_hash, state.length, state.body, state.error,
+            state.checked_at)
+
+    async def add_watch_change(self, change: WatchChange) -> None:
+        await self._p().execute(
+            "INSERT INTO planner_watch_change (id, url, kind, detected_at, previous_hash, new_hash, "
+            "size_delta, words_added, words_removed, detail, materiality, ai_summary) "
+            "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)",
+            change.id, change.url, change.kind, change.detected_at, change.previous_hash,
+            change.new_hash, change.size_delta, change.words_added, change.words_removed,
+            change.detail, change.materiality, change.ai_summary)
+
+    async def list_watch_changes(self, urls: Iterable[str] | None = None,
+                                 limit: int = 200) -> list[WatchChange]:
+        wanted = list(urls) if urls is not None else None
+        rows = await self._p().fetch(
+            "SELECT * FROM planner_watch_change "
+            "WHERE $1::text[] IS NULL OR url = ANY($1::text[]) "
+            "ORDER BY detected_at DESC, id LIMIT $2", wanted, limit)
+        return [WatchChange(**dict(r)) for r in rows]
