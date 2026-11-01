@@ -492,6 +492,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/program": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Program
+         * @description The workspace's missions folded into one picture per jurisdiction: how many licences each
+         *     market needs, how many are tracked, granted or overdue, and the next dates across all missions.
+         */
+        get: operations["program_program_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/missions/{mission_id}/deadlines": {
         parameters: {
             query?: never;
@@ -1667,6 +1688,62 @@ export interface components {
              * @enum {string}
              */
             stage: "submitted" | "granted";
+        };
+        /** Program */
+        Program: {
+            /** Missions */
+            missions: number;
+            /** Markets */
+            markets: components["schemas"]["ProgramMarket"][];
+            /** Upcoming */
+            upcoming: components["schemas"]["ProgramDeadline"][];
+        };
+        /** ProgramDeadline */
+        ProgramDeadline: {
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "start" | "submit" | "obligation";
+            /** License Id */
+            license_id: string;
+            /** Title */
+            title: string;
+            /** Hard */
+            hard: boolean;
+            /** Mission Id */
+            mission_id: string;
+            /** Mission Name */
+            mission_name: string;
+            /** Jurisdiction */
+            jurisdiction: string;
+            /** Overdue */
+            overdue: boolean;
+        };
+        /** ProgramMarket */
+        ProgramMarket: {
+            /** Jurisdiction */
+            jurisdiction: string;
+            /** Name */
+            name: string;
+            /** Kind */
+            kind: string;
+            /** Licences */
+            licences: number;
+            /** Tracked */
+            tracked: number;
+            /** Granted */
+            granted: number;
+            /** In Progress */
+            in_progress: number;
+            /** Overdue */
+            overdue: number;
+            next_deadline: components["schemas"]["ProgramDeadline"] | null;
         };
         /**
          * RadioService
@@ -3207,6 +3284,38 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Contact"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    program_program_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-workspace"?: string | null;
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Program"];
                 };
             };
             /** @description Validation Error */

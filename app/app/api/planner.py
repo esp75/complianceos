@@ -48,6 +48,7 @@ from app.planner.history import HistoryDocument, build_history
 from app.planner.knowledge import Facilitator, Jurisdiction, KnowledgeBase, License
 from app.planner.mission import MissionProfile
 from app.planner.plan import Deadline, Roadmap, RoadmapItem, build_roadmap
+from app.planner.program import MissionView, Program, ProgramDeadline, build_program
 from app.planner.review import dossier_markdown
 from app.planner.sample import sample_mission
 from app.planner.store import DuplicateError, Mission, PlannerStore
@@ -437,6 +438,24 @@ async def _deadlines(store: PlannerStore, p: Principal, roadmap: Roadmap, missio
                                            overdue=c.next_step_due < today, tracked=True))
     out.sort(key=lambda d: (d.date, d.license_id, d.kind))
     return out
+
+
+@router.get("/program")
+async def program(p: Read, store: Store, kb: KB, today: Today) -> Program:
+    """The workspace's missions folded into one picture per jurisdiction: how many licences each
+    market needs, how many are tracked, granted or overdue, and the next dates across all missions."""
+    views: list[MissionView] = []
+    for m in await store.list_missions(p.workspace):
+        roadmap = build_roadmap(kb, m.profile, today)
+        deadlines = [
+            ProgramDeadline(**d.model_dump(), mission_id=m.id, mission_name=m.profile.name,
+                            jurisdiction=next((i.jurisdiction for i in roadmap.items
+                                               if i.license_id == d.license_id), ""))
+            for d in await _deadlines(store, p, roadmap, m.id, today)]
+        views.append(MissionView(mission_id=m.id, mission_name=m.profile.name, roadmap=roadmap,
+                                 applications=await store.list_applications(p.workspace, m.id),
+                                 deadlines=deadlines))
+    return build_program(views, today)
 
 
 @router.get("/missions/{mission_id}/deadlines")

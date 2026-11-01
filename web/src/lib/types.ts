@@ -33,3 +33,5 @@ export type FrequencyBand = S["FrequencyBand"];
 
 export type UsageSummary = S["UsageSummary"];
 export type Recipients = S["RecipientsOut"];
+export type Program = S["Program"];
+export type ProgramMarket = S["ProgramMarket"];

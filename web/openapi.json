@@ -2186,6 +2186,72 @@
     }
    }
   },
+  "/program": {
+   "get": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "Program",
+    "description": "The workspace's missions folded into one picture per jurisdiction: how many licences each\nmarket needs, how many are tracked, granted or overdue, and the next dates across all missions.",
+    "operationId": "program_program_get",
+    "parameters": [
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Program"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/missions/{mission_id}/deadlines": {
    "get": {
     "tags": [
@@ -5494,6 +5560,153 @@
      "stage"
     ],
     "title": "PrerequisiteOut"
+   },
+   "Program": {
+    "properties": {
+     "missions": {
+      "type": "integer",
+      "title": "Missions"
+     },
+     "markets": {
+      "items": {
+       "$ref": "#/components/schemas/ProgramMarket"
+      },
+      "type": "array",
+      "title": "Markets"
+     },
+     "upcoming": {
+      "items": {
+       "$ref": "#/components/schemas/ProgramDeadline"
+      },
+      "type": "array",
+      "title": "Upcoming"
+     }
+    },
+    "type": "object",
+    "required": [
+     "missions",
+     "markets",
+     "upcoming"
+    ],
+    "title": "Program"
+   },
+   "ProgramDeadline": {
+    "properties": {
+     "date": {
+      "type": "string",
+      "format": "date",
+      "title": "Date"
+     },
+     "kind": {
+      "type": "string",
+      "enum": [
+       "start",
+       "submit",
+       "obligation"
+      ],
+      "title": "Kind"
+     },
+     "license_id": {
+      "type": "string",
+      "title": "License Id"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "hard": {
+      "type": "boolean",
+      "title": "Hard"
+     },
+     "mission_id": {
+      "type": "string",
+      "title": "Mission Id"
+     },
+     "mission_name": {
+      "type": "string",
+      "title": "Mission Name"
+     },
+     "jurisdiction": {
+      "type": "string",
+      "title": "Jurisdiction"
+     },
+     "overdue": {
+      "type": "boolean",
+      "title": "Overdue"
+     }
+    },
+    "type": "object",
+    "required": [
+     "date",
+     "kind",
+     "license_id",
+     "title",
+     "hard",
+     "mission_id",
+     "mission_name",
+     "jurisdiction",
+     "overdue"
+    ],
+    "title": "ProgramDeadline"
+   },
+   "ProgramMarket": {
+    "properties": {
+     "jurisdiction": {
+      "type": "string",
+      "title": "Jurisdiction"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "kind": {
+      "type": "string",
+      "title": "Kind"
+     },
+     "licences": {
+      "type": "integer",
+      "title": "Licences"
+     },
+     "tracked": {
+      "type": "integer",
+      "title": "Tracked"
+     },
+     "granted": {
+      "type": "integer",
+      "title": "Granted"
+     },
+     "in_progress": {
+      "type": "integer",
+      "title": "In Progress"
+     },
+     "overdue": {
+      "type": "integer",
+      "title": "Overdue"
+     },
+     "next_deadline": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/ProgramDeadline"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    },
+    "type": "object",
+    "required": [
+     "jurisdiction",
+     "name",
+     "kind",
+     "licences",
+     "tracked",
+     "granted",
+     "in_progress",
+     "overdue",
+     "next_deadline"
+    ],
+    "title": "ProgramMarket"
    },
    "RadioService": {
     "type": "string",

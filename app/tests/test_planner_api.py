@@ -382,3 +382,29 @@ async def test_compose_service_name_is_an_allowed_host(monkeypatch: pytest.Monke
     get_settings.cache_clear()
     async with httpx.AsyncClient(transport=httpx.ASGITransport(app=make_app()), base_url="http://api:8000") as c:
         assert (await c.get("/missions")).status_code == 200
+
+
+# --- one client, many markets ---
+
+async def test_program_folds_missions_into_markets(client: httpx.AsyncClient) -> None:
+    empty = (await client.get("/program")).json()
+    assert empty == {"missions": 0, "markets": [], "upcoming": []}
+
+    mid = await sample(client)
+    second = await client.post("/missions", json={
+        "name": "Second mission", "operator_country": "AT", "orbit": "LEO", "altitude_km": 550,
+        "satellite_count": 4, "services": ["earth_exploration_satellite"],
+        "frequency_bands": ["X"], "target_launch_date": "2029-06-01"})
+    assert second.status_code == 201, second.text
+    lic = "lu-space-activity-authorisation"
+    app_id = (await client.post(f"/missions/{mid}/applications",
+                                json={"license_id": lic})).json()["application"]["id"]
+    await client.patch(f"/applications/{app_id}", json={"status": "preparing"})
+
+    prog = (await client.get("/program")).json()
+    assert prog["missions"] == 2
+    by = {m["jurisdiction"]: m for m in prog["markets"]}
+    assert {"lu", "at"} <= set(by)
+    assert by["lu"]["tracked"] == 1 and by["lu"]["in_progress"] == 1 and by["lu"]["granted"] == 0
+    assert by["at"]["licences"] == 1 and by["at"]["tracked"] == 0
+    assert prog["upcoming"] and all(not d["overdue"] for d in prog["upcoming"])

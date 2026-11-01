@@ -32,6 +32,10 @@ All notable changes to ComplianceOS are documented here. Format: [Keep a Changel
   and Weltraumverordnung, read from the RIS open-data API, with the BMIMI Weltraumbehörde as the
   authority. Germany is not covered: it has no general space law and its routes are unresearched.
 
+- One client, many markets: `GET /program` folds every mission in a workspace into one row per
+  jurisdiction (licences needed, tracked, in progress, granted, overdue, next date), shown as the
+  Markets table on the Workspace page.
+
 ### Changed
 - `POST /watch/run` allows one run at a time (409) and one per minute per process (429).
 - `verify_history` checks the fingerprint matches the embedded key and accepts a

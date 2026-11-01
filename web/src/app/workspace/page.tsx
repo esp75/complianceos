@@ -1,12 +1,14 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ApiNotice } from "@/components/api-notice";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, Select, Textarea } from "@/components/ui/field";
 import { api, paths, useApi } from "@/lib/api";
-import type { Recipients, UsageSummary } from "@/lib/types";
+import { formatDate } from "@/lib/dates";
+import type { Program, Recipients, UsageSummary } from "@/lib/types";
 
 /** What each usage event means in plain words. The planner stores the kind only, never content. */
 const KINDS: [string, string][] = [
@@ -23,9 +25,10 @@ export default function WorkspacePage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Workspace</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Who hears about source changes, and how this workspace has been used.
+          Your markets across every mission, who hears about source changes, and how this workspace has been used.
         </p>
       </div>
+      <Markets />
       <AlertRecipients />
       <UsageReport />
     </div>
@@ -115,6 +118,75 @@ function UsageReport() {
                 ))}
               </tbody>
             </table>
+          </>
+        ) : null}
+      </CardContent>
+    </Card>
+  );
+}
+
+function Markets() {
+  const { data, error } = useApi<Program>(paths.program);
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Markets</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <ApiNotice error={error} />
+        {data && data.markets.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            No missions yet. <Link href="/missions/new" className="underline">Plan a mission</Link> to see the licences
+            each country needs.
+          </p>
+        ) : null}
+        {data && data.markets.length > 0 ? (
+          <>
+            <p className="text-sm text-muted-foreground">
+              {data.missions} mission{data.missions === 1 ? "" : "s"} across {data.markets.length} jurisdiction
+              {data.markets.length === 1 ? "" : "s"}. Most urgent first.
+            </p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-left text-xs text-muted-foreground">
+                    <th className="py-1 pr-3 font-medium">Jurisdiction</th>
+                    <th className="py-1 pr-3 text-right font-medium">Needed</th>
+                    <th className="py-1 pr-3 text-right font-medium">Tracked</th>
+                    <th className="py-1 pr-3 text-right font-medium">In progress</th>
+                    <th className="py-1 pr-3 text-right font-medium">Granted</th>
+                    <th className="py-1 pr-3 text-right font-medium">Overdue</th>
+                    <th className="py-1 font-medium">Next date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.markets.map((m) => (
+                    <tr key={m.jurisdiction} className="border-t align-top">
+                      <td className="py-2 pr-3 font-medium">{m.name}</td>
+                      <td className="py-2 pr-3 text-right tabular-nums">{m.licences}</td>
+                      <td className="py-2 pr-3 text-right tabular-nums">{m.tracked}</td>
+                      <td className="py-2 pr-3 text-right tabular-nums">{m.in_progress}</td>
+                      <td className="py-2 pr-3 text-right tabular-nums">{m.granted}</td>
+                      <td className={`py-2 pr-3 text-right tabular-nums ${m.overdue ? "font-medium text-alarm" : ""}`}>
+                        {m.overdue}
+                      </td>
+                      <td className="py-2">
+                        {m.next_deadline ? (
+                          <Link href={`/missions/${m.next_deadline.mission_id}`} className="hover:underline">
+                            {formatDate(m.next_deadline.date)}
+                            <span className="block text-xs text-muted-foreground">
+                              {m.next_deadline.title} · {m.next_deadline.mission_name}
+                            </span>
+                          </Link>
+                        ) : (
+                          <span className="text-muted-foreground">None</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </>
         ) : null}
       </CardContent>

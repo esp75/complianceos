@@ -113,6 +113,7 @@ export const paths = {
   watch: (id: string) => `/missions/${id}/watch`,
   events: (appId: string) => `/applications/${appId}/events`,
   contacts: (appId: string) => `/applications/${appId}/contacts`,
+  program: "/program",
   recipients: "/alerts/recipients",
   usage: (days: number) => `/usage/summary?days=${days}`,
   jurisdictions: "/knowledge/jurisdictions",

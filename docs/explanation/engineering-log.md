@@ -1,5 +1,30 @@
 # Engineering log — ComplianceOS v0.2
 
+## 2026-11-01 — Review, security pass, workspace, Austria
+
+- **Committed** as nine commits on `planner-first-slice` (nothing pushed). The first three are not each
+  green on their own (shared files `store.py`, `planner.py` landed with the first); the branch
+  head is.
+- **Postgres is now verified.** Colima's daemon was dead behind a live-looking VM; `colima restart`
+  fixed it (and switched the active Docker context to `colima`). The store contract ran against
+  `postgres:17`: 12 passed with no skips, including the new columns, checkpoints and usage tables.
+- **`/review` and `/cso` findings, fixed:** `POST /watch/run` let any writer start unlimited
+  fetches and LLM calls and race snapshots (now one at a time, one per minute); `verify_history`
+  trusted the key embedded in the document (now checks the fingerprint and can pin a trusted one).
+  The `/cso` run was static and partial (`--paths` scoped); it was not a full audit.
+  Known and left: redirects are followed on https without re-checking the resolved address (the
+  sources are pack URLs, not user input), and SMTP with `security=none` sends credentials in clear.
+- **Signed deliverable correction:** the dossier signature covered the roadmap only, not the cited
+  brief. It now covers both (`complianceos-dossier/1`), is served as `dossier.signed.json`, and the
+  Markdown package ends with the hash and signature. `/bundle/sign` seals Openlane evidence and is
+  not the planner's path; no trust-layer file was edited.
+- **Per-workspace alert recipients**, a Workspace page (recipients, usage report, Markets view),
+  and `GET /program` for several missions.
+- **Austria** added (draft) from the RIS API; Germany not added (see `knowledge/VERIFICATION.md`).
+- **Not done, and why:** Légifrance route (needs PISTE API credentials from the project owner);
+  objection-pattern layer (practice data needs a human source); trust-bundle anchoring (after the
+  external review); billing (provider choice).
+
 ## 2026-11-01 — P1/P2 completion pass (ADR-0021, ADR-0022)
 
 - **Signed program history** (`app/planner/history.py`): Merkle export of application events,

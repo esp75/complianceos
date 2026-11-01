@@ -17,7 +17,7 @@
 
 **Goal:** produce a client-grade Market-Access Dossier for one pilot jurisdiction with the existing stack.
 
-- [ ] Jurisdiction corpus ingest v1: point the L2 ingest (`app/app/kg/ingest.py` + Claude extractor) at national telecom/space acts, ministry publications, and ITU RR excerpts for the first 2–3 pilot jurisdictions (chosen by pilot signups; likely DE/AT/UK/LU from the target list)
+- [~] Jurisdiction corpus ingest v1 — Austria's space approval added by hand from the RIS API (DE not started: no verified sources; the L2 extractor was not used). Original text: point the L2 ingest (`app/app/kg/ingest.py` + Claude extractor) at national telecom/space acts, ministry publications, and ITU RR excerpts for the first 2–3 pilot jurisdictions (chosen by pilot signups; likely DE/AT/UK/LU from the target list)
 - [~] Dossier composer — shipped ([ADR-0022](./adr/0022-dossier-sections-and-review-package.md)): friction points and decision-maker map, both citation-enforced, with basis labels; **open:** a sourced objection-pattern layer (practice data), L4 drafting of per-section prose. Original text: extend L4 drafting (`app/app/l4/drafting.py`) from single-obligation paragraphs to the dossier section set (requirements map, sequence/timeline, prerequisites, objection forecast, decision-maker map) — citation-or-422 enforced per section; practice-vs-statute confidence labels
 - [~] Human-review loop — Markdown reviewer package with checklist shipped (ADR-0022); the branded-PDF part is unchanged: reviewer checklist + diff-friendly dossier format (markdown → branded PDF via existing fpdf2 path)
 - [x] Signed deliverable — every dossier carries a verifiable Ed25519 signature over the roadmap and the brief ([ADR-0022](./adr/0022-dossier-sections-and-review-package.md) addendum), through the trust primitives (`/bundle/sign` seals Openlane evidence and is not the planner path). **Open:** pin the signer by fingerprint in a published verifier tool
@@ -38,7 +38,7 @@
 - [ ] Dossier pipeline cost/time reduction (target: ≤1 founder-day/dossier): section templates per jurisdiction archetype, reusable corpus, extraction QA harness
 - [ ] Objection-pattern layer v1: structured objection/decision-maker records per jurisdiction accumulating in the KG (the compounding asset)
 - [ ] Billing + subscription plumbing (EU provider), MoU→contract conversion flow
-- [ ] Multi-jurisdiction workspace (the S2→S3 bridge: one client, N markets)
+- [~] Multi-jurisdiction workspace (the S2→S3 bridge: one client, N markets) — the Markets view (`GET /program`) shipped; **open:** per-market ownership/assignees and a cross-mission Watch digest
 - [ ] `/cso` pass + RLS hardening on client-facing surfaces (licensing state is competitively sensitive — the sovereignty pitch must be true)
 
 **DoD:** a converted client is billed, multi-market, monitored, with signed history — no founder heroics in the loop.
