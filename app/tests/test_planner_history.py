@@ -133,3 +133,18 @@ async def test_api_serves_the_review_package(client: httpx.AsyncClient) -> None:
     assert res.status_code == 200 and res.headers["content-type"].startswith("text/markdown")
     assert "Reviewer sign-off" in res.text
     assert (await client.get("/missions/nope/dossier.md")).status_code == 404
+
+
+async def test_a_history_signed_with_someone_elses_key_fails_the_pinned_fingerprint() -> None:
+    """Security review: the key is embedded, so a forger's self-signed document verified."""
+    store, _ = await _store_with_history()
+    real = await build_history(store, "local", KEYS, NOW)
+    forged = await build_history(store, "local", DerivedKeyStore(b"x" * 32), NOW)
+
+    assert verify_history(forged) == []  # internally consistent: integrity only
+    assert verify_history(real, real.fingerprint) == []
+    assert any("different key" in p for p in verify_history(forged, real.fingerprint))
+
+    swapped = real.model_copy(deep=True)
+    swapped.fingerprint = forged.fingerprint  # fingerprint claim not matching the embedded key
+    assert any("fingerprint does not match" in p for p in verify_history(swapped))

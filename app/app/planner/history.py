@@ -82,9 +82,14 @@ async def build_history(store: PlannerStore, workspace: str, keystore: KeyStore 
     return doc
 
 
-def verify_history(doc: HistoryDocument) -> list[str]:
+def verify_history(doc: HistoryDocument, trusted_fingerprint: str | None = None) -> list[str]:
     """Problems found in an exported document; empty when it is internally consistent and signed
-    correctly. Offline: uses only the document."""
+    correctly. Offline: uses only the document.
+
+    The document carries its own public key, so a bare signature check proves integrity only, not
+    origin: anyone can sign a forged history with their own key. Pass ``trusted_fingerprint``
+    (obtained out of band, e.g. from the operator) to pin the signer; without it the result says
+    nothing about who signed."""
     from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 
     problems: list[str] = []
@@ -101,6 +106,10 @@ def verify_history(doc: HistoryDocument) -> list[str]:
     else:
         try:
             pub = Ed25519PublicKey.from_public_bytes(bytes.fromhex(doc.public_key_hex))
+            if doc.fingerprint != key_fingerprint(bytes.fromhex(doc.public_key_hex)):
+                problems.append("fingerprint does not match the embedded public key")
+            if trusted_fingerprint is not None and doc.fingerprint != trusted_fingerprint:
+                problems.append("signed by a different key than the trusted fingerprint")
             if not verify(canonical(m), bytes.fromhex(doc.signature_hex), pub):
                 problems.append("signature does not verify")
         except ValueError:

@@ -18,7 +18,9 @@ keeps an append-only event log per application and signs its dossier with a per-
    events into the trust layer's Merkle tree, and signs the manifest with the workspace's Ed25519
    key (the dossier's key). It imports the trust primitives and does not edit any file marked
    `MARKED-FOR-EXTERNAL-REVIEW`, so the frozen review surface is unchanged.
-   `verify_history` checks the Merkle root and the signature from the document alone.
+   `verify_history` checks the Merkle root and the signature from the document alone. The document
+   embeds its public key, so that proves integrity, not origin: pass the signer's fingerprint,
+   obtained out of band, as `trusted_fingerprint` to pin who signed it.
 2. **Exports chain.** A workspace export is stored as a checkpoint and names the previous
    checkpoint's root in its signed manifest. A later export therefore cannot drop earlier events
    without the break being visible to anyone holding the earlier export. A per-mission export is a
