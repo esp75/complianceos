@@ -649,3 +649,27 @@ def test_smtp_refuses_cleartext_credentials() -> None:
         smtp_send(cfg, EmailMessage())
     with pytest.raises(ValueError, match="unknown SMTP security"):
         smtp_send(cfg.model_copy(update={"security": "tls"}), EmailMessage())
+
+
+async def test_unresolvable_host_is_refused_not_fetched() -> None:
+    result = await HttpFetcher().fetch("https://no-such-host.invalid/x")
+    assert not result.ok and "refused" in (result.error or "")
+
+
+def test_peer_address_check_refuses_private_peers() -> None:
+    from app.planner.watch import _peer_refusal
+
+    class Stream:
+        def __init__(self, addr: tuple[str, int]) -> None:
+            self.addr = addr
+
+        def get_extra_info(self, name: str) -> tuple[str, int]:
+            return self.addr
+
+    def resp(addr: tuple[str, int]) -> httpx.Response:
+        return httpx.Response(200, extensions={"network_stream": Stream(addr)})
+
+    assert _peer_refusal(resp(("10.1.2.3", 443))) is not None
+    assert _peer_refusal(resp(("169.254.169.254", 443))) is not None
+    assert _peer_refusal(resp(("8.8.8.8", 443))) is None
+    assert _peer_refusal(httpx.Response(200)) is None

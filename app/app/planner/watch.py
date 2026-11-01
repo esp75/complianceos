@@ -261,6 +261,21 @@ def _id() -> str:
 MAX_REDIRECTS = 5
 
 
+def _peer_refusal(resp: httpx.Response) -> str | None:
+    """Check the address the connection really reached, which closes the gap between the DNS
+    answer we validated and the one the connection used (DNS rebinding). The body is not read
+    when this refuses. Test transports have no socket, so there is nothing to check."""
+    stream = resp.extensions.get("network_stream")
+    addr = stream.get_extra_info("server_addr") if stream is not None else None
+    if not addr:
+        return None
+    try:
+        ip = ipaddress.ip_address(str(addr[0]).split("%")[0])
+    except ValueError:
+        return "refused a non-public address"
+    return None if ip.is_global else "refused a non-public address"
+
+
 class HttpFetcher:
     """Fetches pack URLs over https. Redirects are followed only when they stay on https, and the
     body is capped so a hostile or broken host cannot exhaust memory."""
@@ -282,6 +297,8 @@ class HttpFetcher:
                     if refusal:
                         return FetchResult(url=url, ok=False, error=refusal)
                     async with client.stream("GET", target) as resp:
+                        if (peer := _peer_refusal(resp)) is not None:
+                            return FetchResult(url=url, ok=False, error=peer)
                         if resp.is_redirect and resp.headers.get("location"):
                             target = str(resp.url.join(resp.headers["location"]))
                             continue
@@ -307,7 +324,7 @@ class HttpFetcher:
             try:
                 infos = await asyncio.get_running_loop().getaddrinfo(host, parts.port or 443)
             except OSError:
-                return None  # let the request itself report the failure
+                return "refused: the host name did not resolve"
             literals = [ipaddress.ip_address(i[4][0]) for i in infos]
         if any(not ip.is_global for ip in literals):
             return "refused a non-public address"

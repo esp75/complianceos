@@ -5,6 +5,13 @@ All notable changes to ComplianceOS are documented here. Format: [Keep a Changel
 ## [Unreleased]
 
 ### Added
+- Standalone offline verifier (`verifier/complianceos_verify.py`) for signed dossiers and history.
+- Branded dossier PDF: cover page, running header, reviewer sign-off block.
+- `watch` service in `compose.yaml` runs the Watch daily.
+
+### Security
+- HttpFetcher checks every redirect hop and the connected peer address for non-public targets and
+  fails closed on DNS errors; SMTP refuses cleartext credentials.
 - Application owners: `PATCH /applications/{id}` takes `owner`; `GET /program` adds a per-owner
   workload (open, overdue, markets). The Workspace page shows an Owners table and a cross-mission
   Source changes list.

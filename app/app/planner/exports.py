@@ -153,12 +153,62 @@ def _sign(payload: bytes, keystore: KeyStore | None, workspace: str) -> tuple[Si
     return info, {}
 
 
+ACCENT = (79, 70, 229)  # DESIGN.md "accent" (indigo-600)
+
+
 class _Doc(FPDF):
+    title_line = ""
+
+    def header(self) -> None:
+        if self.page_no() == 1:  # the cover carries its own band
+            return
+        self.set_fill_color(*ACCENT)
+        self.rect(0, 0, self.w, 2.2, style="F")
+        self.set_y(5)
+        self.set_font("Helvetica", "", 7.5)
+        self.set_text_color(110, 110, 110)
+        self.cell(0, 4, _t(self.title_line), align="L")
+        self.ln(7)
+        self.set_text_color(30, 41, 59)
+
     def footer(self) -> None:
         self.set_y(-12)
         self.set_font("Helvetica", "", 7)
         self.set_text_color(110, 110, 110)
         self.cell(0, 5, _t(f"ComplianceOS · {_DISCLAIMER[:96]}…  Page {self.page_no()}"), align="C")
+
+
+def _cover(pdf: FPDF, roadmap: Roadmap, info: SignatureInfo) -> None:
+    m = roadmap.mission
+    pdf.set_fill_color(*ACCENT)
+    pdf.rect(0, 0, pdf.w, 70, style="F")
+    pdf.set_xy(pdf.l_margin, 22)
+    pdf.set_text_color(255, 255, 255)
+    pdf.set_font("Helvetica", "B", 11)
+    pdf.cell(0, 6, "ComplianceOS", new_x="LMARGIN", new_y="NEXT")
+    pdf.set_font("Helvetica", "B", 24)
+    pdf.multi_cell(0, 11, _t("Regulatory path dossier"), new_x="LMARGIN", new_y="NEXT")
+    pdf.set_font("Helvetica", "", 13)
+    pdf.multi_cell(0, 7, _t(m.name), new_x="LMARGIN", new_y="NEXT")
+    pdf.set_text_color(30, 41, 59)
+    pdf.set_y(84)
+    markets = sorted({i.jurisdiction.upper() for i in roadmap.items})
+    drafts = sum(1 for i in roadmap.items if i.status.value != "reviewed")
+    rows = [("Generated", str(roadmap.generated_on)),
+            ("Target launch", str(m.target_launch_date)),
+            ("Mission", f"{m.satellite_count} satellite(s), {m.orbit.value}, operator country "
+                        f"{m.operator_country}"),
+            ("Markets", ", ".join(markets) or "none"),
+            ("Licences and filings", str(len(roadmap.items))),
+            ("Review status", "Draft: expert review pending" if drafts else "Reviewed"),
+            ("Signature", f"Ed25519, key {(info.fingerprint or "")[:16]}..." if info.signed else "Unsigned")]
+    for k, v in rows:
+        pdf.set_font("Helvetica", "B", 9)
+        pdf.cell(42, 7, _t(k))
+        pdf.set_font("Helvetica", "", 9.5)
+        pdf.multi_cell(0, 7, _t(v), new_x="LMARGIN", new_y="NEXT")
+    pdf.ln(8)
+    _p(pdf, _DISCLAIMER, 8, "I")
 
 
 def _h(pdf: FPDF, text: str, size: int = 13) -> None:
@@ -208,6 +258,9 @@ def dossier_pdf(roadmap: Roadmap, brief: Brief, *, workspace: str,
     pdf.set_title(_t(f"Licensing roadmap - {roadmap.mission.name}"))
     pdf.set_author("ComplianceOS")
     pdf.set_auto_page_break(True, margin=16)
+    pdf.title_line = f"Licensing roadmap · {roadmap.mission.name}"
+    pdf.add_page()
+    _cover(pdf, roadmap, info)
     pdf.add_page()
 
     _h(pdf, f"Licensing roadmap: {roadmap.mission.name}", 17)
@@ -233,6 +286,15 @@ def dossier_pdf(roadmap: Roadmap, brief: Brief, *, workspace: str,
     _h(pdf, "Licences, authorisations and filings")
     for item in roadmap.items:
         _item_block(pdf, roadmap, item)
+
+    drafts = sum(1 for i in roadmap.items if i.status.value != "reviewed")
+    if drafts:
+        _h(pdf, "Reviewer sign-off")
+        _p(pdf, f"{drafts} of {len(roadmap.items)} rule records are draft: researched from official "
+                "sources and not yet reviewed by a licensing practitioner.", 9)
+        for field in ("Reviewer (organisation):", "Date:",
+                      "Result: approved / approved with changes / not approved", "Notes:"):
+            _p(pdf, f"{field} ______________________________________", 9)
 
     _h(pdf, "Integrity")
     pdf.set_font("Courier", "", 7)
