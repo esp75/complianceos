@@ -21,7 +21,9 @@ PDF, say), and `unreachable` means the source did not answer. PDFs with text are
 
 ## 2. Schedule it
 
-Run it daily from cron (or a compose job with the same command):
+With `docker compose up`, the `watch` service already does this: it runs the check once a day
+(`WATCH_INTERVAL_SECONDS` changes the pace) and sends email when SMTP is configured in `.env`.
+Without compose, run it from cron:
 
 **Who gets the email.** Each workspace sets its own recipients on the Workspace page (or
 `PUT /alerts/recipients`): its digest goes only to them. A workspace with none set falls back to
