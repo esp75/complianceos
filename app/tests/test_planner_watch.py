@@ -613,3 +613,39 @@ async def test_digest_goes_to_each_workspaces_own_recipients(
     assert await _alert(KB, store, summary) == 0
     assert sorted(sent) == [("a@a.eu",), ("b@b.eu",), ("default@x.eu",)]
     get_settings.cache_clear()
+
+
+@pytest.mark.parametrize("target", [
+    "https://127.0.0.1/admin", "https://10.0.0.5/x", "https://169.254.169.254/latest/meta-data",
+    "https://[::1]/x", "https://localhost/x", "https://db.internal/x",
+])
+async def test_redirect_to_internal_address_is_refused(target: str) -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.host == "example.gov":
+            return httpx.Response(302, headers={"location": target})
+        raise AssertionError(f"the fetcher followed the redirect to {request.url}")
+    result = await HttpFetcher(transport=httpx.MockTransport(handler)).fetch("https://example.gov/a")
+    assert not result.ok and "refused" in (result.error or "")
+
+
+async def test_redirect_to_public_https_is_followed_and_loops_end() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/a":
+            return httpx.Response(301, headers={"location": "/b"})
+        if request.url.path == "/loop":
+            return httpx.Response(302, headers={"location": "/loop"})
+        return httpx.Response(200, headers={"content-type": "text/html"}, content=b"<p>ok</p>")
+    f = HttpFetcher(transport=httpx.MockTransport(handler))
+    assert (await f.fetch("https://example.gov/a")).ok
+    loop = await f.fetch("https://example.gov/loop")
+    assert not loop.ok and "redirect" in (loop.error or "")
+
+
+def test_smtp_refuses_cleartext_credentials() -> None:
+    from app.planner.alerts import smtp_send
+    cfg = AlertConfig(host="mail.example.com", port=25, user="u", password="p", security="none",
+                      sender="a@x.eu", recipients=["b@x.eu"])
+    with pytest.raises(ValueError, match="clear text"):
+        smtp_send(cfg, EmailMessage())
+    with pytest.raises(ValueError, match="unknown SMTP security"):
+        smtp_send(cfg.model_copy(update={"security": "tls"}), EmailMessage())

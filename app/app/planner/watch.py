@@ -19,6 +19,7 @@ import datetime as dt
 import difflib
 import hashlib
 import io
+import ipaddress
 import smtplib
 import sys
 import uuid
@@ -257,6 +258,9 @@ def _id() -> str:
 
 # --- fetching ---
 
+MAX_REDIRECTS = 5
+
+
 class HttpFetcher:
     """Fetches pack URLs over https. Redirects are followed only when they stay on https, and the
     body is capped so a hostile or broken host cannot exhaust memory."""
@@ -269,33 +273,65 @@ class HttpFetcher:
             return FetchResult(url=url, ok=False, error="only https sources are watched")
         try:
             async with httpx.AsyncClient(
-                    timeout=REQUEST_TIMEOUT_S, follow_redirects=True, transport=self._transport,
+                    timeout=REQUEST_TIMEOUT_S, follow_redirects=False, transport=self._transport,
                     headers={"User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml,application/pdf"},
-            ) as client, client.stream("GET", url) as resp:
-                if resp.url.scheme != "https":
-                    return FetchResult(url=url, ok=False, error="redirected away from https")
-                if resp.status_code >= 400:
-                    return FetchResult(url=url, ok=False, http_status=resp.status_code,
-                                       error=f"HTTP {resp.status_code}")
-                ctype = resp.headers.get("content-type", "").split(";")[0].strip().lower()
-                if ctype in PDF_TYPES:
-                    return await self._pdf(url, resp)
-                if ctype not in HTML_TYPES | FEED_TYPES:
-                    return FetchResult(url=url, ok=False, http_status=resp.status_code,
-                                       unsupported=True,
-                                       error=f"not HTML ({ctype or 'no content type'}); "
-                                             "the Watch reads HTML and PDF")
-                body = bytearray()
-                async for chunk in resp.aiter_bytes():
-                    body.extend(chunk)
-                    if len(body) > MAX_BODY_BYTES:
-                        return FetchResult(url=url, ok=False, http_status=resp.status_code,
-                                           error="response exceeds the size cap")
-                html = bytes(body).decode(resp.encoding or "utf-8", errors="replace")
-                return FetchResult(url=url, ok=True, http_status=resp.status_code, html=html)
+            ) as client:
+                target = url
+                for _ in range(MAX_REDIRECTS + 1):
+                    refusal = await self._refuse(target)
+                    if refusal:
+                        return FetchResult(url=url, ok=False, error=refusal)
+                    async with client.stream("GET", target) as resp:
+                        if resp.is_redirect and resp.headers.get("location"):
+                            target = str(resp.url.join(resp.headers["location"]))
+                            continue
+                        return await self._read(url, resp)
+                return FetchResult(url=url, ok=False, error="too many redirects")
         except httpx.HTTPError as exc:
             return FetchResult(url=url, ok=False, error=type(exc).__name__)
 
+    async def _refuse(self, target: str) -> str | None:
+        """Why a hop must not be fetched: not https, or a host that is not on the public internet.
+        Every hop is checked, so a redirect cannot lead the Watch to an internal address."""
+        parts = urlsplit(target)
+        if parts.scheme != "https":
+            return "redirected away from https"
+        host = parts.hostname or ""
+        if not host or host == "localhost" or host.endswith((".local", ".internal")):
+            return "refused a non-public host"
+        try:
+            literals = [ipaddress.ip_address(host)]
+        except ValueError:
+            if self._transport is not None:  # tests: no DNS
+                return None
+            try:
+                infos = await asyncio.get_running_loop().getaddrinfo(host, parts.port or 443)
+            except OSError:
+                return None  # let the request itself report the failure
+            literals = [ipaddress.ip_address(i[4][0]) for i in infos]
+        if any(not ip.is_global for ip in literals):
+            return "refused a non-public address"
+        return None
+
+    async def _read(self, url: str, resp: httpx.Response) -> FetchResult:
+        if resp.status_code >= 400:
+            return FetchResult(url=url, ok=False, http_status=resp.status_code,
+                               error=f"HTTP {resp.status_code}")
+        ctype = resp.headers.get("content-type", "").split(";")[0].strip().lower()
+        if ctype in PDF_TYPES:
+            return await self._pdf(url, resp)
+        if ctype not in HTML_TYPES | FEED_TYPES:
+            return FetchResult(url=url, ok=False, http_status=resp.status_code, unsupported=True,
+                               error=f"not HTML ({ctype or 'no content type'}); "
+                                     "the Watch reads HTML and PDF")
+        body = bytearray()
+        async for chunk in resp.aiter_bytes():
+            body.extend(chunk)
+            if len(body) > MAX_BODY_BYTES:
+                return FetchResult(url=url, ok=False, http_status=resp.status_code,
+                                   error="response exceeds the size cap")
+        html = bytes(body).decode(resp.encoding or "utf-8", errors="replace")
+        return FetchResult(url=url, ok=True, http_status=resp.status_code, html=html)
 
     async def _pdf(self, url: str, resp: httpx.Response) -> FetchResult:
         body = bytearray()

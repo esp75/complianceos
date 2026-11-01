@@ -6,6 +6,7 @@ which tracked applications cite it; like the Watch it draws no conclusion beyond
 from __future__ import annotations
 
 import asyncio
+import ipaddress
 import re
 import smtplib
 import ssl
@@ -98,8 +99,21 @@ def build_message(cfg: AlertConfig, subject: str, body: str) -> EmailMessage:
 Sender = Callable[[AlertConfig, EmailMessage], None]
 
 
+def _is_loopback(host: str) -> bool:
+    if host == "localhost":
+        return True
+    try:
+        return ipaddress.ip_address(host).is_loopback
+    except ValueError:
+        return False
+
+
 def smtp_send(cfg: AlertConfig, msg: EmailMessage) -> None:
     """Blocking SMTP delivery. TLS certificates are verified for starttls and ssl."""
+    if cfg.security not in ("starttls", "ssl", "none"):
+        raise ValueError(f"unknown SMTP security {cfg.security!r}; use starttls, ssl or none")
+    if cfg.security == "none" and cfg.user and not _is_loopback(cfg.host):
+        raise ValueError("refusing to send SMTP credentials in clear text; use starttls or ssl")
     ctx = ssl.create_default_context()
     if cfg.security == "ssl":
         client: smtplib.SMTP = smtplib.SMTP_SSL(cfg.host, cfg.port, timeout=30, context=ctx)
