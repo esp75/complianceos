@@ -179,6 +179,19 @@ excerpt against an exact copy and say so here.
 - **Not covered:** the general authorisation under § 9 (whether a ground station can use it), the
   decision period, fees (§ 24), the Czech ITU satellite filing route.
 
+### Examined but not added (3 November 2026)
+- **Belgium:** the Electronic Communications Act of 13 June 2005 (ejustice ELI 2005011238) loads, but
+  the key sections (Art. 39 § 1) are empty placeholders in the consolidated text, and the Art. 18 award
+  rule is not the licence requirement. No clean quotable licence requirement was found.
+- **Poland:** the Prawo komunikacji elektronicznej (Dz.U. 2024 poz. 1221) PDF from UKE has lost word
+  spacing, so no provision can be quoted verbatim. ISAP returns a redirect loop from this environment.
+- **Italy:** Decreto legislativo 259/2003 on Normattiva loads only its table of contents; the article
+  bodies were not returned.
+- **Finland:** see above.
+- **Switzerland:** fedlex serves a JavaScript shell and its data endpoint refuses automated requests.
+- **Sweden:** pts.se does not connect, so the authority cannot be verified.
+- **Australia:** see above.
+
 ### Facilitators
 - Each firm's description is taken from its own website or publication, linked in `source`.
 - Listing is neutral: no ranking and no paid placement. To be listed, corrected or removed, open
