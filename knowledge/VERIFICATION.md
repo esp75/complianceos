@@ -159,6 +159,18 @@ excerpt against an exact copy and say so here.
   added: the ACMA website (acma.gov.au) did not connect from this environment on 3 November 2026,
   so the authority cannot be verified.
 
+### Spain
+- Ley 11/2022, de 28 de junio, General de Telecomunicaciones (BOE-A-2022-10757), read from the BOE
+  XML on 3 November 2026. Articles 85(5) and 88(3) are quoted verbatim.
+- Authority: the 2022 Act names the Ministry of Economic Affairs and Digital Transformation and the
+  Secretaría de Estado de Telecomunicaciones e Infraestructuras Digitales. The ministry portal
+  (portal.mineco.gob.es) shows the current name, Ministerio de Economía, Comercio y Empresa. The
+  internal body that now holds the telecom competence was not verified.
+- **Needs a human:** confirm the current competent body and whether the 2022 text is amended.
+- **Not covered:** which title form (general authorisation, individual authorisation, assignment or
+  concession) a ground station needs, fees, the royal decree on satellite exploitation under art.
+  85(5), and the Spanish ITU filing procedure.
+
 ### Facilitators
 - Each firm's description is taken from its own website or publication, linked in `source`.
 - Listing is neutral: no ranking and no paid placement. To be listed, corrected or removed, open

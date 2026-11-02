@@ -44,6 +44,9 @@ All notable changes to ComplianceOS are documented here. Format: [Keep a Changel
 - Germany joins the knowledge pack (draft): the ground-station frequency assignment (TKG §§ 91, 92)
   and the ITU satellite filing with the Bundesnetzagentur (TKG § 95), quoted verbatim from the
   official gesetze-im-internet.de text. Space-activity authorisation is not covered.
+- Spain joins the knowledge pack (draft): the title for using the radio public domain for a ground station
+  (Ley 11/2022 art. 88(3), with its six-week rule and coordination exception), and the State reservation of
+  orbit-spectrum use for communications satellites (art. 85(5)).
 - Denmark joins the knowledge pack (draft): the radio frequency permit for a ground station (Lov om
   radiofrekvenser § 6(1)), issued by Digitaliseringsstyrelsen.
 - Norway joins the knowledge pack (draft): the frequency permit for a ground station (ekomloven § 11-2)

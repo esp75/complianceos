@@ -247,6 +247,17 @@ def test_danish_ground_station_needs_a_radio_frequency_permit() -> None:
     assert "dk.rf.s6-1" in r.citations
     assert "dk-radio-frequency-permit" not in ids(mission(operator_country="LU"))
 
+def test_spanish_ground_station_and_satellite_orbit_routes() -> None:
+    station = mission(operator_country="LU", ground_station_countries=["ES"])
+    assert "es-radio-title" in ids(station)
+    r = build_roadmap(KB, station, TODAY)
+    item = next(i for i in r.items if i.license_id == "es-radio-title")
+    assert item.review.basis == "statutory" and item.review.typical_weeks == 6
+    assert "es.lgt2022.art-88-3" in r.citations
+    filing = mission(operator_country="LU", filing_administration="ES")
+    assert "es-satellite-orbit-reservation" in ids(filing)
+    assert "es-radio-title" not in ids(mission(operator_country="LU"))
+
 # --- brief ---
 
 class FakeLLM:
