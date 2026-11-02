@@ -1,0 +1,28 @@
+id: ie
+name: Ireland
+kind: national
+country: IE
+summary: 'Covered: the wireless telegraphy licence for a ground station under the Wireless Telegraphy Act 1926 as revised,
+  granted by ComReg. Not covered: the Irish ITU satellite filing route, any space-activity authorisation, licence conditions
+  and fees.'
+authorities:
+- id: ie-comreg
+  name: Commission for Communications Regulation (ComReg)
+  name_en: Commission for Communications Regulation
+  roles:
+  - earth_station_licensing
+  - spectrum_management
+  website: https://www.comreg.ie/
+  contacts:
+  - kind: web
+    value: https://www.comreg.ie/
+    purpose: Home page of ComReg, the appropriate authority under the Wireless Telegraphy Act 1926 for matters other than
+      ships.
+    source:
+      title: ComReg
+      url: https://www.comreg.ie/
+      retrieved: '2026-11-03'
+  notes: Named as the appropriate authority in the Wireless Telegraphy Act 1926, s. 2, as amended. Only the website was verified;
+    no postal address or email is listed.
+status: draft
+last_verified: '2026-11-03'

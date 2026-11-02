@@ -107,6 +107,19 @@ excerpt against an exact copy and say so here.
   general and names no satellite procedure), licence-exempt use, fees, space-activity rules.
   Agentschap Telecom's domain does not resolve; the RDI now carries out the work.
 
+### Ireland
+- Wireless Telegraphy Act 1926 (No. 45 of 1926), revised text from revisedacts.lawreform.ie (Law
+  Reform Commission), read on 3 November 2026. Sections 2 (definitions), 3(1) and 5(1) are quoted
+  with the amendment markers removed; the wording is otherwise unchanged.
+- Authority: the Act's definition of "appropriate authority" names the Commission for Communications
+  Regulation (ComReg) for matters other than ships; comreg.ie was checked live (HTTP 200).
+- The editorial note records that the Wireless Telegraphy Acts do not apply to placing satellite
+  earth station equipment on the market (European Communities (Satellite Telecommunications Services)
+  Regulations 1997, reg. 3). The record says so, and does not treat that as a licence exemption for
+  operating a station.
+- **Not covered:** the ITU satellite filing route, licence conditions, the decision period (none in
+  the Act), fees, and any space-activity authorisation.
+
 ### Facilitators
 - Each firm's description is taken from its own website or publication, linked in `source`.
 - Listing is neutral: no ranking and no paid placement. To be listed, corrected or removed, open

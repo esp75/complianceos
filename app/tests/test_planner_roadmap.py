@@ -217,6 +217,13 @@ def test_dutch_ground_station_needs_the_rdi_frequency_licence() -> None:
     assert "nl.tw.art-3-13-1" in r.citations
     assert "nl-frequency-licence" not in ids(mission(operator_country="LU"))
 
+def test_irish_ground_station_needs_the_comreg_wireless_licence() -> None:
+    m = mission(operator_country="LU", ground_station_countries=["IE"])
+    assert "ie-wireless-telegraphy-licence" in ids(m)
+    r = build_roadmap(KB, m, TODAY)
+    assert "ie.wta1926.s3-1" in r.citations
+    assert "ie-wireless-telegraphy-licence" not in ids(mission(operator_country="LU"))
+
 # --- brief ---
 
 class FakeLLM:

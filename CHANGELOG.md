@@ -44,6 +44,8 @@ All notable changes to ComplianceOS are documented here. Format: [Keep a Changel
 - Germany joins the knowledge pack (draft): the ground-station frequency assignment (TKG §§ 91, 92)
   and the ITU satellite filing with the Bundesnetzagentur (TKG § 95), quoted verbatim from the
   official gesetze-im-internet.de text. Space-activity authorisation is not covered.
+- Ireland joins the knowledge pack (draft): the wireless telegraphy licence for a ground station
+  (Wireless Telegraphy Act 1926, revised), granted by ComReg. The ITU filing route is not covered.
 - Netherlands joins the knowledge pack (draft): the frequency licence for a ground station under the
   Telecommunicatiewet (art. 3.13(1)), issued through the RDI. The ITU filing route is not covered.
 - Austria's ITU route checked against TKG 2021 and the Weltraumverordnung: no Austrian filing
