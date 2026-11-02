@@ -120,6 +120,14 @@ excerpt against an exact copy and say so here.
 - **Not covered:** the ITU satellite filing route, licence conditions, the decision period (none in
   the Act), fees, and any space-activity authorisation.
 
+### Canada
+- Radiocommunication Act (R.S.C. 1985, c. R-2), consolidated text from the Justice Laws Website
+  (laws-lois.justice.gc.ca, XML), read on 3 November 2026. Sections 4(1) and 5(1) are quoted verbatim;
+  section 5(1) is cut off at the first licence type, marked by the excerpt's end.
+- "Minister" means the Minister of Industry (s. 2). The ISED spectrum-management page was checked live.
+- **Not covered:** exemptions under regulations (s. 6(1)(m)), licence conditions, the decision period
+  (none in the Act text checked), fees, the Canadian ITU satellite filing route, space-related licences.
+
 ### Facilitators
 - Each firm's description is taken from its own website or publication, linked in `source`.
 - Listing is neutral: no ranking and no paid placement. To be listed, corrected or removed, open

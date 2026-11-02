@@ -1,0 +1,26 @@
+id: ca
+name: Canada
+kind: national
+country: CA
+summary: 'Covered: the radio authorisation for a ground station under the Radiocommunication Act, issued by the Minister responsible
+  for ISED. Not covered: the Canadian ITU satellite filing route, any space-related licence, licence conditions, exemptions
+  under regulations, and fees.'
+authorities:
+- id: ca-ised
+  name: Innovation, Science and Economic Development Canada (ISED)
+  name_en: Innovation, Science and Economic Development Canada
+  roles:
+  - spectrum_management
+  - earth_station_licensing
+  website: https://ised-isde.canada.ca/site/spectrum-management-telecommunications/en
+  contacts:
+  - kind: web
+    value: https://ised-isde.canada.ca/site/spectrum-management-telecommunications/en
+    purpose: ISED page on spectrum management and telecommunications, which covers radio licensing.
+    source:
+      title: ISED — Spectrum management and telecommunications
+      url: https://ised-isde.canada.ca/site/spectrum-management-telecommunications/en
+      retrieved: '2026-11-03'
+  notes: The Act's "Minister" means the Minister of Industry (s. 2), so ISED is the department that carries out the licensing function; this link is to the department's page. Only the web page was verified; no postal address or email is listed.
+status: draft
+last_verified: '2026-11-03'
