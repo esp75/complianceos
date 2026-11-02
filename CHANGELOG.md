@@ -40,7 +40,10 @@ All notable changes to ComplianceOS are documented here. Format: [Keep a Changel
 
 - Austria joins the knowledge pack (draft): the space activity approval under the Weltraumgesetz
   and Weltraumverordnung, read from the RIS open-data API, with the BMIMI Weltraumbehörde as the
-  authority. Germany is not covered: it has no general space law and its routes are unresearched.
+  authority. Germany: see below.
+- Germany joins the knowledge pack (draft): the ground-station frequency assignment (TKG §§ 91, 92)
+  and the ITU satellite filing with the Bundesnetzagentur (TKG § 95), quoted verbatim from the
+  official gesetze-im-internet.de text. Space-activity authorisation is not covered.
 
 - One client, many markets: `GET /program` folds every mission in a workspace into one row per
   jurisdiction (licences needed, tracked, in progress, granted, overdue, next date), shown as the

@@ -69,10 +69,24 @@ excerpt against an exact copy and say so here.
 - **Radio licence (added 2026-11-01):** excerpts for `at-radio-licence` were copied from the RIS API text of TKG 2021 (§ 4 Z 49, § 28(1), § 34(2), § 34(5)); the Fernmeldebüro site (fb.gv.at) was checked live. Fees, general authorisations (§ 28 ordinance), the 'no frequency coordination' case and satellite-specific procedure were not researched.
 - **Not covered:** Austria's ITU satellite filing route, the Weltraumregister
   procedure beyond the post-launch submission, and any sectoral approvals (e.g. Earth observation
-  data rules). **Germany is not covered at all**: it has no general space-activity law and its
-  routes (frequency assignment, satellite data security law) have not been researched.
+  data rules). Germany is covered only as
+  described under "Germany" below.
 - **Needs a human:** confirm the BMIMI is the competent authority in practice and that §13
   (supervision, current version) and the fee in §8 have not been amended since 2018.
+
+### Germany
+- Telekommunikationsgesetz (TKG) §§ 91, 92 and 95, downloaded on 3 November 2026 from the official
+  `gesetze-im-internet.de` XML (`/tkg_2021/xml.zip`, which can be fetched automatically) and quoted
+  verbatim; the three cited section pages were checked live (HTTP 200).
+- Authority: bundesnetzagentur.de checked live (HTTP 200). Only the website is recorded.
+- Timing: the six-week decision limit (§ 91(4)) is the only statutory figure; international
+  agreements on frequencies and orbital positions are expressly unaffected, so the plan's maximum
+  is an estimate. The filing route (§ 95) has no statutory period; its figures are estimates.
+- **Not covered:** any authorisation for the space activity itself, German registration of space
+  objects, general assignments (Allgemeinzuteilungen) for earth stations, fees, the satellite data
+  security law. Whether Germany has no general space law was not verified here.
+- **Needs a human:** confirm with the Bundesnetzagentur how the § 95 transfer is applied for in
+  practice.
 
 ### Facilitators
 - Each firm's description is taken from its own website or publication, linked in `source`.

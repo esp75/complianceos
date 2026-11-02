@@ -192,6 +192,22 @@ def test_austrian_launch_or_control_also_triggers_it_for_a_foreign_operator() ->
     assert "at-space-activity-authorisation" not in ids(mission(operator_country="LU"))
 
 
+def test_german_ground_station_gets_the_frequency_assignment_with_a_six_week_statutory_review() -> None:
+    m = mission(operator_country="LU", ground_station_countries=["DE"])
+    assert "de-frequency-assignment" in ids(m)
+    r = build_roadmap(KB, m, TODAY)
+    item = next(i for i in r.items if i.license_id == "de-frequency-assignment")
+    assert item.review.basis == "statutory" and item.review.min_weeks == 6
+    assert {"de.tkg.par-91-1", "de.tkg.par-91-4"} <= set(r.citations)
+    assert "de-frequency-assignment" not in ids(mission(operator_country="LU"))
+
+
+def test_filing_through_germany_needs_the_bnetza_transfer_of_orbit_rights() -> None:
+    m = mission(operator_country="DE")
+    assert "de-bnetza-satellite-filing" in ids(m)
+    assert "de-bnetza-satellite-filing" not in ids(mission(operator_country="LU"))
+
+
 # --- brief ---
 
 class FakeLLM:

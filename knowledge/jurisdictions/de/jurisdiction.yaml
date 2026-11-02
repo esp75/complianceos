@@ -1,0 +1,28 @@
+id: de
+name: Germany
+kind: national
+country: DE
+summary: 'Covered: the frequency assignment for a ground station and the ITU satellite filing, both handled by the Bundesnetzagentur
+  under the Telekommunikationsgesetz (TKG). Not covered: any authorisation for the space activity itself, German registration
+  of space objects, and general assignments for earth stations. None of these were researched.'
+authorities:
+- id: de-bnetza
+  name: Bundesnetzagentur (BNetzA)
+  name_en: Federal Network Agency
+  roles:
+  - spectrum_management
+  - earth_station_licensing
+  - itu_notifying_administration
+  website: https://www.bundesnetzagentur.de/
+  contacts:
+  - kind: web
+    value: https://www.bundesnetzagentur.de/
+    purpose: Home page of the Federal Network Agency, the frequency authority named in TKG § 91 and § 95.
+    source:
+      title: Bundesnetzagentur
+      url: https://www.bundesnetzagentur.de/
+      retrieved: '2026-11-03'
+  notes: Named as the deciding authority for frequency assignment (TKG § 91) and for ITU filings (TKG § 95). Only the website
+    was verified; no postal address or email is listed.
+status: draft
+last_verified: '2026-11-03'

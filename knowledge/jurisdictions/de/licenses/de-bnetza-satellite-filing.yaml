@@ -1,0 +1,70 @@
+id: de-bnetza-satellite-filing
+jurisdiction: de
+name: German satellite filing through the Bundesnetzagentur (ITU filing and transfer of orbit and frequency rights)
+name_local: Anmeldung, Koordinierung und Notifizierung von Satellitensystemen; Übertragung von Orbit- und Frequenznutzungsrechten
+authority: de-bnetza
+category: itu_filing
+summary: Exercising German orbit and frequency rights needs, besides the frequency assignment, a transfer by the Bundesnetzagentur.
+  On application the authority files, coordinates and notifies the satellite system with the ITU and transfers the resulting
+  rights to the applicant, provided that frequencies and orbital positions are available, the system is compatible with other
+  uses and filings, and public interests are not impaired. Timings and fees were not researched.
+applies_when:
+  field: filing_administration
+  eq: DE
+  because: Germany is the administration filing your satellite network with the ITU.
+  cite:
+  - de.tkg.par-95-2
+legal_basis:
+- id: de.tkg.par-95-1
+  instrument: Telekommunikationsgesetz (TKG), Bundesgesetz vom 23. Juni 2021 (BGBl. I S. 1858)
+  provision: § 95(1)
+  url: https://www.gesetze-im-internet.de/tkg_2021/__95.html
+  retrieved: '2026-11-03'
+  language: de
+  excerpt: Natürliche oder juristische Personen mit Wohnsitz beziehungsweise Sitz in der Bundesrepublik Deutschland, die Orbitpositionen
+    und Frequenzen durch Satelliten nutzen, unterliegen den Verpflichtungen, die sich aus der Konstitution und Konvention
+    der Internationalen Fernmeldeunion ergeben.
+  excerpt_en: Natural or legal persons resident or seated in Germany who use orbital positions and frequencies through satellites
+    are subject to the obligations arising from the ITU Constitution and Convention. (Unofficial translation.)
+- id: de.tkg.par-95-2
+  instrument: Telekommunikationsgesetz (TKG), Bundesgesetz vom 23. Juni 2021 (BGBl. I S. 1858)
+  provision: § 95(2)
+  url: https://www.gesetze-im-internet.de/tkg_2021/__95.html
+  retrieved: '2026-11-03'
+  language: de
+  excerpt: Jede Ausübung deutscher Orbit- und Frequenznutzungsrechte bedarf neben der Frequenzzuteilung nach § 91 Absatz 1
+    der Übertragung durch die Bundesnetzagentur. Die Bundesnetzagentur führt auf Antrag Anmeldung, Koordinierung und Notifizierung
+    von Satellitensystemen bei der Internationalen Fernmeldeunion durch und überträgt dem Antragsteller die daraus hervorgegangenen
+    Orbit- und Frequenznutzungsrechte. Voraussetzung für die Übertragung der Orbit- und Frequenznutzungsrechte ist, dass 1.
+    Frequenzen und Orbitpositionen verfügbar sind, 2. die Verträglichkeit mit anderen Frequenznutzungen sowie anderen Anmeldungen
+    von Satellitensystemen gegeben ist und 3. öffentliche Interessen nicht beeinträchtigt werden.
+  excerpt_en: Any exercise of German orbit and frequency rights requires, besides the frequency assignment under § 91(1),
+    a transfer by the Bundesnetzagentur. On application it carries out the filing, coordination and notification of satellite
+    systems with the ITU and transfers the resulting rights to the applicant, provided that frequencies and orbital positions
+    are available, compatibility with other uses and filings is given, and public interests are not impaired. (Unofficial
+    translation.)
+needed_by: launch
+preparation:
+  min_weeks: 4
+  typical_weeks: 8
+  max_weeks: 16
+  basis: estimate
+review:
+  min_weeks: 4
+  typical_weeks: 8
+  max_weeks: 26
+  basis: estimate
+  note: The law sets no decision period for the transfer of orbit and frequency rights. This is a cautious estimate, not a
+    researched figure.
+documents:
+- Application to the Bundesnetzagentur for filing, coordination and notification of the satellite system (TKG § 95(2))
+fees: Not researched. Fees were not verified from an official source.
+obligations: []
+requires_local_presence: null
+local_presence_note: Not researched.
+status: draft
+last_verified: '2026-11-03'
+sources:
+- title: Gesetze im Internet — Telekommunikationsgesetz (TKG)
+  url: https://www.gesetze-im-internet.de/tkg_2021/
+  retrieved: '2026-11-03'
