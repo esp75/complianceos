@@ -95,6 +95,18 @@ excerpt against an exact copy and say so here.
 - **Needs a human:** confirm with the Bundesnetzagentur how the § 95 transfer is applied for in
   practice.
 
+### Netherlands
+- Telecommunicatiewet (BWBR0009950), current text (validity date 3 November 2026), read from the
+  official consolidated XML on repository.officiele-overheidspublicaties.nl. Article 3.13(1) is quoted
+  verbatim. Article 3.13(2) and Articles 3.10 to 3.12 were read but not cited.
+- Authority: the Rijksoverheid frequency-policy page names the RDI as the body that allocates
+  frequency licences; the RDI home page (rdi.nl) was checked live.
+- Timing: no decision period for a frequency licence was found in the statute text checked, so the
+  plan's range is an estimate.
+- **Not covered:** the Dutch ITU satellite filing route (the RDI international-coordination page is
+  general and names no satellite procedure), licence-exempt use, fees, space-activity rules.
+  Agentschap Telecom's domain does not resolve; the RDI now carries out the work.
+
 ### Facilitators
 - Each firm's description is taken from its own website or publication, linked in `source`.
 - Listing is neutral: no ranking and no paid placement. To be listed, corrected or removed, open

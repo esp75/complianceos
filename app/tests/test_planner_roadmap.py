@@ -208,6 +208,15 @@ def test_filing_through_germany_needs_the_bnetza_transfer_of_orbit_rights() -> N
     assert "de-bnetza-satellite-filing" not in ids(mission(operator_country="LU"))
 
 
+def test_dutch_ground_station_needs_the_rdi_frequency_licence() -> None:
+    m = mission(operator_country="LU", ground_station_countries=["NL"])
+    assert "nl-frequency-licence" in ids(m)
+    r = build_roadmap(KB, m, TODAY)
+    item = next(i for i in r.items if i.license_id == "nl-frequency-licence")
+    assert item.review.basis == "estimate"
+    assert "nl.tw.art-3-13-1" in r.citations
+    assert "nl-frequency-licence" not in ids(mission(operator_country="LU"))
+
 # --- brief ---
 
 class FakeLLM:

@@ -72,7 +72,7 @@ async def sample(c: httpx.AsyncClient) -> str:
 async def test_knowledge_endpoints(client: httpx.AsyncClient) -> None:
     js = (await client.get("/knowledge/jurisdictions")).json()
     assert js[0]["jurisdiction"]["id"] == "itu"
-    assert {j["jurisdiction"]["id"] for j in js} == {"itu", "fr", "gb", "lu", "us", "at", "de"}
+    assert {j["jurisdiction"]["id"] for j in js} == {"itu", "fr", "gb", "lu", "us", "at", "de", "nl"}
     lic = await client.get("/knowledge/licenses/fr-los-authorisation")
     assert lic.status_code == 200 and lic.json()["legal_basis"][0]["language"] == "fr"
     assert (await client.get("/knowledge/licenses/nope")).status_code == 404
