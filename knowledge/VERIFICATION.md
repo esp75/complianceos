@@ -139,6 +139,26 @@ excerpt against an exact copy and say so here.
 - **Not covered:** permit conditions, the fee rules (§§ 17-1 and 17-2), the satellite filing
   requirements set by regulation, the registration duty (§ 2-1), and space-activity rules.
 
+### Denmark
+- Lov om radiofrekvenser, LBK nr 119 af 21/01/2026 (Retsinformation), read from the official PDF on
+  3 November 2026. § 6(1) is quoted verbatim; § 6(3) (receive-only installations) is described, not
+  quoted. Retsinformation's HTML page needs JavaScript and was not used.
+- Authority: digst.dk checked live (HTTP 200).
+- **Not covered:** the Danish ITU satellite filing route, the satellite rules in the frequency plan
+  (BEK nr 1150 of 2019), permit conditions, decision periods and fees.
+
+### Finland (not added)
+- Laki sähköisen viestinnän palveluista 917/2014 was fetched from Finlex, but the page returns the
+  structural skeleton only, with headings and no section text. No Finnish provision was quoted, so
+  no record was added. Check the Finlex consolidated text in another form before adding it.
+
+### Australia (not added)
+- The Radiocommunications Act 1992 was read from the Federal Register of Legislation PDF
+  (compilation C2024C00823). Section 46(1) (operation only under a spectrum, apparatus or class
+  licence) and section 100(1) (the ACMA may issue apparatus licences) were checked, but no record was
+  added: the ACMA website (acma.gov.au) did not connect from this environment on 3 November 2026,
+  so the authority cannot be verified.
+
 ### Facilitators
 - Each firm's description is taken from its own website or publication, linked in `source`.
 - Listing is neutral: no ranking and no paid placement. To be listed, corrected or removed, open

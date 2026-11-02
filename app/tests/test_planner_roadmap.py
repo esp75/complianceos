@@ -240,6 +240,13 @@ def test_norwegian_ground_station_and_satellite_filing_are_separate_routes() -> 
     assert "no-satellite-filing" in ids(filing)
     assert "no-satellite-filing" not in ids(mission(operator_country="LU"))
 
+def test_danish_ground_station_needs_a_radio_frequency_permit() -> None:
+    m = mission(operator_country="LU", ground_station_countries=["DK"])
+    assert "dk-radio-frequency-permit" in ids(m)
+    r = build_roadmap(KB, m, TODAY)
+    assert "dk.rf.s6-1" in r.citations
+    assert "dk-radio-frequency-permit" not in ids(mission(operator_country="LU"))
+
 # --- brief ---
 
 class FakeLLM:
