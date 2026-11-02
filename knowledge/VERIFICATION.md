@@ -128,6 +128,17 @@ excerpt against an exact copy and say so here.
 - **Not covered:** exemptions under regulations (s. 6(1)(m)), licence conditions, the decision period
   (none in the Act text checked), fees, the Canadian ITU satellite filing route, space-related licences.
 
+### Norway
+- Lov om elektronisk kommunikasjon (ekomloven), LOV-2024-12-13-76, chapter 11 "Frekvenser og
+  satellittsystemer", read from Lovdata on 3 November 2026. §§ 11-2 (first sentence) and 11-16 (first
+  sentence) are quoted verbatim (Norwegian, with an unofficial translation).
+- Delegation: forskrift LTI/2024-12-20-3413 delegates the ministry's powers under § 11-2 (first
+  subsection) and § 11-16 (first and second subsections) to Nkom. Lovdata was read for this; the
+  regulation text was not compared against the official gazette.
+- Authority: nkom.no checked live (HTTP 200).
+- **Not covered:** permit conditions, the fee rules (§§ 17-1 and 17-2), the satellite filing
+  requirements set by regulation, the registration duty (§ 2-1), and space-activity rules.
+
 ### Facilitators
 - Each firm's description is taken from its own website or publication, linked in `source`.
 - Listing is neutral: no ranking and no paid placement. To be listed, corrected or removed, open

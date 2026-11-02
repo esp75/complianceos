@@ -1,0 +1,53 @@
+id: no-frequency-permit
+jurisdiction: 'no'
+name: Frequency permit for a ground station (use of frequencies)
+name_local: Tillatelse til bruk av frekvenser (frekvenstillatelse)
+authority: no-nkom
+category: earth_station
+summary: Frequencies may not be taken into use without a permit. Under the Electronic Communications Act the ministry grants
+  the permit, and its powers under § 11-2 (first subsection) are delegated to the Nasjonal kommunikasjonsmyndighet (Nkom).
+  Permit conditions, duration and fees were not researched.
+applies_when:
+  field: ground_station_countries
+  contains: 'NO'
+  because: You plan a ground station in Norway.
+  cite:
+  - no.ekom.s11-2-1
+legal_basis:
+- id: no.ekom.s11-2-1
+  instrument: Lov om elektronisk kommunikasjon (ekomloven), LOV-2024-12-13-76, chapter 11
+  provision: § 11-2 first sentence
+  url: https://lovdata.no/nav/lov/2024-12-13-76/kap11
+  retrieved: '2026-11-03'
+  language: 'no'
+  excerpt: Frekvenser skal ikke tas i bruk uten at det foreligger tillatelse fra departementet.
+  excerpt_en: Frequencies may not be taken into use without a permit from the ministry (departementet). (Unofficial translation.)
+needed_by: launch
+preparation:
+  min_weeks: 2
+  typical_weeks: 6
+  max_weeks: 16
+  basis: estimate
+review:
+  min_weeks: 6
+  typical_weeks: 8
+  max_weeks: 16
+  basis: estimate
+  note: No decision period was found in the section checked. The range is an estimate.
+  cite:
+  - no.ekom.s11-2-1
+documents:
+- Application to Nkom for a frequency permit (form and route not researched; check Nkom)
+fees: Not researched. Fees are set under §§ 17-1 and 17-2 of the Act and were not verified.
+obligations: []
+requires_local_presence: null
+local_presence_note: Not researched.
+status: draft
+last_verified: '2026-11-03'
+sources:
+- title: Lovdata — Lov om elektronisk kommunikasjon (ekomloven), kapittel 11
+  url: https://lovdata.no/nav/lov/2024-12-13-76/kap11
+  retrieved: '2026-11-03'
+- title: Lovdata — Forskrift om delegering av myndighet etter ekomloven (LTI/2024-12-20-3413)
+  url: https://lovdata.no/dokument/LTI/forskrift/2024-12-20-3413
+  retrieved: '2026-11-03'

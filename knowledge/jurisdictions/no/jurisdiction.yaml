@@ -1,0 +1,28 @@
+id: 'no'
+name: Norway
+kind: national
+country: 'NO'
+summary: 'Covered: the frequency permit for a ground station (ekomloven § 11-2) and the satellite system filing to the ITU
+  register on application (§ 11-16), both within Nkom’s delegated powers. Not covered: permit conditions, fees, space-activity
+  rules and the registration duty.'
+authorities:
+- id: no-nkom
+  name: Nasjonal kommunikasjonsmyndighet (Nkom)
+  name_en: Norwegian Communications Authority (Nkom)
+  roles:
+  - spectrum_management
+  - earth_station_licensing
+  - international_coordination
+  website: https://nkom.no/
+  contacts:
+  - kind: web
+    value: https://nkom.no/
+    purpose: Home page of Nkom, to which the ministry’s chapter 11 powers are delegated.
+    source:
+      title: Nkom
+      url: https://nkom.no/
+      retrieved: '2026-11-03'
+  notes: Named as the body holding delegated powers under ekomloven chapter 11 (forskrift LTI/2024-12-20-3413). Only the website
+    was verified; no postal address or email is listed.
+status: draft
+last_verified: '2026-11-03'

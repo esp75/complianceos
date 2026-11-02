@@ -44,6 +44,8 @@ All notable changes to ComplianceOS are documented here. Format: [Keep a Changel
 - Germany joins the knowledge pack (draft): the ground-station frequency assignment (TKG §§ 91, 92)
   and the ITU satellite filing with the Bundesnetzagentur (TKG § 95), quoted verbatim from the
   official gesetze-im-internet.de text. Space-activity authorisation is not covered.
+- Norway joins the knowledge pack (draft): the frequency permit for a ground station (ekomloven § 11-2)
+  and the satellite system filing to the ITU register on application (§ 11-16), both delegated to Nkom.
 - Canada joins the knowledge pack (draft): the radio authorisation for a ground station (Radiocommunication
   Act ss. 4(1), 5(1)), issued by the Minister of Industry through ISED. The ITU filing route is not covered.
 - Ireland joins the knowledge pack (draft): the wireless telegraphy licence for a ground station

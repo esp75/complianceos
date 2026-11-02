@@ -13,6 +13,7 @@ says how each part was checked and what still needs a human.
 | Netherlands | Frequency licence for a ground station (Telecommunicatiewet art. 3.13(1)), issued through the RDI. The ITU satellite filing route and space-activity rules not researched |
 | Ireland | Wireless telegraphy licence for a ground station (Wireless Telegraphy Act 1926, revised), granted by ComReg. The ITU satellite filing route not researched |
 | Canada | Radio authorisation for a ground station (Radiocommunication Act ss. 4(1), 5(1)), issued under the Minister of Industry (ISED). ITU filing route and exemptions not researched |
+| Norway | Frequency permit for a ground station (ekomloven § 11-2) and satellite system filing to the ITU register on application (§ 11-16), both delegated to Nkom. Fees and conditions not researched |
 | Luxembourg | Space activity authorisation (2020 law), satellite system concession |
 | United Kingdom | Orbital operator licence (CAA, SIA 2018 / OSA 1986), Ofcom satellite filing, earth station licence |
 | United States | FCC Part 25 space station licence and streamlined small-satellite route, US market access, earth station licence, NOAA remote sensing licence |
