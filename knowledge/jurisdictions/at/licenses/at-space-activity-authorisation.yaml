@@ -162,6 +162,21 @@ legal_basis:
     particular the intended frequency spectrum and orbital position, power supply, payload description,
     communication strategy, ground-station details and subsystem technologies, and documents on the duration
     and end of the activity. (Unofficial translation, abridged.)
+- id: at.wrv2015.par-2-6
+  instrument: Weltraumverordnung, BGBl. II Nr. 36/2015 (as amended by BGBl. II Nr. 90/2018)
+  provision: § 2(6)
+  url: https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20009102
+  retrieved: '2026-11-03'
+  language: de
+  excerpt: >-
+    (6) Zum Nachweis, dass die für den Funkbetrieb des Weltraumobjektes erforderlichen Frequenzen und
+    Orbitalpositionen rechtmäßig genutzt werden dürfen, sind vom Betreiber geeignete Bewilligungen, oder die für
+    eine Frequenzkoordination mit der Internationale Fernmeldeunion (ITU) erforderlichen Unterlagen (§ 4 Abs. 1
+    Z 6 des Weltraumgesetzes) beizulegen.
+  excerpt_en: >-
+    To prove that the frequencies and orbital positions needed for the radio operation of the space object may
+    lawfully be used, the operator attaches suitable licences, or the documents required for frequency
+    coordination with the ITU (§ 4(1) point 6 of the Weltraumgesetz). (Unofficial translation.)
 - id: at.wrv2015.par-6-1
   instrument: Weltraumverordnung, BGBl. II Nr. 36/2015 (as amended by BGBl. II Nr. 90/2018)
   provision: § 6(1)
@@ -223,6 +238,9 @@ documents:
 - >-
   Evidence of liability insurance of at least EUR 60,000,000 per event, or an application for a reduced
   sum or exemption for science, research or education (Weltraumgesetz §4(4), Weltraumverordnung §3)
+- >-
+  Proof that the frequencies and orbital positions may lawfully be used: a suitable licence, or the
+  documents needed for ITU frequency coordination (Weltraumverordnung §2(6))
 fees: >-
   Procedure fee EUR 6,500 for approval and registration (Weltraumverordnung §8). The operator also bears
   the cost of the security check and of any experts the ministry appoints (§7).

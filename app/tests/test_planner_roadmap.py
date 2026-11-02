@@ -184,7 +184,7 @@ def test_austrian_operator_gets_the_space_approval_and_it_is_dated_and_cited() -
     assert item.review.basis == "statutory" and item.review.typical_weeks == 26
     reg = next(o for o in item.obligations if o.id == "at-registration-particulars")
     assert reg.when == "2 weeks after launch"
-    assert {"at.wrg2011.par-4-3", "at.wrv2015.par-8"} <= set(r.citations)
+    assert {"at.wrg2011.par-4-3", "at.wrv2015.par-8", "at.wrv2015.par-2-6"} <= set(r.citations)
 
 
 def test_austrian_launch_or_control_also_triggers_it_for_a_foreign_operator() -> None:

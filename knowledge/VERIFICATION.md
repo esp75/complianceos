@@ -67,7 +67,14 @@ excerpt against an exact copy and say so here.
 - Timing: the six-month decision limit (§4(3)) is the only statutory figure. Preparation time is
   the planner's estimate.
 - **Radio licence (added 2026-11-01):** excerpts for `at-radio-licence` were copied from the RIS API text of TKG 2021 (§ 4 Z 49, § 28(1), § 34(2), § 34(5)); the Fernmeldebüro site (fb.gv.at) was checked live. Fees, general authorisations (§ 28 ordinance), the 'no frequency coordination' case and satellite-specific procedure were not researched.
-- **Not covered:** Austria's ITU satellite filing route, the Weltraumregister
+- **ITU route (checked 3 November 2026):** TKG 2021 §§ 13 to 20 and 28 to 35 and the Weltraumverordnung
+  paragraphs 0 to 11 (current text, from the RIS API XML) were searched for satellite, orbit and ITU
+  terms. None names an Austrian administration that files satellite networks with the ITU. The only
+  ITU-specific rule is the operator's: WRV § 2(6) requires the operator to attach a licence or the
+  documents needed for ITU frequency coordination, and WRG § 4(1) point 6 makes ITU compliance a
+  condition of approval. Both are now cited in `at-space-activity-authorisation`. No licence record
+  for an Austrian ITU filing was added, since no provision supports one.
+- **Not covered:** the Weltraumregister
   procedure beyond the post-launch submission, and any sectoral approvals (e.g. Earth observation
   data rules). Germany is covered only as
   described under "Germany" below.
