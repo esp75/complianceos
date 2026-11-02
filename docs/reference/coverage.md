@@ -16,6 +16,7 @@ says how each part was checked and what still needs a human.
 | Norway | Frequency permit for a ground station (ekomloven § 11-2) and satellite system filing to the ITU register on application (§ 11-16), both delegated to Nkom. Fees and conditions not researched |
 | Denmark | Radio frequency permit for a ground station (Lov om radiofrekvenser § 6(1)), issued by Digitaliseringsstyrelsen. ITU filing route and satellite band rules not researched |
 | Spain | Title for using the radio public domain for a ground station (Ley 11/2022 art. 88(3)), with its six-week rule and coordination exception. Orbit-spectrum reservation to the State for communications satellites (art. 85(5)). Ground-station form, fees and royal decree not researched |
+| Czech Republic | Individual right to use radio frequencies for a ground station (Act 127/2005 § 17(1)), granted by the ČTÚ. General authorisation, fees and ITU filing not researched |
 | Luxembourg | Space activity authorisation (2020 law), satellite system concession |
 | United Kingdom | Orbital operator licence (CAA, SIA 2018 / OSA 1986), Ofcom satellite filing, earth station licence |
 | United States | FCC Part 25 space station licence and streamlined small-satellite route, US market access, earth station licence, NOAA remote sensing licence |

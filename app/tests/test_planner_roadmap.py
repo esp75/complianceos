@@ -258,6 +258,13 @@ def test_spanish_ground_station_and_satellite_orbit_routes() -> None:
     assert "es-satellite-orbit-reservation" in ids(filing)
     assert "es-radio-title" not in ids(mission(operator_country="LU"))
 
+def test_czech_ground_station_needs_an_individual_frequency_right() -> None:
+    m = mission(operator_country="LU", ground_station_countries=["CZ"])
+    assert "cz-radio-frequency-right" in ids(m)
+    r = build_roadmap(KB, m, TODAY)
+    assert "cz.zek.s17-1" in r.citations
+    assert "cz-radio-frequency-right" not in ids(mission(operator_country="LU"))
+
 # --- brief ---
 
 class FakeLLM:

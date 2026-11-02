@@ -171,6 +171,14 @@ excerpt against an exact copy and say so here.
   concession) a ground station needs, fees, the royal decree on satellite exploitation under art.
   85(5), and the Spanish ITU filing procedure.
 
+### Czech Republic
+- Zákon č. 127/2005 Sb., o elektronických komunikacích, § 17(1) quoted verbatim from the
+  consolidated text on zakonyprolidi.cz (read 3 November 2026). **Check against e-Sbírka before
+  relying on it:** zakonyprolidi.cz is a commercial consolidation, not the official gazette.
+- Authority: the ČTÚ home page (ctu.gov.cz) was checked live (HTTP 200).
+- **Not covered:** the general authorisation under § 9 (whether a ground station can use it), the
+  decision period, fees (§ 24), the Czech ITU satellite filing route.
+
 ### Facilitators
 - Each firm's description is taken from its own website or publication, linked in `source`.
 - Listing is neutral: no ranking and no paid placement. To be listed, corrected or removed, open

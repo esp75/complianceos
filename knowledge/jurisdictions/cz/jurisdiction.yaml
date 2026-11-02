@@ -1,0 +1,27 @@
+id: cz
+name: Czech Republic
+kind: national
+country: CZ
+summary: 'Covered: the individual right to use radio frequencies for a ground station under the Electronic Communications
+  Act (127/2005), granted by the ČTÚ. Not covered: the general authorisation for a ground station, fees, the Czech ITU satellite
+  filing route and space-activity rules.'
+authorities:
+- id: cz-ctu
+  name: Český telekomunikační úřad (ČTÚ)
+  name_en: Czech Telecommunication Office (ČTÚ)
+  roles:
+  - spectrum_management
+  - earth_station_licensing
+  website: https://www.ctu.gov.cz/
+  contacts:
+  - kind: web
+    value: https://www.ctu.gov.cz/
+    purpose: Home page of the ČTÚ, which grants individual rights to use radio frequencies under § 17.
+    source:
+      title: ČTÚ
+      url: https://www.ctu.gov.cz/
+      retrieved: '2026-11-03'
+  notes: Named as the competent office under the Electronic Communications Act (the Úřad). Only the website was verified;
+    no postal address or email is listed.
+status: draft
+last_verified: '2026-11-03'
