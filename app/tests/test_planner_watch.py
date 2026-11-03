@@ -6,6 +6,7 @@ from __future__ import annotations
 import datetime as dt
 from collections.abc import AsyncIterator, Iterator
 from email.message import EmailMessage
+from urllib.parse import urlsplit
 
 import httpx
 import pytest
@@ -673,3 +674,42 @@ def test_peer_address_check_refuses_private_peers() -> None:
     assert _peer_refusal(resp(("169.254.169.254", 443))) is not None
     assert _peer_refusal(resp(("8.8.8.8", 443))) is None
     assert _peer_refusal(httpx.Response(200)) is None
+
+
+def test_pinned_request_connects_to_the_checked_address() -> None:
+    from app.planner.watch import _pinned_request
+    assert _pinned_request("https://example.gov/a?x=1", "93.184.216.34") == (
+        "https://93.184.216.34/a?x=1", {"sni_hostname": "example.gov"})
+    assert _pinned_request("https://example.gov:8443/a", "93.184.216.34")[0] == (
+        "https://93.184.216.34:8443/a")
+    assert _pinned_request("https://example.gov/a", "2606:4700::1111")[0] == (
+        "https://[2606:4700::1111]/a")
+    assert _pinned_request("https://example.gov/a", None) == ("https://example.gov/a", None)
+    assert _pinned_request("https://93.184.216.34/a", "93.184.216.34") == (
+        "https://93.184.216.34/a", None)
+
+
+async def test_each_hop_connects_to_its_checked_address(monkeypatch: pytest.MonkeyPatch) -> None:
+    # The DNS check returns one address per host; the connection must use exactly that address,
+    # with the host name kept for SNI and the Host header, even across a redirect to another host.
+    checked = {"example.gov": "93.184.216.34", "cdn.example.gov": "151.101.1.1"}
+
+    async def fake_refuse(self: HttpFetcher, target: str) -> tuple[str | None, str | None]:
+        return None, checked[urlsplit(target).hostname or ""]
+
+    monkeypatch.setattr(HttpFetcher, "_refuse", fake_refuse)
+    seen: list[tuple[str, str, object]] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append((str(request.url), request.headers["host"],
+                     request.extensions.get("sni_hostname")))
+        if request.url.host == "93.184.216.34":
+            return httpx.Response(302, headers={"location": "https://cdn.example.gov/b"})
+        return httpx.Response(200, headers={"content-type": "text/html"}, content=b"<p>ok</p>")
+
+    result = await HttpFetcher(transport=httpx.MockTransport(handler)).fetch("https://example.gov/a")
+    assert result.ok
+    assert seen == [
+        ("https://93.184.216.34/a", "example.gov", "example.gov"),
+        ("https://151.101.1.1/b", "cdn.example.gov", "cdn.example.gov"),
+    ]

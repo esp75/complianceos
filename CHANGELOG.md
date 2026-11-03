@@ -11,7 +11,8 @@ All notable changes to ComplianceOS are documented here. Format: [Keep a Changel
 
 ### Security
 - HttpFetcher checks every redirect hop and the connected peer address for non-public targets and
-  fails closed on DNS errors; SMTP refuses cleartext credentials.
+  fails closed on DNS errors; each hop connects to the address it checked (SNI and Host kept), which
+  closes the DNS-rebinding window. SMTP refuses cleartext credentials.
 - Application owners: `PATCH /applications/{id}` takes `owner`; `GET /program` adds a per-owner
   workload (open, overdue, markets). The Workspace page shows an Owners table and a cross-mission
   Source changes list.

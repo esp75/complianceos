@@ -17,14 +17,19 @@ credentials in clear text.
   "unchanged" for "authentic". It re-implements the canonical form and Merkle rules; tests assert
   it agrees with the server's output.
 - **Fetcher.** Redirects are followed by hand (max 5). Each hop must be https and resolve only to
-  public addresses; a name that does not resolve is refused. After connecting, the peer address is
-  checked again to narrow the DNS-rebinding window.
+  public addresses; a name that does not resolve is refused. Each hop then connects to the address
+  that was checked, with the host name kept for SNI and the Host header, so a second DNS answer
+  cannot redirect the connection. The peer address is checked again after connecting.
 - **SMTP.** Unknown security values are rejected, and credentials are never sent with
   `security=none` unless the host is loopback.
 
 ## Consequences
 
-The peer-address check runs after the request is sent and the response is discarded unread; it does
-not stop the connection itself. Fully closing that needs connecting to a pre-validated IP with the
-original host for SNI, left for a later change. Sources are pack URLs, not user input, which keeps
-the exposure low.
+The peer-address check still runs after the request is sent, as a second layer. The primary control
+is the pinned connection: a second DNS answer cannot move the connection to an internal address.
+Sources are pack URLs, not user input, which keeps the exposure low.
+
+Addendum (2026-11-03): the pinned connection is in place (`_pinned_request` in
+`app/planner/watch.py`). Tests check each hop's connection address, SNI and Host header across a
+redirect. A live fetch confirmed TLS verification against the host name through the pinned IP. The
+connection timeouts seen on one German host are host-side and unrelated to pinning.
