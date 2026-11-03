@@ -15,6 +15,8 @@ dependencies = [
     # EU-acceptable, offline) and pure-Python deterministic PDF rendering (fpdf2, no native deps).
     "cryptography>=43",
     "fpdf2>=2.8",
+    "defusedxml>=0.7",  # feed parsing without XML entity attacks (ADR-0020)
+    "pypdf>=5.0",  # Watch: text of PDF sources (ADR-0020)
     # L3 SDER packages consumed by the /sder router (M7). Path deps — see [tool.uv.sources].
     "itu-compliance",
     "risk-scoring",
@@ -28,6 +30,7 @@ dev = [
     "mypy>=1.13",
     "types-pyyaml>=6.0",
     "hypothesis>=6.100",
+    "types-defusedxml>=0.7.0.20260504",
 ]
 
 [tool.uv]

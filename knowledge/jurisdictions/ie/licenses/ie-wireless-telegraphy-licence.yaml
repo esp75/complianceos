@@ -1,0 +1,72 @@
+id: ie-wireless-telegraphy-licence
+jurisdiction: ie
+name: Wireless telegraphy licence for a ground station (possession and use of apparatus)
+name_local: Wireless telegraphy licence under the Wireless Telegraphy Act 1926
+authority: ie-comreg
+category: earth_station
+summary: Keeping, possessing or using wireless telegraphy apparatus needs a licence under the Wireless Telegraphy Act 1926.
+  For matters other than ships, the licence is granted by the Commission for Communications Regulation (ComReg). A 1997 regulation
+  disapplies the Act to placing satellite earth station equipment on the market, not to operating a station. Licence conditions,
+  the decision period and fees were not researched.
+applies_when:
+  field: ground_station_countries
+  contains: IE
+  because: You plan a ground station in Ireland.
+  cite:
+  - ie.wta1926.s3-1
+legal_basis:
+- id: ie.wta1926.s3-1
+  instrument: Wireless Telegraphy Act, 1926 (No. 45 of 1926), revised text
+  provision: Section 3(1)
+  url: https://revisedacts.lawreform.ie/eli/1926/act/45/revised/en/html
+  retrieved: '2026-11-03'
+  language: en
+  excerpt: (1) Subject to the exceptions hereinafter mentioned, no person shall keep or have in his possession anywhere in
+    the State or in any ship or aircraft to which this section applies any apparatus for wireless telegraphy save in so far
+    as such keeping or possession is authorised by a licence granted under this Act and for the time being in force.
+- id: ie.wta1926.s5-1
+  instrument: Wireless Telegraphy Act, 1926 (No. 45 of 1926), revised text
+  provision: Section 5(1)
+  url: https://revisedacts.lawreform.ie/eli/1926/act/45/revised/en/html
+  retrieved: '2026-11-03'
+  language: en
+  excerpt: (1) The appropriate authority may, subject to this Act and on payment of the prescribed fee (if any) grant to any
+    person a licence to keep and have possession of apparatus for wireless telegraphy in any specified place in the State
+    or to keep and have possession of apparatus for wireless telegraphy in any specified ship or other vessel or aircraft.
+- id: ie.wta1926.s2-commission
+  instrument: Wireless Telegraphy Act, 1926 (No. 45 of 1926), revised text
+  provision: Section 2 (definition of "appropriate authority", point (b), and "the Commission")
+  url: https://revisedacts.lawreform.ie/eli/1926/act/45/revised/en/html
+  retrieved: '2026-11-03'
+  language: en
+  excerpt: (b) in relation to any other matter, means the Commission; the expression "the Commission" means the Commission
+    for Communications Regulation established by Part 2 of the Communications Regulation Act 2002;
+needed_by: launch
+preparation:
+  min_weeks: 2
+  typical_weeks: 6
+  max_weeks: 16
+  basis: estimate
+review:
+  min_weeks: 6
+  typical_weeks: 8
+  max_weeks: 16
+  basis: estimate
+  note: The Act sets no decision period in the text checked. The range is an estimate, not a researched figure.
+  cite:
+  - ie.wta1926.s5-1
+documents:
+- Application to ComReg for a wireless telegraphy licence (route and form not researched; check ComReg)
+fees: Not researched. Fees were not verified from an official source (the Act refers to a prescribed fee).
+obligations: []
+requires_local_presence: null
+local_presence_note: Not researched.
+status: draft
+last_verified: '2026-11-03'
+sources:
+- title: Revised Acts (Law Reform Commission) — Wireless Telegraphy Act 1926
+  url: https://revisedacts.lawreform.ie/eli/1926/act/45/revised/en/html
+  retrieved: '2026-11-03'
+- title: ComReg — Commission for Communications Regulation
+  url: https://www.comreg.ie/
+  retrieved: '2026-11-03'

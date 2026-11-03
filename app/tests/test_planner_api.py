@@ -16,7 +16,7 @@ from app.api.trust.keystore import DerivedKeyStore
 from app.api.trust.signing import verify
 from app.config import get_settings
 from app.planner.brief import build_brief
-from app.planner.exports import SIDECAR_NAME, canonical_roadmap, dossier_pdf
+from app.planner.exports import SIDECAR_NAME, dossier_pdf
 from app.planner.knowledge import load_knowledge
 from app.planner.plan import build_roadmap
 from app.planner.sample import sample_mission
@@ -72,7 +72,8 @@ async def sample(c: httpx.AsyncClient) -> str:
 async def test_knowledge_endpoints(client: httpx.AsyncClient) -> None:
     js = (await client.get("/knowledge/jurisdictions")).json()
     assert js[0]["jurisdiction"]["id"] == "itu"
-    assert {j["jurisdiction"]["id"] for j in js} == {"itu", "fr", "gb", "lu", "us"}
+    expected = {"itu", "fr", "gb", "lu", "us", "at", "de", "nl", "ie", "ca", "no", "dk", "es", "cz"}
+    assert {j["jurisdiction"]["id"] for j in js} == expected
     lic = await client.get("/knowledge/licenses/fr-los-authorisation")
     assert lic.status_code == 200 and lic.json()["legal_basis"][0]["language"] == "fr"
     assert (await client.get("/knowledge/licenses/nope")).status_code == 404
@@ -195,13 +196,43 @@ async def test_dossier_pdf_signed_and_verifiable(client: httpx.AsyncClient) -> N
 
     roadmap = build_roadmap(KB, sample_mission(TODAY), TODAY)
     keystore = DerivedKeyStore(b"test-seed")
-    pdf, info = dossier_pdf(roadmap, await build_brief(roadmap), workspace="local", keystore=keystore)
+    _, info = dossier_pdf(roadmap, await build_brief(roadmap), workspace="local", keystore=keystore)
     assert info.signed and info.fingerprint == keystore.fingerprint("workspace:local")
-    from app.planner.exports import _sign
 
-    _, sig = _sign(canonical_roadmap(roadmap), keystore, "local")
-    assert verify(canonical_roadmap(roadmap), bytes.fromhex(sig["signature_hex"]),
-                  keystore.public_key("workspace:local"))
+
+def _verify_sidecar(doc: dict[str, object]) -> bool:
+    """What an outside checker does: rebuild the signed bytes from the document's own content."""
+    import json
+
+    from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
+
+    content = {k: doc[k] for k in ("format", "roadmap", "brief")}
+    payload = json.dumps(content, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+    pub = Ed25519PublicKey.from_public_bytes(bytes.fromhex(str(doc["public_key_hex"])))
+    return verify(payload, bytes.fromhex(str(doc["signature_hex"])), pub)
+
+
+async def test_signed_dossier_covers_the_brief_not_just_the_roadmap(client: httpx.AsyncClient) -> None:
+    """Review gap: friction points and decision makers were outside the signature."""
+    mid = await sample(client)
+    r = await client.get(f"/missions/{mid}/dossier.signed.json")
+    assert r.status_code == 200 and r.headers["x-dossier-signed"] == "true"
+    doc = r.json()
+    assert doc["format"] == "complianceos-dossier/1" and _verify_sidecar(doc)
+    assert r.headers["x-dossier-key-fingerprint"]
+
+    titles = [sec["title"] for sec in doc["brief"]["sections"]]
+    assert "Likely friction points" in titles and "Who decides" in titles
+
+    doc["brief"]["sections"][0]["paragraphs"][0] += " (edited after signing)"
+    assert not _verify_sidecar(doc)
+
+
+async def test_review_package_ends_with_the_dossier_signature(client: httpx.AsyncClient) -> None:
+    mid = await sample(client)
+    md = (await client.get(f"/missions/{mid}/dossier.md")).text
+    doc = (await client.get(f"/missions/{mid}/dossier.signed.json")).json()
+    assert "## Integrity" in md and doc["sha256"] in md and doc["signature_hex"] in md
 
 
 async def test_dossier_unsigned_without_key() -> None:
@@ -352,3 +383,38 @@ async def test_compose_service_name_is_an_allowed_host(monkeypatch: pytest.Monke
     get_settings.cache_clear()
     async with httpx.AsyncClient(transport=httpx.ASGITransport(app=make_app()), base_url="http://api:8000") as c:
         assert (await c.get("/missions")).status_code == 200
+
+
+# --- one client, many markets ---
+
+async def test_program_folds_missions_into_markets(client: httpx.AsyncClient) -> None:
+    empty = (await client.get("/program")).json()
+    assert empty == {"missions": 0, "markets": [], "owners": [], "upcoming": []}
+
+    mid = await sample(client)
+    second = await client.post("/missions", json={
+        "name": "Second mission", "operator_country": "AT", "orbit": "LEO", "altitude_km": 550,
+        "satellite_count": 4, "services": ["earth_exploration_satellite"],
+        "frequency_bands": ["X"], "target_launch_date": "2029-06-01"})
+    assert second.status_code == 201, second.text
+    lic = "lu-space-activity-authorisation"
+    app_id = (await client.post(f"/missions/{mid}/applications",
+                                json={"license_id": lic})).json()["application"]["id"]
+    await client.patch(f"/applications/{app_id}", json={"status": "preparing"})
+
+    prog = (await client.get("/program")).json()
+    assert prog["missions"] == 2
+    by = {m["jurisdiction"]: m for m in prog["markets"]}
+    assert {"lu", "at"} <= set(by)
+    assert by["lu"]["tracked"] == 1 and by["lu"]["in_progress"] == 1 and by["lu"]["granted"] == 0
+    assert by["at"]["licences"] == 1 and by["at"]["tracked"] == 0
+    assert prog["upcoming"] and all(not d["overdue"] for d in prog["upcoming"])
+    assert prog["owners"] == [{"owner": "", "open": 1, "overdue": 0, "jurisdictions": ["lu"]}]
+
+    # Assigning the application moves it out of the unassigned bucket; blank clears it again.
+    patched = await client.patch(f"/applications/{app_id}", json={"owner": "  Dana  "})
+    assert patched.json()["application"]["owner"] == "Dana"
+    owners = (await client.get("/program")).json()["owners"]
+    assert owners == [{"owner": "Dana", "open": 1, "overdue": 0, "jurisdictions": ["lu"]}]
+    await client.patch(f"/applications/{app_id}", json={"owner": ""})
+    assert (await client.get("/program")).json()["owners"][0]["owner"] == ""

@@ -66,6 +66,7 @@ class Application(BaseModel):
     granted_on: dt.date | None = None
     reference: str = Field(default="", max_length=200)
     notes: str = Field(default="", max_length=5000)
+    owner: str = Field(default="", max_length=200)  # who on the team runs this application
     created_at: dt.datetime
     updated_at: dt.datetime
 

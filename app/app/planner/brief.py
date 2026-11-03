@@ -17,7 +17,7 @@ import datetime as dt
 import json
 from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.l4.citations import CitationError, enforce_text_citations
 from app.llm.base import LLMProvider
@@ -33,11 +33,19 @@ _SYSTEM = (
 )
 
 
+Basis = Literal["statute", "practice", "estimate", "derived", ""]
+
+
 class BriefSection(BaseModel):
     id: str
     title: str
     paragraphs: list[str]
     grounded: bool
+    #: How well each paragraph is supported, parallel to ``paragraphs``: ``statute`` (stated in the
+    #: cited text), ``practice`` (an authority's published practice), ``estimate`` (no official
+    #: figure; the planner's own), ``derived`` (computed from dates and the rules). Empty when the
+    #: section makes no such claims.
+    labels: list[Basis] = Field(default_factory=list)
 
 
 class Brief(BaseModel):
@@ -47,6 +55,10 @@ class Brief(BaseModel):
     sections: list[BriefSection]
     citations: dict[str, Citation]
     facilitators: dict[str, Facilitator]
+
+
+def _basis(duration_basis: str) -> Basis:
+    return "statute" if duration_basis == "statutory" else "practice" if duration_basis == "practice" else "estimate"
 
 
 def _cite(ids: list[str]) -> str:
@@ -87,42 +99,91 @@ def _summary(r: Roadmap) -> list[str]:
     return paras
 
 
-def _critical(r: Roadmap) -> list[str]:
-    out = []
+def _critical(r: Roadmap) -> list[tuple[str, Basis]]:
+    out: list[tuple[str, Basis]] = []
     for i in (i for i in r.items if i.critical):
         why = i.reasons[0].text if i.reasons else ""
-        out.append(
+        out.append((
             f"{i.name} ({_authority_name(r, i)}): start by {_date(i.start_by)}, submit by "
             f"{_date(i.submit_by)}. Review typically takes {i.review.typical_weeks} weeks "
-            f"({i.review.basis}). {why} " + _cite(i.legal_basis)
-        )
+            f"({i.review.basis}). {why} " + _cite(i.legal_basis), _basis(i.review.basis)))
     return out
 
 
-def _risks(r: Roadmap) -> list[str]:
-    out = []
+def _risks(r: Roadmap) -> list[tuple[str, Basis]]:
+    out: list[tuple[str, Basis]] = []
     for i in r.items:
         if i.risk == "late":
-            out.append(
+            out.append((
                 f"{i.name} cannot be granted by {_date(i.needed_by)} even if work starts today "
                 f"(earliest grant {_date(i.earliest_grant)}). Move the date, or ask "
                 f"{_authority_name(r, i)} about timing before committing to a launch slot. "
-                + _cite(i.legal_basis[:1])
-            )
+                + _cite(i.legal_basis[:1]), _basis(i.review.basis)))
         elif i.risk == "tight":
-            out.append(f"{i.name} has less than four weeks of slack; any delay moves your launch. "
-                       + _cite(i.legal_basis[:1]))
+            out.append((f"{i.name} has less than four weeks of slack; any delay moves your launch. "
+                        + _cite(i.legal_basis[:1]), "derived"))
         if i.requires_local_presence:
-            out.append(f"{i.name} requires a local presence: {i.local_presence_note} "
-                       + _cite(i.legal_basis))
+            out.append((f"{i.name} requires a local presence: {i.local_presence_note} "
+                        + _cite(i.legal_basis), "statute"))
         if i.critical and i.review.basis == "estimate":
-            out.append(f"There is no official processing time for {i.name}; the roadmap uses an "
-                       f"estimate of {i.review.min_weeks}-{i.review.max_weeks} weeks. Confirm it "
-                       "with the authority early. " + _cite(i.legal_basis[:1]))
+            out.append((f"There is no official processing time for {i.name}; the roadmap uses an "
+                        f"estimate of {i.review.min_weeks}-{i.review.max_weeks} weeks. Confirm it "
+                        "with the authority early. " + _cite(i.legal_basis[:1]), "estimate"))
         for o in i.obligations:
             if o.kind == "hard" and not o.recurring:
-                out.append(f"{o.name} ({o.when}; {_date(o.due)} if you start now). {o.description} "
-                           + _cite(o.cite or i.legal_basis[:1]))
+                out.append((f"{o.name} ({o.when}; {_date(o.due)} if you start now). {o.description} "
+                            + _cite(o.cite or i.legal_basis[:1]), "statute"))
+    return out
+
+
+def _friction(r: Roadmap) -> list[tuple[str, Basis]]:
+    """Where the application is likely to meet resistance or delay, from the cited rules alone.
+    This is not a record of how regulators have objected before: that needs practice data the pack
+    does not hold yet, and each line says what it rests on."""
+    names = {i.license_id: i.name for i in r.items}
+    out: list[tuple[str, Basis]] = []
+    for i in r.items:
+        for pre in i.prerequisites:
+            if pre.license_id in names:
+                out.append((
+                    f"{i.name} waits for {names[pre.license_id]} to be {pre.stage}; a problem with "
+                    "the earlier step delays this one. " + _cite(i.legal_basis[:1]), "derived"))
+        if i.requires_local_presence:
+            out.append((f"Expect the authority to ask who represents you locally for {i.name}. "
+                        + _cite(i.legal_basis[:1]), "statute"))
+        if i.review.basis == "estimate":
+            out.append((f"{i.name}: the authority publishes no processing time, so a slow review is "
+                        "possible and cannot be ruled out from the law. " + _cite(i.legal_basis[:1]),
+                        "estimate"))
+        if i.risk != "ok":
+            out.append((f"{i.name} has {'no' if i.risk == 'late' else 'little'} schedule margin; a "
+                        "request for more information would move your launch. "
+                        + _cite(i.legal_basis[:1]), "derived"))
+    unreviewed = [i for i in r.items if i.status.value != "reviewed"]
+    if unreviewed:
+        out.append((
+            "Not yet checked by a licensing practitioner: "
+            + ", ".join(i.name for i in unreviewed)
+            + ". A requirement may be missing from this roadmap. "
+            + _cite([c for i in unreviewed for c in i.legal_basis[:1]]), "derived"))
+    return out
+
+
+def _decision_makers(r: Roadmap) -> list[tuple[str, Basis]]:
+    names = {i.license_id: i.name for i in r.items}
+    out: list[tuple[str, Basis]] = []
+    for i in r.items:
+        found = r.authorities.get(i.authority_id)
+        if found is None:
+            continue
+        roles = ", ".join(role.value.replace("_", " ") for role in found.authority.roles)
+        first = "; ".join(f"{c.kind}: {c.value}" for c in found.authority.contacts[:2])
+        before = ", ".join(names[p.license_id] for p in i.prerequisites if p.license_id in names)
+        line = f"{i.name}: decided by {found.authority.name} ({roles})."
+        if before:
+            line += f" Comes after: {before}."
+        line += f" Contact: {first}." if first else f" Website: {found.authority.website}."
+        out.append((line + " " + _cite(i.legal_basis[:1]), "statute"))
     return out
 
 
@@ -168,11 +229,18 @@ def _support(r: Roadmap) -> list[str]:
     return out
 
 
+def _labelled(id_: str, title: str, rows: list[tuple[str, Basis]]) -> BriefSection:
+    return BriefSection(id=id_, title=title, paragraphs=[t for t, _ in rows],
+                        labels=[b for _, b in rows], grounded=True)
+
+
 def _sections(r: Roadmap, summary: list[str]) -> list[BriefSection]:
     return [
         BriefSection(id="summary", title="Executive summary", paragraphs=summary, grounded=True),
-        BriefSection(id="critical_path", title="Critical path", paragraphs=_critical(r), grounded=True),
-        BriefSection(id="risks", title="Risks and hard deadlines", paragraphs=_risks(r), grounded=True),
+        _labelled("critical_path", "Critical path", _critical(r)),
+        _labelled("risks", "Risks and hard deadlines", _risks(r)),
+        _labelled("friction", "Likely friction points", _friction(r)),
+        _labelled("decision_makers", "Who decides", _decision_makers(r)),
         BriefSection(id="sequence", title="Recommended sequence", paragraphs=_sequence(r), grounded=True),
         BriefSection(id="questions", title="Questions to raise with each authority",
                      paragraphs=_questions(r), grounded=False),

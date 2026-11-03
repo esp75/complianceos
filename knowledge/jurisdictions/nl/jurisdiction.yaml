@@ -1,0 +1,27 @@
+id: nl
+name: Netherlands
+kind: national
+country: NL
+summary: 'Covered: the frequency licence for a ground station under the Telecommunicatiewet, issued through the Rijksinspectie
+  Digitale Infrastructuur (RDI). Not covered: the Dutch ITU satellite filing route (not located in the statute or the RDI
+  pages checked), any space-activity authorisation, and fees.'
+authorities:
+- id: nl-rdi
+  name: Rijksinspectie Digitale Infrastructuur (RDI)
+  name_en: Netherlands Digital Infrastructure Inspectorate
+  roles:
+  - earth_station_licensing
+  - spectrum_management
+  website: https://www.rdi.nl/
+  contacts:
+  - kind: web
+    value: https://www.rdi.nl/
+    purpose: Home page of the RDI, which carries out frequency-licence allocation.
+    source:
+      title: Rijksinspectie Digitale Infrastructuur
+      url: https://www.rdi.nl/
+      retrieved: '2026-11-03'
+  notes: Named as carrying out frequency-licence allocation on the Rijksoverheid page. Only the website was verified; no postal
+    address or email is listed.
+status: draft
+last_verified: '2026-11-03'

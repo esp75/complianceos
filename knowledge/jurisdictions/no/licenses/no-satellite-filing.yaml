@@ -1,0 +1,51 @@
+id: no-satellite-filing
+jurisdiction: 'no'
+name: Satellite system filing to the ITU register through Nkom
+name_local: Innmelding av satellittsystemer til internasjonalt register
+authority: no-nkom
+category: itu_filing
+summary: On application, the ministry may file a satellite system with the international register. Its powers under § 11-16
+  (first and second subsections) are delegated to Nkom. The Act is discretionary (“may”), and the timing, the fee and the
+  application requirements were not researched.
+applies_when:
+  field: filing_administration
+  eq: 'NO'
+  because: Norway is the administration filing your satellite network with the ITU.
+  cite:
+  - no.ekom.s11-16-1
+legal_basis:
+- id: no.ekom.s11-16-1
+  instrument: Lov om elektronisk kommunikasjon (ekomloven), LOV-2024-12-13-76, chapter 11
+  provision: § 11-16 first sentence
+  url: https://lovdata.no/nav/lov/2024-12-13-76/kap11
+  retrieved: '2026-11-03'
+  language: 'no'
+  excerpt: Departementet kan etter søknad gjennomføre innmelding av satellittsystemer til internasjonalt register.
+  excerpt_en: The ministry may, on application, carry out the filing of satellite systems with the international register.
+    (Unofficial translation.)
+needed_by: launch
+preparation:
+  min_weeks: 4
+  typical_weeks: 8
+  max_weeks: 16
+  basis: estimate
+review:
+  min_weeks: 4
+  typical_weeks: 8
+  max_weeks: 16
+  basis: estimate
+  note: No statutory period is set. The range is an estimate.
+  cite:
+  - no.ekom.s11-16-1
+documents:
+- Application to Nkom for filing the satellite system (requirements set by regulation under § 11-16; not researched)
+fees: Not researched. The Act allows fees to be set by regulation (§ 11-16).
+obligations: []
+requires_local_presence: null
+local_presence_note: Not researched.
+status: draft
+last_verified: '2026-11-03'
+sources:
+- title: Lovdata — Lov om elektronisk kommunikasjon (ekomloven), kapittel 11
+  url: https://lovdata.no/nav/lov/2024-12-13-76/kap11
+  retrieved: '2026-11-03'

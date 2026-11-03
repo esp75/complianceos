@@ -1,0 +1,59 @@
+id: es-radio-title
+jurisdiction: es
+name: Authorisation for use of the radio public domain (ground station)
+name_local: Título habilitante para el uso del dominio público radioeléctrico
+authority: es-mineco
+category: spectrum
+summary: 'Use of the radio public domain needs a title: a general authorisation, an individual authorisation, an assignment
+  or an administrative concession (Ley 11/2022 art. 88(3)). The Act sets a six-week period, which does not apply where international
+  frequency coordination is needed or orbital positions are affected. Which form a ground station needs was not researched,
+  and neither were fees.'
+applies_when:
+  field: ground_station_countries
+  contains: ES
+  because: You plan a ground station in Spain.
+  cite:
+  - es.lgt2022.art-88-3
+legal_basis:
+- id: es.lgt2022.art-88-3
+  instrument: Ley 11/2022, de 28 de junio, General de Telecomunicaciones (BOE-A-2022-10757)
+  provision: Artículo 88(3)
+  url: https://www.boe.es/buscar/act.php?id=BOE-A-2022-10757
+  retrieved: '2026-11-03'
+  language: es
+  excerpt: 3. Los títulos habilitantes mediante los que se otorguen derechos de uso del dominio público radioeléctrico revestirán
+    la forma de autorización general, autorización individual, afectación o concesión administrativas. El plazo para el otorgamiento
+    de los títulos habilitantes será de seis semanas desde la entrada de la solicitud en cualquiera de los registros del órgano
+    administrativo competente, sin perjuicio de lo establecido para los derechos de uso con limitación de número. Dicho plazo
+    no será de aplicación cuando sea necesaria la coordinación internacional de frecuencias o afecte a reservas de posiciones
+    orbitales.
+  excerpt_en: Authorisations for use of the radio public domain take the form of a general authorisation, an individual authorisation,
+    an assignment or an administrative concession. The period is six weeks from the application, but it does not apply where
+    international frequency coordination is needed or orbital positions are affected. (Unofficial translation.)
+needed_by: launch
+preparation:
+  min_weeks: 2
+  typical_weeks: 6
+  max_weeks: 16
+  basis: estimate
+review:
+  min_weeks: 6
+  typical_weeks: 6
+  max_weeks: 26
+  basis: statutory
+  note: The statute sets six weeks from a complete application. It does not apply where international coordination is needed,
+    so the plan treats 26 weeks as a cautious maximum (an estimate).
+  cite:
+  - es.lgt2022.art-88-3
+documents:
+- Application to the competent administration for the title (route and documents not researched)
+fees: Not researched. Fees were not verified from an official source.
+obligations: []
+requires_local_presence: null
+local_presence_note: Not researched.
+status: draft
+last_verified: '2026-11-03'
+sources:
+- title: BOE — Ley 11/2022, General de Telecomunicaciones
+  url: https://www.boe.es/buscar/act.php?id=BOE-A-2022-10757
+  retrieved: '2026-11-03'

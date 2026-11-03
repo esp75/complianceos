@@ -1,0 +1,27 @@
+id: dk
+name: Denmark
+kind: national
+country: DK
+summary: 'Covered: the radio frequency permit for a ground station under the Radio Frequencies Act, issued by the Danish Agency
+  for Digitalisation. Not covered: the Danish ITU satellite filing route, the frequency plan for satellite bands, fees, and
+  any space-activity rules.'
+authorities:
+- id: dk-digst
+  name: Digitaliseringsstyrelsen (DIGST)
+  name_en: Danish Agency for Digitalisation
+  roles:
+  - spectrum_management
+  website: https://digst.dk/
+  contacts:
+  - kind: web
+    value: https://digst.dk/
+    purpose: Home page of the Danish Agency for Digitalisation, which issues radio frequency permits under the Radio Frequencies
+      Act.
+    source:
+      title: Digitaliseringsstyrelsen
+      url: https://digst.dk/
+      retrieved: '2026-11-03'
+  notes: Named in the Radio Frequencies Act § 6(1) as the body that issues radio frequency permits. Only the website was verified;
+    no postal address or email is listed.
+status: draft
+last_verified: '2026-11-03'

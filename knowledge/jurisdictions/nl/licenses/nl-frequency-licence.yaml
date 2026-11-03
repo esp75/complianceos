@@ -1,0 +1,58 @@
+id: nl-frequency-licence
+jurisdiction: nl
+name: Frequency licence for a ground station (use of frequency space)
+name_local: Vergunning voor het gebruik van frequentieruimte
+authority: nl-rdi
+category: earth_station
+summary: Using radio frequency space that is not licence-exempt, or assigned under the public-task rules, needs a licence
+  from the Minister for Economic Affairs. Licences are granted only in line with the national frequency plan. The Rijksinspectie
+  Digitale Infrastructuur (RDI) carries out the allocation of licences. Licence-exempt use, licence conditions, the decision
+  period and fees were not researched.
+applies_when:
+  field: ground_station_countries
+  contains: NL
+  because: You plan a ground station in the Netherlands.
+  cite:
+  - nl.tw.art-3-13-1
+legal_basis:
+- id: nl.tw.art-3-13-1
+  instrument: Telecommunicatiewet (Tw), BWBR0009950, geldigheid 3 november 2026
+  provision: Artikel 3.13, eerste lid
+  url: https://wetten.overheid.nl/BWBR0009950
+  retrieved: '2026-11-03'
+  language: nl
+  excerpt: Voor het gebruik van andere frequentieruimte dan die welke in het frequentieplan is aangewezen als frequentieruimte
+    waarvan het gebruik zonder vergunning is toegestaan, dan wel die op grond van de artikelen 3.5 tot en met 3.5b is toegewezen,
+    is een vergunning vereist van Onze Minister.
+  excerpt_en: Using radio frequency space other than that designated in the frequency plan as usable without a licence, or
+    assigned under Articles 3.5 to 3.5b, requires a licence from the Minister. (Unofficial translation.)
+needed_by: launch
+preparation:
+  min_weeks: 2
+  typical_weeks: 6
+  max_weeks: 16
+  basis: estimate
+review:
+  min_weeks: 6
+  typical_weeks: 8
+  max_weeks: 16
+  basis: estimate
+  note: No statutory decision period was located in the Telecommunicatiewet text checked. The range is an estimate, not a
+    researched figure.
+  cite:
+  - nl.tw.art-3-13-1
+documents:
+- Application to the RDI for the frequency licence (licence application route not researched; check the RDI procedure)
+fees: Not researched. Fees were not verified from an official source.
+obligations: []
+requires_local_presence: null
+local_presence_note: Not researched.
+status: draft
+last_verified: '2026-11-03'
+sources:
+- title: wetten.overheid.nl — Telecommunicatiewet (BWBR0009950)
+  url: https://wetten.overheid.nl/BWBR0009950
+  retrieved: '2026-11-03'
+- title: Rijksoverheid — Nationaal frequentiebeleid (names the RDI as the licensing body)
+  url: https://www.rijksoverheid.nl/themas/economie/internet-radio-en-telefonie/nationaal-frequentiebeleid
+  retrieved: '2026-11-03'
