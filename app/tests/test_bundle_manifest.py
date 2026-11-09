@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from hypothesis import given
+from hypothesis import strategies as st
+
 from app.api.bundle.manifest import build_leaves, build_manifest, canonical_bytes
 
 _STATUS = {
@@ -47,5 +50,18 @@ def test_build_manifest_embeds_root_and_leaf_count() -> None:
     )
     assert manifest["merkle"]["root"] == "deadbeef"
     assert manifest["merkle"]["leaf_count"] == 3
-    assert manifest["version"] == "trust-bundle/v0"
+    assert manifest["version"] == "trust-bundle/v1"
+    assert manifest["scope"] == {"framework": None, "complete": True}
     assert manifest["key"] == {"alg": "Ed25519", "fingerprint": "fp"}
+
+
+@given(st.one_of(st.none(), st.text(min_size=1, max_size=40)))
+def test_scope_is_always_recorded(framework_filter: str | None) -> None:
+    """A bundle never omits its scope, and any filter marks it incomplete."""
+    manifest = build_manifest(
+        "01O", _STATUS, _AUDIT, root_hex="00", leaves_hex=[], fingerprint="fp",
+        issued_at="2026-06-07T00:00:00+00:00", framework_filter=framework_filter,
+    )
+    assert manifest["scope"]["framework"] == framework_filter
+    assert manifest["scope"]["complete"] is (framework_filter is None)
+    assert b'"scope"' in canonical_bytes(manifest)

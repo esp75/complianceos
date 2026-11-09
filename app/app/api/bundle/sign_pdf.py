@@ -55,6 +55,14 @@ class DetachedEd25519PdfSigner:
         pdf.set_font("Helvetica", "", 10)
         pdf.cell(0, 6, f"Organization: {manifest.get('org_id', '')}", new_x="LMARGIN", new_y="NEXT")
         pdf.cell(0, 6, f"Issued: {issued_at}", new_x="LMARGIN", new_y="NEXT")
+        scope = manifest.get("scope", {})
+        if not scope.get("complete", False):
+            pdf.set_font("Helvetica", "B", 10)
+            pdf.multi_cell(0, 6, (
+                f"Partial bundle: framework {scope.get('framework') or '(unrecorded)'} only. "
+                "Other frameworks of this organization are not included."
+            ), new_x="LMARGIN", new_y="NEXT")
+            pdf.set_font("Helvetica", "", 10)
 
         summary = manifest.get("summary", {})
         pdf.ln(2)

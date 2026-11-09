@@ -40,8 +40,10 @@ document is the pre-review baseline and will be revised against findings.
 
 ## Trust boundary
 
-- The bundle packages only data the caller is authorized to read (`can_view`); export is gated at the
-  BFF before theopenlane is hit. A stronger `can_export_bundle` relation is a named follow-up.
+- Export is gated at the BFF on `can_edit` on the organization (org admins and owners) before
+  theopenlane is hit: signing makes the org's key speak for the org, so it needs more than read
+  access. A dedicated `can_export_bundle` relation needs an edit to the vendored FGA model (ADR plus
+  a new pin) and stays an option.
 - Verification requires only the **public** key; compromise of a published public key does not enable
   forgery.
 
@@ -53,19 +55,20 @@ document is the pre-review baseline and will be revised against findings.
 - No Postgres RLS on the trust tables yet (`app/api/rls/**` reserved); tenancy is enforced at the BFF.
 - No rate-limiting / per-export audit-log entry on bundle generation.
 
-## Open findings (security review, 2026-10-15) — fix before anything depends on `/bundle/sign`
+## Resolved findings (security review, 2026-10-15; fixed 2026-11-09)
 
-1. **Chain fork under concurrency.** `TrustStore.last_root()` and `append_bundle()` run as separate
-   statements with no transaction or lock, so two concurrent signs for one org can both read the
-   same head and both append, forking the chain. Fix: read the head and insert inside one
-   transaction under `pg_advisory_xact_lock` keyed on the org, and add a unique index on
-   `(org_id, prev_root)` plus a partial unique index for the genesis row so a fork cannot persist.
-2. **Signing gated by a read relation.** `/bundle/sign` checks `can_view`, so any viewer (insurer,
-   regulator) can make the org's key sign and append to the org's chain. Fix: add a
-   `can_export_bundle` relation to the FGA model and gate on it.
-3. **Unrecorded filtering.** The optional `framework` query filter yields an org-signed bundle that
-   omits frameworks without saying so. Fix: record the applied filter in the signed manifest (and
-   render it on the PDF) so a partial bundle cannot pass as a full one.
+1. **Chain fork under concurrency.** Fixed: `TrustStore.append_next` reads the head and inserts in
+   one transaction under `pg_advisory_xact_lock(hashtextextended('trust_bundle:' || org_id, 0))`.
+   Unique indexes on `(org_id, prev_root)` and on `(org_id) WHERE prev_root IS NULL` refuse a fork
+   even from a writer that skips the lock. A Postgres contract test runs 12 concurrent appends and
+   checks for one linear chain. Creating the indexes fails on a database that already holds a fork.
+2. **Signing gated by a read relation.** Fixed: `/bundle/sign` requires `can_edit` on the
+   organization, which only admins and owners hold in the tetrad (`cross-cutting/auth/tetrad-roles.md`).
+   Insurer, regulator and operator members get 403. The upstream model was not edited.
+3. **Unrecorded filtering.** Fixed: the manifest (now `trust-bundle/v1`) carries a signed
+   `scope: {framework, complete}`, and the PDF cover says "Partial bundle" when a filter was applied.
+   Known and left: `summary` still counts every framework of the org on a filtered bundle; `scope`
+   makes that visible, and the summary is not used for verification.
 
 ## Documented US LLM dependencies
 

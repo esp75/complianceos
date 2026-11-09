@@ -77,10 +77,25 @@ follow-up, not built in this slice.
 ## Out of scope for v0 (pre-audit / later slices)
 - Full PAdES-B-LT (CMS, X.509 cert chain, RFC-8419 EdDSA-in-CMS, RFC-3161 timestamp, revocation info).
 - EU KMS/HSM-backed `KeyStore`; per-org key rotation + versioning.
-- Dedicated `can_export_bundle` relation; Postgres RLS (`app/api/rls/**`).
+- Dedicated `can_export_bundle` relation (export now gated on `can_edit`, see the addendum); Postgres
+  RLS (`app/api/rls/**`).
 - Merkle inclusion-proof export endpoint for single-record disclosure.
 
 ## Action items
 - Phase 4: freeze the trust/bundle surface and tag `pre-audit-v0` before the Quarkslab window
   (ADR-0011).
 - Add the upgrade items above to the Quarkslab RFP scope.
+
+## Addendum (2026-11-09): review findings fixed
+
+The three `/bundle/sign` findings in `docs/THREAT_MODEL.md` are fixed.
+
+- **Gate.** Decision 4 is superseded: `/bundle/sign` gates on `can_edit` on the organization, not
+  `can_view`. `can_edit` already exists in the vendored model and only org admins and owners hold
+  it, so no upstream file changes. A dedicated `can_export_bundle` would let an admin delegate
+  export without granting edit rights; it needs an ADR and a new pin of `external/theopenlane-core`,
+  and is not built.
+- **Chain.** Appends go through `TrustStore.append_next` (per-org advisory lock, head read and
+  insert in one transaction), backed by unique indexes that keep each org's chain linear.
+- **Scope.** The manifest version is `trust-bundle/v1` and adds a signed `scope` object. A v0
+  bundle has no `scope`; treat it as of unknown completeness.

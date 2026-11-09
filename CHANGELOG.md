@@ -10,6 +10,10 @@ All notable changes to ComplianceOS are documented here. Format: [Keep a Changel
 - `watch` service in `compose.yaml` runs the Watch daily.
 
 ### Security
+- `/bundle/sign` (THREAT_MODEL findings 1–3): appends to the bundle chain under a per-org lock with
+  unique indexes that keep the chain linear; signing requires `can_edit` on the organization (it
+  was `can_view`); a framework filter is recorded in the signed manifest (`trust-bundle/v1`,
+  `scope`) and on the PDF.
 - HttpFetcher checks every redirect hop and the connected peer address for non-public targets and
   fails closed on DNS errors; each hop connects to the address it checked (SNI and Host kept), which
   closes the DNS-rebinding window. SMTP refuses cleartext credentials.

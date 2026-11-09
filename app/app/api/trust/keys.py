@@ -3,7 +3,7 @@
 
 Keys are *derived*, never stored: each org's keypair comes from a single master seed via
 HKDF-SHA256 with the org_id as the HKDF ``info``. Pure functions, no I/O — the only secret is the
-master seed, supplied by the caller (env-only ``CELESTIA_TRUST_SIGNING_SEED`` in v0; an EU KMS
+master seed, supplied by the caller (env-only ``COMPLIANCEOS_TRUST_SIGNING_SEED`` in v0; an EU KMS
 behind the KeyStore interface later). HKDF is one-way, so a derived org key never reveals the seed
 or another org's key.
 """
@@ -26,7 +26,7 @@ def derive_ed25519(master_seed: bytes, org_id: str) -> Ed25519PrivateKey:
     Same ``(master_seed, org_id)`` always yields the same key (offline + test-deterministic).
     """
     if not master_seed:
-        raise ValueError("master_seed is empty; set CELESTIA_TRUST_SIGNING_SEED")
+        raise ValueError("master_seed is empty; set COMPLIANCEOS_TRUST_SIGNING_SEED")
     seed = HKDF(
         algorithm=hashes.SHA256(),
         length=32,

@@ -5,14 +5,15 @@ POST /bundle/sign?org_id=   Gather the org's compliance status + evidence audit 
                             under a SHA-256 Merkle root, sign the canonical manifest with the org's
                             derived Ed25519 key, render a self-verifying PDF, append the root to the
                             org's tamper-evident bundle chain, and return the PDF. Gated by
-                            ``can_view`` (the same data /compliance/status exposes); a dedicated
-                            ``can_export_bundle`` relation is a named hardening follow-up.
+                            ``can_edit`` on the organization (org admins and owners): signing
+                            makes the org's key speak for the org, which is stronger than reading
+                            the same data. A ``framework`` filter is recorded in the signed
+                            manifest's ``scope``.
 """
 
 from __future__ import annotations
 
 import datetime as _dt
-import hashlib
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
@@ -83,7 +84,8 @@ async def sign_bundle(
     signer: Annotated[BundleSigner, Depends(get_bundle_signer)],
     framework: Annotated[str | None, Query(description="optional shortName filter")] = None,
 ) -> Response:
-    await assert_can(openfga, user, "can_view", f"organization:{org_id}")
+    # Export signs with the org key: an org-level write, not a read (THREAT_MODEL finding 2).
+    await assert_can(openfga, user, "can_edit", f"organization:{org_id}")
     token = user["_token"]
 
     compliance = await gather_status(openlane, token, org_id)
@@ -107,7 +109,7 @@ async def sign_bundle(
     except KeyStoreUnavailable as exc:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="trust signing key unavailable (set CELESTIA_TRUST_SIGNING_SEED)",
+            detail="trust signing key unavailable (set COMPLIANCEOS_TRUST_SIGNING_SEED)",
         ) from exc
     pub = public_raw(priv)
     fingerprint = key_fingerprint(pub)
@@ -119,19 +121,16 @@ async def sign_bundle(
         leaves_hex=[leaf.hex() for leaf in leaves],
         fingerprint=fingerprint,
         issued_at=issued_at,
+        framework_filter=framework or None,
     )
     manifest_bytes = canonical_bytes(manifest)
     signature = sign(manifest_bytes, priv)
 
     pdf = signer.render_and_sign(manifest, manifest_bytes, signature, pub)
 
-    # Append to the org's tamper-evident bundle chain.
-    prev_root = await trust.last_root(org_id)
-    chain_hash = hashlib.sha256((prev_root or b"") + root + signature).digest()
+    # Append to the org's tamper-evident bundle chain: head read + insert under one per-org lock.
     await trust.upsert_org_key(org_id, pub, fingerprint)
-    await trust.append_bundle(
-        org_id, root, prev_root, chain_hash, signature, manifest_bytes.decode("utf-8")
-    )
+    await trust.append_next(org_id, root, signature, manifest_bytes.decode("utf-8"))
 
     return Response(
         content=pdf,
