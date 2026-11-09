@@ -27,7 +27,7 @@
 ## Phase P2 — Workspace + the Watch v0 (weeks 3–6) · serves: pilot delivery + retention
 
 - [x] Client workspace v0 (shipped with the planner, ADR-0018; Workspace page added): lightweight web UI (Next.js portal path per ADR-0003; replaces the parked openmct surface) — dossier viewer, program tracker (applications, deadlines, dependencies, statuses), tenant-isolated via L1 tetrad (roles: operator client, Celestia admin)
-- [~] The Watch v0 — first slice shipped ([ADR-0019](./adr/0019-the-watch-v0.md)): every cited source checked on a schedule, change detection, changes linked to tracked applications, workspace feed and mission tab. alert email, PDF sources, curated publication feeds (GB, US) and advisory Claude triage shipped ([ADR-0020](./adr/0020-the-watch-alerts-pdf-feeds-triage.md)). **Open:** a Légifrance route (4 of 23 cited sources are blocked to automated fetches); more verified feeds (FR, LU, ITU, DE, AT); signed history (below). Per-workspace alert recipients shipped
+- [~] The Watch v0 — first slice shipped ([ADR-0019](./adr/0019-the-watch-v0.md)): every cited source checked on a schedule, change detection, changes linked to tracked applications, workspace feed and mission tab. alert email, PDF sources, curated publication feeds (GB, US) and advisory Claude triage shipped ([ADR-0020](./adr/0020-the-watch-alerts-pdf-feeds-triage.md)). **Open:** a Légifrance route (4 of 23 cited sources are blocked to automated fetches); more verified feeds (DE shipped; FR, LU, ITU, AT have no documented official feed, see VERIFICATION.md); signed history (below). Per-workspace alert recipients shipped
 - [~] Signed program history — first slice shipped ([ADR-0021](./adr/0021-signed-history-and-pilot-usage.md)): signed Merkle export of application events, chained across exports. **Open:** anchoring checkpoints in the trust layer's `trust_bundle` chain (needs a trust-layer change, after the external review)
 - [~] Pilot instrumentation — first slice shipped (ADR-0021): session, mission, Watch and alert-link events with a summary endpoint. Dossier-export events and the pilot-facing report (Workspace page) shipped. **Open:** none beyond what pilots ask for
 
@@ -35,11 +35,11 @@
 
 ## Phase P3 — Conversion hardening (weeks 7–12) · serves: pilots → paying clients
 
-- [ ] Dossier pipeline cost/time reduction (target: ≤1 founder-day/dossier): section templates per jurisdiction archetype, reusable corpus, extraction QA harness
+- [~] Dossier pipeline cost/time reduction (target: ≤1 founder-day/dossier): the extraction QA harness shipped (`app.planner.pack_qa`: every quote checked against its cited page, weekly in CI); **open:** section templates per jurisdiction archetype, reusable corpus
 - [ ] Objection-pattern layer v1: structured objection/decision-maker records per jurisdiction accumulating in the KG (the compounding asset)
 - [x] ~~Billing + subscription plumbing~~ dropped: the project is free and open source
 - [~] Multi-jurisdiction workspace (the S2→S3 bridge: one client, N markets) — the Markets view (`GET /program`), per-application owners with a workload table, and a cross-mission source-changes list shipped; **open:** per-market (not per-application) ownership, if pilots ask
-- [ ] `/cso` pass + RLS hardening on client-facing surfaces (licensing state is competitively sensitive — the sovereignty pitch must be true)
+- [x] `/cso` pass + RLS hardening on client-facing surfaces: Postgres RLS on the planner's workspace tables, and a static `/cso` pass on the planner API (one finding, fixed). **Open:** RLS on the trust tables; a full, non-`--paths` `/cso` audit
 
 **DoD:** a converted client is billed, multi-market, monitored, with signed history — no founder heroics in the loop.
 

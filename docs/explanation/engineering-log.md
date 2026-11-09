@@ -1,5 +1,40 @@
 # Engineering log — ComplianceOS v0.2
 
+## 2026-11-09 — Trust-layer fixes, RLS, pack QA, prefix rename, CA/IE/DE
+
+- **Env prefix** is now `COMPLIANCEOS_`; a shim in `app/__init__.py` maps old `CELESTIA_*` names
+  with one warning (`.env` files read by the API are not translated). ADRs and this log keep the old
+  names.
+- **`/bundle/sign` findings 1–3 fixed** (trust layer, under `/careful`, needs PR review):
+  `TrustStore.append_next` (per-org advisory lock, plus unique indexes that keep the chain linear),
+  the gate moves to `can_edit` (vendored FGA model unchanged), and a signed `scope` in
+  `trust-bundle/v1`. Postgres contract: 12 concurrent appends make one chain, forks are refused.
+- **Postgres RLS** on the seven workspace tables (`app/api/rls/planner_policies.py`). Compose connects
+  as a superuser, so the store drops to the NOLOGIN `complianceos_planner` role. The alert job reads
+  an id-only `planner_workspace` registry. Contract tests cover isolation, nothing visible without a
+  workspace, refused cross-workspace writes, and a setting that dies with its transaction. Checked on
+  the running compose stack: RLS is forced on all seven tables and the full flow works.
+- **`/cso`** (static, `--code --paths`, partial, run `1794195898053-89edefe28572c619`): one
+  supported medium finding, fixed: `POST /missions/{id}/brief?ai=true` was reader-gated and
+  unlimited. It now needs write access, with 6 calls per workspace per minute. Left as a question:
+  `dossier.signed.json` is reader-gated, so a viewer can get a workspace-signed dossier.
+- **Pack QA harness** (`python -m app.planner.pack_qa`, weekly in CI). First live run, 73 citations:
+  16 found, 9 partial, 26 unreadable, 7 blocked, 15 unreachable (RIS 503 all day), 0 not found.
+  "Unreadable" means the cited page shows none of the quote: eCFR serves an anti-bot page,
+  legislation.gov.uk answers 202 with no body, and Legilux, Retsinformation and the Canadian table
+  of contents need JavaScript or are index pages. **The Watch hashes those same pages**, so it
+  cannot see changes in 26 cited sources; that needs per-source routes (eCFR API, legislation.gov.uk
+  data URLs, text URLs).
+- **Pack:** Canada's space station spectrum licence and ITU filing through ISED (CPC-2-6-02 issue 7);
+  Ireland's S.I. 96/2024; Germany's BGBl Teil I feed. All new quotes were found on their pages by the
+  harness. Not added, with reasons in `knowledge/VERIFICATION.md`: the NL and IE ITU routes, LU and
+  FR earth stations, and feeds for LU, AT, ITU and FR.
+- Verified: backend 291 passed, 19 skipped by default; Postgres contracts (store, trust, RLS) 47
+  passed on `postgres:17`; ruff, mypy --strict; web tsc, lint, bun test (10). `bun run build` was not
+  re-run (no web changes).
+- **Still blocked:** Légifrance (PISTE credentials), objection-pattern data, trust-bundle anchoring
+  (after the external review), the NOTICE copyright holder and the conduct contact, and merging.
+
 ## 2026-11-01 — Review, security pass, workspace, Austria
 
 - **Committed** as nine commits on `planner-first-slice` (nothing pushed). The first three are not each
