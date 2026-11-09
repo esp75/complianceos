@@ -117,8 +117,16 @@ excerpt against an exact copy and say so here.
   earth station equipment on the market (European Communities (Satellite Telecommunications Services)
   Regulations 1997, reg. 3). The record says so, and does not treat that as a licence exemption for
   operating a station.
-- **Not covered:** the ITU satellite filing route, licence conditions, the decision period (none in
-  the Act), fees, and any space-activity authorisation.
+- Wireless Telegraphy (Satellite Earth Station Licence) Regulations 2024 (S.I. No. 96 of 2024), read
+  live from irishstatutebook.ie on 9 November 2026. Regulations 5(1), 5(3), 6(1) and 6(2) are quoted
+  verbatim; `pack_qa` found both excerpts on the page. The annual renewal is an obligation in the
+  record. Fee amounts (Schedule 2) were not copied.
+- **Not covered:** the ITU satellite filing route, licence conditions beyond reg. 7, the decision
+  period (none in the Act or the 2024 Regulations), fee amounts, and any space-activity
+  authorisation. Lead for the ITU route: a ComReg information notice (ComReg 25/79, found by search,
+  not read in full) says the Department of Culture, Communications and Sport handles the
+  submission of satellite filings to the ITU. No Department procedure was found, so no record was
+  added.
 
 ### Canada
 - Radiocommunication Act (R.S.C. 1985, c. R-2), consolidated text from the Justice Laws Website
@@ -186,6 +194,23 @@ excerpt against an exact copy and say so here.
 - Authority: the ČTÚ home page (ctu.gov.cz) was checked live (HTTP 200).
 - **Not covered:** the general authorisation under § 9 (whether a ground station can use it), the
   decision period, fees (§ 24), the Czech ITU satellite filing route.
+
+### Examined but not added (9 November 2026)
+- **Netherlands, ITU route:** no RDI or government page describing how a satellite network is
+  filed with the ITU was found (searched rdi.nl, business.gov.nl and the official gazette). Not added.
+- **Luxembourg, earth station:** the governing text is the amended law of 30 May 2005 on radio
+  frequency management ("nul ne peut utiliser une fréquence … sans y avoir été autorisé", seen
+  only in a parliamentary document). Its Legilux pages return almost no text to an automated reader,
+  and bill 8205 (2023) amends the law with its adoption unconfirmed, so the current text could
+  not be quoted. Not added.
+- **France, earth station:** the CPCE is on Légifrance, which blocks automated fetches. Not added.
+- **Watch feeds not added:** Luxembourg (no documented Legilux feed; guessed URLs 404 or return
+  HTML), Austria (RIS returned HTTP 503 for every request on 9 November 2026, and no documented
+  Bundesgesetzblatt feed was found), ITU (no RSS for the BR IFIC or space services; the circular
+  letters page is HTML), France (journal-officiel.gouv.fr has no feed at /rss/; ANFR 404; ARCEP's
+  URL returns HTML). Germany's BNetzA Amtsblatt feed parses, but every entry is titled only with
+  the issue number, so keyword matching cannot work; the Bundesgesetzblatt Teil I feed was added
+  instead.
 
 ### Examined but not added (3 November 2026)
 - **Belgium:** the Electronic Communications Act of 13 June 2005 (ejustice ELI 2005011238) loads, but
