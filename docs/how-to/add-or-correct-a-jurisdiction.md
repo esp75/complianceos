@@ -22,7 +22,14 @@ code to fix a rule or add a licence.
 
    ```bash
    cd app && uv run python -m app.planner.knowledge validate
+   uv run python -m app.planner.pack_qa --jurisdiction <id>
    ```
+
+   The second command fetches each cited page and checks that your `excerpt` is on it. Mark an
+   omission with `[...]`. `found` and `partial` are fine. `unreadable` means the page did not show
+   the text to an automated reader (a JavaScript page, an index page or a bot wall). Open it
+   yourself, and if the text is somewhere else, cite the page that shows it. `not_found` means the
+   page shows the law but not your wording: re-read the text.
 
 5. **Check the result in the planner.** Run the API and web app
    ([see the tutorial](../tutorials/first-regulatory-path.md)), open a mission in that country, and

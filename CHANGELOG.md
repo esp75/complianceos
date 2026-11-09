@@ -5,6 +5,10 @@ All notable changes to ComplianceOS are documented here. Format: [Keep a Changel
 ## [Unreleased]
 
 ### Added
+- Knowledge-pack QA (`python -m app.planner.pack_qa`): offline checks (https URLs, no future dates)
+  and a live check that each quoted excerpt is still on the page it cites (`found`, `partial`,
+  `not_found`, `unreadable`, `blocked`, `unsupported`, `unreachable`). It runs weekly with the link
+  check and fails only on `not_found`.
 - Standalone offline verifier (`verifier/complianceos_verify.py`) for signed dossiers and history.
 - Branded dossier PDF: cover page, running header, reviewer sign-off block.
 - `watch` service in `compose.yaml` runs the Watch daily.
