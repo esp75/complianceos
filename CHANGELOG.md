@@ -69,6 +69,10 @@ All notable changes to ComplianceOS are documented here. Format: [Keep a Changel
   radiofrekvenser § 6(1)), issued by Digitaliseringsstyrelsen.
 - Norway joins the knowledge pack (draft): the frequency permit for a ground station (ekomloven § 11-2)
   and the satellite system filing to the ITU register on application (§ 11-16), both delegated to Nkom.
+- Canada: the space station spectrum licence and ITU filing through ISED (CPC-2-6-02 issue 7, ss. 1, 3, 5.2,
+  10), with the 126-day service standard and the six-month link between filing and application.
+- Germany: the Watch follows the Bundesgesetzblatt Teil I feed (recht.bund.de) for new telecoms,
+  frequency, satellite and space instruments.
 - Canada joins the knowledge pack (draft): the radio authorisation for a ground station (Radiocommunication
   Act ss. 4(1), 5(1)), issued by the Minister of Industry through ISED. The ITU filing route is not covered.
 - Ireland joins the knowledge pack (draft): the wireless telegraphy licence for a ground station

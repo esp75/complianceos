@@ -126,7 +126,15 @@ excerpt against an exact copy and say so here.
   section 5(1) is cut off at the first licence type, marked by the excerpt's end.
 - "Minister" means the Minister of Industry (s. 2). The ISED spectrum-management page was checked live.
 - **Not covered:** exemptions under regulations (s. 6(1)(m)), licence conditions, the decision period
-  (none in the Act text checked), fees, the Canadian ITU satellite filing route, space-related licences.
+  (none in the Act text checked), fees, space-related licences other than the one below.
+- ITU route (added 9 November 2026): the Act and the Radiocommunication Regulations (SOR/96-484) have
+  no ITU filing provision; the route is in ISED's CPC-2-6-02, issue 7 (April 2026), read live from
+  ised-isde.canada.ca (node/164). Sections 1, 3, 5.2 and 10 are quoted verbatim (s. 5.2 with an
+  omission marked `[...]`); `pack_qa` found all four on the page. The two mailboxes are the ones
+  the circular names. The 18-week review is ISED's published service standard (`practice`).
+- **Not covered (ITU route):** the eligibility rule in Regulations s. 9 (not read), fee amounts (Fee
+  Order SMSE-001-23, not read), earth station spectrum licences (CPC-2-6-01, CPC-2-6-03) and foreign
+  satellite approval (CPC-2-6-04).
 
 ### Norway
 - Lov om elektronisk kommunikasjon (ekomloven), LOV-2024-12-13-76, chapter 11 "Frekvenser og

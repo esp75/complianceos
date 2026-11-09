@@ -24,5 +24,12 @@ authorities:
       retrieved: '2026-11-03'
   notes: Named as the deciding authority for frequency assignment (TKG § 91) and for ITU filings (TKG § 95). Only the website
     was verified; no postal address or email is listed.
+feeds:
+- id: de-bgbl-teil-1
+  title: Bundesgesetzblatt Teil I (recht.bund.de) — new federal laws and ordinances
+  url: https://www.recht.bund.de/rss/feeds/rss_bgbl-1.xml
+  keywords: [Telekommunikationsgesetz, Frequenz, Satellit, Weltraum]
+  license_ids: [de-frequency-assignment, de-bnetza-satellite-filing]
+  retrieved: '2026-11-09'
 status: draft
 last_verified: '2026-11-03'

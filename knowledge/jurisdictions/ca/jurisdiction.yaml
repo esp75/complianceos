@@ -3,8 +3,9 @@ name: Canada
 kind: national
 country: CA
 summary: 'Covered: the radio authorisation for a ground station under the Radiocommunication Act, issued by the Minister responsible
-  for ISED. Not covered: the Canadian ITU satellite filing route, any space-related licence, licence conditions, exemptions
-  under regulations, and fees.'
+  for ISED, and the space station spectrum licence with its ITU filing through ISED (CPC-2-6-02). Not covered: earth station
+  spectrum licences under CPC-2-6-01 and CPC-2-6-03, foreign satellite approval, licence conditions, exemptions under regulations,
+  and fee amounts.'
 authorities:
 - id: ca-ised
   name: Innovation, Science and Economic Development Canada (ISED)
@@ -12,6 +13,7 @@ authorities:
   roles:
   - spectrum_management
   - earth_station_licensing
+  - itu_notifying_administration
   website: https://ised-isde.canada.ca/site/spectrum-management-telecommunications/en
   contacts:
   - kind: web
@@ -21,6 +23,20 @@ authorities:
       title: ISED — Spectrum management and telecommunications
       url: https://ised-isde.canada.ca/site/spectrum-management-telecommunications/en
       retrieved: '2026-11-03'
-  notes: The Act's "Minister" means the Minister of Industry (s. 2), so ISED is the department that carries out the licensing function; this link is to the department's page. Only the web page was verified; no postal address or email is listed.
+  - kind: email
+    value: satelliteauthorization-autorisationsatellite@ised-isde.gc.ca
+    purpose: Mailbox CPC-2-6-02 names for all enquiries about licensing space stations.
+    source:
+      title: ISED — CPC-2-6-02, section 1
+      url: https://ised-isde.canada.ca/site/spectrum-management-telecommunications/node/164
+      retrieved: '2026-11-09'
+  - kind: email
+    value: satcoord-coordsat@ised-isde.gc.ca
+    purpose: ISED's International Satellite Coordination group, which issues ITU e-Submission accounts (CPC-2-6-02 s. 5.2).
+    source:
+      title: ISED — CPC-2-6-02, section 5.2
+      url: https://ised-isde.canada.ca/site/spectrum-management-telecommunications/node/164
+      retrieved: '2026-11-09'
+  notes: The Act's "Minister" means the Minister of Industry (s. 2), so ISED is the department that carries out the licensing function; this link is to the department's page. The web page and the two mailboxes named in CPC-2-6-02 were verified; no postal address is listed.
 status: draft
-last_verified: '2026-11-03'
+last_verified: '2026-11-09'
