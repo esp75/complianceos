@@ -418,3 +418,46 @@ async def test_program_folds_missions_into_markets(client: httpx.AsyncClient) ->
     assert owners == [{"owner": "Dana", "open": 1, "overdue": 0, "jurisdictions": ["lu"]}]
     await client.patch(f"/applications/{app_id}", json={"owner": ""})
     assert (await client.get("/program")).json()["owners"][0]["owner"] == ""
+
+
+class _FGAByRelation:
+    def __init__(self, allowed: set[str]) -> None:
+        self.allowed = allowed
+
+    async def check(self, user: str, relation: str, obj: str, *, context: dict | None = None) -> bool:
+        return relation in self.allowed
+
+
+async def test_ai_brief_needs_write_access_in_team_mode(monkeypatch: pytest.MonkeyPatch) -> None:
+    """/cso finding: a viewer (insurer, regulator) must not be able to spend the deployment's LLM
+    budget. The deterministic brief stays readable."""
+    monkeypatch.setenv("COMPLIANCEOS_AUTH_MODE", "openlane")
+    get_settings.cache_clear()
+    llm = FakeLLM("Start with the Luxembourg concession [cite:lu.media1991.art-20].")
+    app = make_app(llm=llm)
+    app.state.openlane = _Openlane()
+    app.state.openfga = fga = _FGAByRelation({"can_view", "can_create_evidence"})
+    h = {"X-Workspace": "01O", "Authorization": "Bearer good"}
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://localhost",
+                                 headers=CLIENT | h) as c:
+        mid = (await c.post("/missions/sample")).json()["id"]
+        fga.allowed = {"can_view"}
+        assert (await c.post(f"/missions/{mid}/brief")).json()["mode"] == "deterministic"
+        r = await c.post(f"/missions/{mid}/brief", params={"ai": True})
+        assert r.status_code == 403 and "can_create_evidence" in r.json()["detail"]
+        fga.allowed = {"can_view", "can_create_evidence"}
+        assert (await c.post(f"/missions/{mid}/brief", params={"ai": True})).json()["mode"] == "llm"
+    get_settings.cache_clear()
+
+
+async def test_ai_brief_is_rate_limited_per_workspace() -> None:
+    llm = FakeLLM("Start with the Luxembourg concession [cite:lu.media1991.art-20].")
+    app = make_app(llm=llm)
+    app.state.ai_briefs_per_minute = 2
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app),
+                                 base_url="http://localhost", headers=CLIENT) as c:
+        mid = await sample(c)
+        codes = [(await c.post(f"/missions/{mid}/brief", params={"ai": True})).status_code
+                 for _ in range(3)]
+        assert codes == [200, 200, 429]
+        assert (await c.post(f"/missions/{mid}/brief")).status_code == 200, "deterministic is not limited"

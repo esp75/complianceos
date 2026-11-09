@@ -10,6 +10,10 @@ One interface, two implementations:
 Every read and write is scoped to a workspace: a mission belongs to one workspace, and
 applications, events and contacts are only reachable through their mission. The event log is
 append-only — there is no code path that edits or deletes an event.
+
+In Postgres the scoping is enforced twice: by the queries, and by row-level security
+(``app/api/rls/planner_policies.py``). Each workspace call runs in a transaction that names its
+workspace, so a query that forgot its workspace filter still sees only that workspace.
 """
 
 from __future__ import annotations
@@ -18,12 +22,14 @@ import datetime as dt
 import itertools
 import json
 import uuid
-from collections.abc import Iterable
+from collections.abc import AsyncIterator, Iterable
+from contextlib import asynccontextmanager
 from typing import Literal, Protocol, cast
 
 import asyncpg
 from pydantic import BaseModel
 
+from app.api.rls import planner_policies as rls
 from app.planner.mission import MissionProfile
 from app.planner.tracker import Application, ApplicationEvent, AppStatus, Contact, ContactIn
 from app.planner.watch import SourceState, WatchChange
@@ -133,7 +139,20 @@ CREATE TABLE IF NOT EXISTS planner_watch_change (
 ALTER TABLE planner_watch_change ADD COLUMN IF NOT EXISTS materiality TEXT;
 ALTER TABLE planner_watch_change ADD COLUMN IF NOT EXISTS ai_summary TEXT NOT NULL DEFAULT '';
 CREATE INDEX IF NOT EXISTS planner_watch_change_url_idx ON planner_watch_change (url, detected_at);
+
+-- Workspace ids only, so the alert job can list workspaces without reading their content (RLS).
+CREATE TABLE IF NOT EXISTS planner_workspace (
+    workspace   TEXT PRIMARY KEY,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
 """
+
+# Fills the registry from missions created before it existed. Runs before the policies are applied
+# (a bypassing role sees every row; on a forced-RLS non-superuser owner it adds nothing new).
+_BACKFILL_WORKSPACES_SQL = (
+    "INSERT INTO planner_workspace (workspace) SELECT DISTINCT workspace FROM planner_mission "
+    "ON CONFLICT DO NOTHING"
+)
 
 EventKind = Literal["created", "status", "update", "contact"]
 
@@ -363,9 +382,17 @@ class PostgresPlannerStore:
     def __init__(self, dsn: str) -> None:
         self._dsn = dsn
         self._pool: asyncpg.Pool | None = None
+        #: The RLS-bound role connections switch to, when the login role would bypass RLS.
+        self._role: str | None = None
 
     async def connect(self) -> None:
-        self._pool = await asyncpg.create_pool(self._dsn, min_size=1, max_size=5)
+        self._pool = await asyncpg.create_pool(self._dsn, min_size=1, max_size=5,
+                                               setup=self._setup_connection)
+
+    async def _setup_connection(self, conn: asyncpg.Connection) -> None:
+        """Runs on every acquire: drop to the RLS-bound role once the schema says to."""
+        if self._role is not None:
+            await conn.execute(rls.SET_ROLE_SQL)
 
     async def close(self) -> None:
         if self._pool is not None:
@@ -378,79 +405,114 @@ class PostgresPlannerStore:
         return self._pool
 
     async def apply_schema(self) -> None:
-        async with self._p().acquire() as conn:
+        """Create tables, apply the RLS policies, and decide whether to switch role.
+
+        Runs as the login role (``self._role`` is still None, so no ``SET ROLE``), serialised
+        across processes by an advisory lock so the API and the Watch can start together.
+        """
+        self._role = None
+        async with self._p().acquire() as conn, conn.transaction():
+            await conn.execute("SELECT pg_advisory_xact_lock(hashtextextended('planner_schema', 0))")
             await conn.execute(PLANNER_SCHEMA_SQL)
+            await conn.execute(_BACKFILL_WORKSPACES_SQL)
+            await conn.execute(rls.policies_sql())
+            bypasses = bool(await conn.fetchval(rls.BYPASSES_RLS_SQL))
+            if bypasses:
+                await conn.execute(rls.role_sql())
+        if bypasses:
+            self._role = rls.PLANNER_ROLE
+            # Connections already in the pool pick the role up on their next acquire (setup).
+
+    @asynccontextmanager
+    async def _ws(self, workspace: str) -> AsyncIterator[asyncpg.Connection]:
+        """A connection inside a transaction scoped to ``workspace`` for RLS."""
+        async with self._p().acquire() as conn, conn.transaction():
+            await conn.execute(rls.SET_WORKSPACE_SQL, workspace)
+            yield conn
 
     async def create_mission(self, workspace: str, profile: MissionProfile) -> Mission:
-        row = await self._p().fetchrow(
-            "INSERT INTO planner_mission (id, workspace, profile) VALUES ($1, $2, $3::jsonb) "
-            "RETURNING *", _new_id(), workspace, profile.model_dump_json())
+        async with self._ws(workspace) as conn:
+            await conn.execute("INSERT INTO planner_workspace (workspace) VALUES ($1) "
+                               "ON CONFLICT DO NOTHING", workspace)
+            row = await conn.fetchrow(
+                "INSERT INTO planner_mission (id, workspace, profile) VALUES ($1, $2, $3::jsonb) "
+                "RETURNING *", _new_id(), workspace, profile.model_dump_json())
         return _mission(row)
 
     async def add_usage_event(self, workspace: str, actor: str, kind: str, at: dt.datetime) -> None:
-        await self._p().execute(
-            "INSERT INTO planner_usage_event (workspace, actor, kind, at) VALUES ($1, $2, $3, $4)",
-            workspace, actor, kind, at)
+        async with self._ws(workspace) as conn:
+            await conn.execute(
+                "INSERT INTO planner_usage_event (workspace, actor, kind, at) VALUES ($1, $2, $3, $4)",
+                workspace, actor, kind, at)
 
     async def alert_recipients(self, workspace: str) -> list[str]:
-        row = await self._p().fetchval(
-            "SELECT recipients FROM planner_alert_recipients WHERE workspace = $1", workspace)
+        async with self._ws(workspace) as conn:
+            row = await conn.fetchval(
+                "SELECT recipients FROM planner_alert_recipients WHERE workspace = $1", workspace)
         return [] if row is None else [str(r) for r in row]
 
     async def set_alert_recipients(self, workspace: str, recipients: list[str]) -> None:
-        await self._p().execute(
-            "INSERT INTO planner_alert_recipients (workspace, recipients) VALUES ($1, $2) "
-            "ON CONFLICT (workspace) DO UPDATE SET recipients = EXCLUDED.recipients, "
-            "updated_at = now()", workspace, recipients)
+        async with self._ws(workspace) as conn:
+            await conn.execute(
+                "INSERT INTO planner_alert_recipients (workspace, recipients) VALUES ($1, $2) "
+                "ON CONFLICT (workspace) DO UPDATE SET recipients = EXCLUDED.recipients, "
+                "updated_at = now()", workspace, recipients)
 
     async def usage_events(self, workspace: str, since: dt.datetime) -> list[tuple[str, dt.datetime]]:
-        rows = await self._p().fetch(
-            "SELECT kind, at FROM planner_usage_event WHERE workspace = $1 AND at >= $2 "
-            "ORDER BY at", workspace, since)
+        async with self._ws(workspace) as conn:
+            rows = await conn.fetch(
+                "SELECT kind, at FROM planner_usage_event WHERE workspace = $1 AND at >= $2 "
+                "ORDER BY at", workspace, since)
         return [(r["kind"], r["at"]) for r in rows]
 
     async def last_history_root(self, workspace: str) -> str | None:
-        row = await self._p().fetchval(
-            "SELECT merkle_root FROM planner_history_checkpoint WHERE workspace = $1 "
-            "ORDER BY id DESC LIMIT 1", workspace)
+        async with self._ws(workspace) as conn:
+            row = await conn.fetchval(
+                "SELECT merkle_root FROM planner_history_checkpoint WHERE workspace = $1 "
+                "ORDER BY id DESC LIMIT 1", workspace)
         return None if row is None else str(row)
 
     async def add_history_checkpoint(self, workspace: str, merkle_root: str, prev_root: str | None,
                                      event_count: int) -> None:
-        await self._p().execute(
-            "INSERT INTO planner_history_checkpoint (workspace, merkle_root, prev_root, event_count) "
-            "VALUES ($1, $2, $3, $4)", workspace, merkle_root, prev_root, event_count)
+        async with self._ws(workspace) as conn:
+            await conn.execute(
+                "INSERT INTO planner_history_checkpoint (workspace, merkle_root, prev_root, event_count) "
+                "VALUES ($1, $2, $3, $4)", workspace, merkle_root, prev_root, event_count)
 
     async def list_workspaces(self) -> list[str]:
-        rows = await self._p().fetch("SELECT DISTINCT workspace FROM planner_mission ORDER BY workspace")
+        rows = await self._p().fetch("SELECT workspace FROM planner_workspace ORDER BY workspace")
         return [r["workspace"] for r in rows]
 
     async def list_missions(self, workspace: str) -> list[Mission]:
-        rows = await self._p().fetch(
-            "SELECT * FROM planner_mission WHERE workspace = $1 ORDER BY created_at DESC", workspace)
+        async with self._ws(workspace) as conn:
+            rows = await conn.fetch(
+                "SELECT * FROM planner_mission WHERE workspace = $1 ORDER BY created_at DESC", workspace)
         return [_mission(r) for r in rows]
 
     async def get_mission(self, workspace: str, mission_id: str) -> Mission | None:
-        row = await self._p().fetchrow(
-            "SELECT * FROM planner_mission WHERE workspace = $1 AND id = $2", workspace, mission_id)
+        async with self._ws(workspace) as conn:
+            row = await conn.fetchrow(
+                "SELECT * FROM planner_mission WHERE workspace = $1 AND id = $2", workspace, mission_id)
         return _mission(row) if row else None
 
     async def update_mission(self, workspace: str, mission_id: str,
                              profile: MissionProfile) -> Mission | None:
-        row = await self._p().fetchrow(
-            "UPDATE planner_mission SET profile = $3::jsonb, updated_at = now() "
-            "WHERE workspace = $1 AND id = $2 RETURNING *",
-            workspace, mission_id, profile.model_dump_json())
+        async with self._ws(workspace) as conn:
+            row = await conn.fetchrow(
+                "UPDATE planner_mission SET profile = $3::jsonb, updated_at = now() "
+                "WHERE workspace = $1 AND id = $2 RETURNING *",
+                workspace, mission_id, profile.model_dump_json())
         return _mission(row) if row else None
 
     async def delete_mission(self, workspace: str, mission_id: str) -> bool:
-        result = await self._p().execute(
-            "DELETE FROM planner_mission WHERE workspace = $1 AND id = $2", workspace, mission_id)
+        async with self._ws(workspace) as conn:
+            result = await conn.execute(
+                "DELETE FROM planner_mission WHERE workspace = $1 AND id = $2", workspace, mission_id)
         return cast(str, result).endswith(" 1")
 
     async def create_application(self, workspace: str, mission_id: str,
                                  license_id: str) -> Application:
-        async with self._p().acquire() as conn, conn.transaction():
+        async with self._ws(workspace) as conn:
             if not await conn.fetchval("SELECT 1 FROM planner_mission WHERE workspace = $1 AND id = $2",
                                        workspace, mission_id):
                 raise KeyError(mission_id)
@@ -467,21 +529,23 @@ class PostgresPlannerStore:
         return _application(row)
 
     async def list_applications(self, workspace: str, mission_id: str) -> list[Application]:
-        rows = await self._p().fetch(
-            f"SELECT {_APP_COLS} FROM planner_application a JOIN planner_mission m "
-            "ON m.id = a.mission_id WHERE m.workspace = $1 AND a.mission_id = $2 "
-            "ORDER BY a.created_at", workspace, mission_id)
+        async with self._ws(workspace) as conn:
+            rows = await conn.fetch(
+                f"SELECT {_APP_COLS} FROM planner_application a JOIN planner_mission m "
+                "ON m.id = a.mission_id WHERE m.workspace = $1 AND a.mission_id = $2 "
+                "ORDER BY a.created_at", workspace, mission_id)
         return [_application(r) for r in rows]
 
     async def get_application(self, workspace: str, app_id: str) -> Application | None:
-        row = await self._p().fetchrow(
-            f"SELECT {_APP_COLS} FROM planner_application a JOIN planner_mission m "
-            "ON m.id = a.mission_id WHERE m.workspace = $1 AND a.id = $2", workspace, app_id)
+        async with self._ws(workspace) as conn:
+            row = await conn.fetchrow(
+                f"SELECT {_APP_COLS} FROM planner_application a JOIN planner_mission m "
+                "ON m.id = a.mission_id WHERE m.workspace = $1 AND a.id = $2", workspace, app_id)
         return _application(row) if row else None
 
     async def save_application(self, workspace: str, app: Application, kind: EventKind,
                                from_status: AppStatus | None, note: str) -> Application:
-        async with self._p().acquire() as conn, conn.transaction():
+        async with self._ws(workspace) as conn:
             row = await conn.fetchrow(
                 "UPDATE planner_application a SET status = $3, submitted_on = $4, granted_on = $5, "
                 "reference = $6, notes = $7, owner = $8, updated_at = now() FROM planner_mission m "
@@ -498,14 +562,15 @@ class PostgresPlannerStore:
         return _application(row)
 
     async def list_events(self, workspace: str, app_id: str) -> list[ApplicationEvent]:
-        rows = await self._p().fetch(
-            "SELECT e.* FROM planner_application_event e JOIN planner_application a "
-            "ON a.id = e.application_id JOIN planner_mission m ON m.id = a.mission_id "
-            "WHERE m.workspace = $1 AND e.application_id = $2 ORDER BY e.id", workspace, app_id)
+        async with self._ws(workspace) as conn:
+            rows = await conn.fetch(
+                "SELECT e.* FROM planner_application_event e JOIN planner_application a "
+                "ON a.id = e.application_id JOIN planner_mission m ON m.id = a.mission_id "
+                "WHERE m.workspace = $1 AND e.application_id = $2 ORDER BY e.id", workspace, app_id)
         return [ApplicationEvent(**dict(r)) for r in rows]
 
     async def add_contact(self, workspace: str, app_id: str, contact: ContactIn) -> Contact:
-        async with self._p().acquire() as conn, conn.transaction():
+        async with self._ws(workspace) as conn:
             owned = await conn.fetchval(
                 "SELECT 1 FROM planner_application a JOIN planner_mission m ON m.id = a.mission_id "
                 "WHERE m.workspace = $1 AND a.id = $2", workspace, app_id)
@@ -522,11 +587,12 @@ class PostgresPlannerStore:
         return Contact(**dict(row))
 
     async def list_contacts(self, workspace: str, app_id: str) -> list[Contact]:
-        rows = await self._p().fetch(
-            "SELECT c.* FROM planner_contact c JOIN planner_application a ON a.id = c.application_id "
-            "JOIN planner_mission m ON m.id = a.mission_id "
-            "WHERE m.workspace = $1 AND c.application_id = $2 ORDER BY c.on_date, c.id",
-            workspace, app_id)
+        async with self._ws(workspace) as conn:
+            rows = await conn.fetch(
+                "SELECT c.* FROM planner_contact c JOIN planner_application a ON a.id = c.application_id "
+                "JOIN planner_mission m ON m.id = a.mission_id "
+                "WHERE m.workspace = $1 AND c.application_id = $2 ORDER BY c.on_date, c.id",
+                workspace, app_id)
         return [Contact(**dict(r)) for r in rows]
 
     async def get_source_state(self, url: str) -> SourceState | None:

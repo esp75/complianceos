@@ -18,8 +18,10 @@ Authentication depends on ``COMPLIANCEOS_AUTH_MODE``:
 from __future__ import annotations
 
 import asyncio
+import collections
 import datetime as dt
 import ipaddress
+import time
 from dataclasses import dataclass
 from typing import Annotated, Any, Literal, cast
 
@@ -283,17 +285,44 @@ async def mission_roadmap(mission_id: str, p: Read, store: Store, kb: KB, today:
     return build_roadmap(kb, m.profile, today)
 
 
+#: Claude-written briefs allowed per workspace per minute (each one is a paid LLM call).
+AI_BRIEFS_PER_MINUTE = 6
+
+
+def _allow_ai_brief(state: Any, workspace: str, now: float) -> bool:
+    """Sliding one-minute window per workspace, per process (same model as the Watch limit)."""
+    limit = int(getattr(state, "ai_briefs_per_minute", AI_BRIEFS_PER_MINUTE))
+    windows = cast("dict[str, collections.deque[float]]",
+                   state.__dict__.setdefault("ai_brief_calls", {}))
+    calls = windows.setdefault(workspace, collections.deque())
+    while calls and now - calls[0] >= 60.0:
+        calls.popleft()
+    if len(calls) >= limit:
+        return False
+    calls.append(now)
+    return True
+
+
 @router.post("/missions/{mission_id}/brief")
 async def mission_brief(
-    mission_id: str, p: Read, store: Store, kb: KB, today: Today,
+    mission_id: str, request: Request, p: Read, store: Store, kb: KB, today: Today,
     llm: Annotated[LLMProvider | None, Depends(get_llm)],
     ai: Annotated[bool, Query(description="let Claude write the executive summary")] = False,
+    x_workspace: Annotated[str | None, Header()] = None,
+    authorization: Annotated[str | None, Header()] = None,
 ) -> Brief:
+    """The deterministic brief needs read access. ``ai=true`` makes a paid Claude call, so it
+    needs write access (``can_create_evidence``) and is rate-limited per workspace."""
     m = await _mission(store, p, mission_id)
     roadmap = build_roadmap(kb, m.profile, today)
-    if ai and llm is None:
-        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE,
-                            detail="no LLM configured (set COMPLIANCEOS_ANTHROPIC_API_KEY)")
+    if ai:
+        await writer(request, x_workspace, authorization)
+        if llm is None:
+            raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE,
+                                detail="no LLM configured (set COMPLIANCEOS_ANTHROPIC_API_KEY)")
+        if not _allow_ai_brief(request.app.state, p.workspace, time.monotonic()):
+            raise HTTPException(status.HTTP_429_TOO_MANY_REQUESTS,
+                                detail="too many Claude-written briefs this minute; try again shortly")
     try:
         return await build_brief(roadmap, llm if ai else None)
     except CitationError as exc:

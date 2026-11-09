@@ -14,6 +14,13 @@ All notable changes to ComplianceOS are documented here. Format: [Keep a Changel
 - `watch` service in `compose.yaml` runs the Watch daily.
 
 ### Security
+- Postgres row-level security on the planner's workspace tables (missions, applications, events,
+  contacts, history checkpoints, usage, alert recipients). Each call runs in a transaction that names
+  its workspace; with none set, nothing is visible. When the API connects as a superuser it switches
+  to a `NOLOGIN` role, `complianceos_planner`, so the policies apply. The alert job lists workspaces
+  from a new id-only `planner_workspace` table.
+- `POST /missions/{id}/brief?ai=true` needs write access and is limited to six Claude calls per
+  workspace per minute (a `/cso` finding: any viewer could spend the deployment's LLM budget).
 - `/bundle/sign` (THREAT_MODEL findings 1–3): appends to the bundle chain under a per-org lock with
   unique indexes that keep the chain linear; signing requires `can_edit` on the organization (it
   was `can_view`); a framework filter is recorded in the signed manifest (`trust-bundle/v1`,
