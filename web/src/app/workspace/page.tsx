@@ -1,0 +1,276 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { ApiNotice } from "@/components/api-notice";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Field, Select, Textarea } from "@/components/ui/field";
+import { api, paths, useApi } from "@/lib/api";
+import { formatDate } from "@/lib/dates";
+import type { Program, Recipients, UsageSummary, WatchItem } from "@/lib/types";
+
+/** What each usage event means in plain words. The planner stores the kind only, never content. */
+const KINDS: [string, string][] = [
+  ["session_start", "Opened the planner"],
+  ["mission_viewed", "Viewed a mission"],
+  ["watch_viewed", "Looked at the Watch tab"],
+  ["alert_opened", "Came in from an alert email"],
+  ["dossier_exported", "Exported a dossier or review package"],
+];
+
+export default function WorkspacePage() {
+  return (
+    <div className="container max-w-3xl space-y-8 py-10">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight">Workspace</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Your markets across every mission, who hears about source changes, and how this workspace has been used.
+        </p>
+      </div>
+      <Markets />
+      <Owners />
+      <SourceChanges />
+      <AlertRecipients />
+      <UsageReport />
+    </div>
+  );
+}
+
+function AlertRecipients() {
+  const { data, error, mutate } = useApi<Recipients>(paths.recipients);
+  const [text, setText] = useState("");
+  const [state, setState] = useState<{ kind: "idle" | "saving" | "saved" | "error"; msg?: string }>({ kind: "idle" });
+
+  useEffect(() => {
+    if (data) setText(data.recipients.join("\n"));
+  }, [data]);
+
+  async function save() {
+    setState({ kind: "saving" });
+    const list = text.split(/[\n,;]+/).map((s) => s.trim()).filter(Boolean);
+    try {
+      await mutate(await api.setRecipients(list), { revalidate: false });
+      setState({ kind: "saved" });
+    } catch (e) {
+      setState({ kind: "error", msg: e instanceof Error ? e.message : String(e) });
+    }
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Watch alert recipients</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        <ApiNotice error={error} />
+        <Field
+          label="Email addresses"
+          htmlFor="recipients"
+          hint={
+            data?.fallback_to_deployment_list
+              ? "None set for this workspace, so the deployment's default list receives your alerts. Set your own to change that."
+              : "One per line. Only these addresses receive this workspace's alerts. Up to 20."
+          }
+        >
+          <Textarea id="recipients" value={text} onChange={(e) => setText(e.target.value)} placeholder="regulatory@yourcompany.eu" rows={4} />
+        </Field>
+        <div className="flex items-center gap-3">
+          <Button variant="primary" size="sm" onClick={save} disabled={state.kind === "saving"}>
+            {state.kind === "saving" ? "Saving…" : "Save recipients"}
+          </Button>
+          {state.kind === "saved" ? <span role="status" className="text-sm text-muted-foreground">Saved.</span> : null}
+          {state.kind === "error" ? <span role="alert" className="text-sm text-alarm">{state.msg}</span> : null}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function UsageReport() {
+  const [days, setDays] = useState(30);
+  const { data, error } = useApi<UsageSummary>(paths.usage(days));
+  const total = data ? Object.values(data.counts).reduce((a, b) => a + b, 0) : 0;
+
+  return (
+    <Card>
+      <CardHeader className="flex-row items-center justify-between gap-3">
+        <CardTitle>Usage</CardTitle>
+        <Select aria-label="Period" value={days} onChange={(e) => setDays(Number(e.target.value))} className="w-36">
+          <option value={7}>Last 7 days</option>
+          <option value={30}>Last 30 days</option>
+          <option value={90}>Last 90 days</option>
+        </Select>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <ApiNotice error={error} />
+        {data ? (
+          <>
+            <p className="text-sm text-muted-foreground">
+              Active on <strong className="text-foreground">{data.active_days}</strong> of the last {data.days} days,{" "}
+              {total} recorded actions. Only the kind of action is recorded, never what it contained.
+            </p>
+            <table className="w-full text-sm">
+              <tbody>
+                {KINDS.map(([kind, label]) => (
+                  <tr key={kind} className="border-t">
+                    <td className="py-2">{label}</td>
+                    <td className="py-2 text-right tabular-nums">{data.counts[kind] ?? 0}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
+        ) : null}
+      </CardContent>
+    </Card>
+  );
+}
+
+function Markets() {
+  const { data, error } = useApi<Program>(paths.program);
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Markets</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <ApiNotice error={error} />
+        {data && data.markets.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            No missions yet. <Link href="/missions/new" className="underline">Plan a mission</Link> to see the licences
+            each country needs.
+          </p>
+        ) : null}
+        {data && data.markets.length > 0 ? (
+          <>
+            <p className="text-sm text-muted-foreground">
+              {data.missions} mission{data.missions === 1 ? "" : "s"} across {data.markets.length} jurisdiction
+              {data.markets.length === 1 ? "" : "s"}. Most urgent first.
+            </p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-left text-xs text-muted-foreground">
+                    <th className="py-1 pr-3 font-medium">Jurisdiction</th>
+                    <th className="py-1 pr-3 text-right font-medium">Needed</th>
+                    <th className="py-1 pr-3 text-right font-medium">Tracked</th>
+                    <th className="py-1 pr-3 text-right font-medium">In progress</th>
+                    <th className="py-1 pr-3 text-right font-medium">Granted</th>
+                    <th className="py-1 pr-3 text-right font-medium">Overdue</th>
+                    <th className="py-1 font-medium">Next date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.markets.map((m) => (
+                    <tr key={m.jurisdiction} className="border-t align-top">
+                      <td className="py-2 pr-3 font-medium">{m.name}</td>
+                      <td className="py-2 pr-3 text-right tabular-nums">{m.licences}</td>
+                      <td className="py-2 pr-3 text-right tabular-nums">{m.tracked}</td>
+                      <td className="py-2 pr-3 text-right tabular-nums">{m.in_progress}</td>
+                      <td className="py-2 pr-3 text-right tabular-nums">{m.granted}</td>
+                      <td className={`py-2 pr-3 text-right tabular-nums ${m.overdue ? "font-medium text-alarm" : ""}`}>
+                        {m.overdue}
+                      </td>
+                      <td className="py-2">
+                        {m.next_deadline ? (
+                          <Link href={`/missions/${m.next_deadline.mission_id}`} className="hover:underline">
+                            {formatDate(m.next_deadline.date)}
+                            <span className="block text-xs text-muted-foreground">
+                              {m.next_deadline.title} · {m.next_deadline.mission_name}
+                            </span>
+                          </Link>
+                        ) : (
+                          <span className="text-muted-foreground">None</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        ) : null}
+      </CardContent>
+    </Card>
+  );
+}
+
+/** Who is carrying what across every mission, so one person's overload is visible. */
+function Owners() {
+  const { data } = useApi<Program>(paths.program);
+  if (!data || data.owners.length === 0) return null;
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Owners</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="text-left text-xs text-muted-foreground">
+              <th className="py-1 pr-3 font-medium">Owner</th>
+              <th className="py-1 pr-3 text-right font-medium">Open</th>
+              <th className="py-1 pr-3 text-right font-medium">Overdue</th>
+              <th className="py-1 font-medium">Markets</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.owners.map((o) => (
+              <tr key={o.owner} className="border-t">
+                <td className={`py-2 pr-3 ${o.owner ? "font-medium" : "text-muted-foreground"}`}>
+                  {o.owner || "Unassigned"}
+                </td>
+                <td className="py-2 pr-3 text-right tabular-nums">{o.open}</td>
+                <td className={`py-2 pr-3 text-right tabular-nums ${o.overdue ? "font-medium text-alarm" : ""}`}>
+                  {o.overdue}
+                </td>
+                <td className="py-2">{o.jurisdictions.map((j) => j.toUpperCase()).join(", ") || "-"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p className="mt-3 text-xs text-muted-foreground">Set an owner in the application panel of each mission.</p>
+      </CardContent>
+    </Card>
+  );
+}
+
+/** Source changes that touch any mission in this workspace, newest first (ADR-0019). */
+function SourceChanges() {
+  const { data, error } = useApi<WatchItem[]>(paths.watchAll);
+  const items = (data ?? []).slice(0, 10);
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Source changes</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        <ApiNotice error={error} />
+        {data && data.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No changes to the sources behind your tracked applications.</p>
+        ) : null}
+        {items.length > 0 ? (
+          <ul className="divide-y text-sm">
+            {items.map(({ change: c, affected, jurisdictions }) => (
+              <li key={c.id} className="space-y-1 py-2">
+                <div className="text-xs tabular-nums text-muted-foreground">
+                  {formatDate(c.detected_at)} · {jurisdictions.join(", ").toUpperCase()} ·{" "}
+                  {c.kind === "changed" ? "Source changed" : c.kind === "published" ? "New publication" : "Unreachable"}
+                </div>
+                <a href={c.url} target="_blank" rel="noopener noreferrer" className="break-all underline-offset-4 hover:underline">
+                  {c.url}
+                </a>
+                <div className="flex flex-wrap gap-x-3 text-xs">
+                  {[...new Set(affected.map((a) => a.mission_id))].map((id) => (
+                    <Link key={id} href={`/missions/${id}`} className="underline">Open the mission</Link>
+                  ))}
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </CardContent>
+    </Card>
+  );
+}

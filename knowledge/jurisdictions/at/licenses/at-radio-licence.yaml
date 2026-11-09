@@ -1,0 +1,122 @@
+id: at-radio-licence
+jurisdiction: at
+name: Radio licence and frequency assignment (ground station)
+name_local: Bewilligung zur Errichtung und zum Betrieb einer Funkanlage (Funkbewilligung)
+authority: at-fernmeldebuero
+category: earth_station
+summary: >-
+  Building and operating radio equipment, which the Act defines to include equipment communicating in spectrum allocated
+  to satellite radio communication, is allowed only within a general authorisation, an individual licence or similar
+  listed route. For a ground station in Austria the individual licence under § 34 is the route to plan for, decided
+  by the Fernmeldebüro, usually together with the frequency assignment. Whether a general authorisation covers a
+  given station was not researched.
+applies_when:
+  field: ground_station_countries
+  contains: AT
+  because: You plan a ground station in Austria.
+  cite:
+  - at.tkg2021.par-28-1
+legal_basis:
+- id: at.tkg2021.par-4-z49
+  instrument: >-
+    Bundesgesetz, mit dem ein Telekommunikationsgesetz erlassen wird (Telekommunikationsgesetz 2021 – TKG 2021),
+    BGBl. I Nr. 190/2021
+  provision: § 4 Z 49
+  url: https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20011678
+  retrieved: '2026-11-01'
+  language: de
+  excerpt: >-
+    „Funkanlage“ ein Erzeugnis oder ein wesentlicher Bauteil davon, der in dem für terrestrische/satellitengestützte
+    Funkkommunikation zugewiesenen Spektrum durch Ausstrahlung und/oder Empfang von Funkwellen kommunizieren kann;
+    als Funkanlagen gelten auch elektrische Einrichtungen, deren Zweck es ist, mittels Funkwellen Funkkommunikation
+    zu verhindern;
+  excerpt_en: >-
+    "Radio equipment" means a product or an essential component of it that can communicate by emitting and/or receiving
+    radio waves in the spectrum allocated to terrestrial/satellite radio communication; electrical devices whose
+    purpose is to prevent radio communication also count as radio equipment. (Unofficial translation.)
+- id: at.tkg2021.par-28-1
+  instrument: >-
+    Bundesgesetz, mit dem ein Telekommunikationsgesetz erlassen wird (Telekommunikationsgesetz 2021 – TKG 2021),
+    BGBl. I Nr. 190/2021
+  provision: § 28(1)
+  url: https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20011678
+  retrieved: '2026-11-01'
+  language: de
+  excerpt: >-
+    (1) Die Errichtung und der Betrieb einer Funkanlage ist unbeschadet der Bestimmungen des Funkanlagen-Marktüberwachungs-Gesetz
+    (FmaG 2016), BGBl. I Nr. 57/2017, nur zulässig 1. im Rahmen der technischen Bedingungen einer Verordnung nach
+    Abs. 10, oder 2. nach einer Anzeige des Betriebs einer Funkanlage auf Grund einer Verordnung nach Abs. 10, letzter
+    Satz oder 3. im Rahmen einer gemäß Abs. 4, 5, 6 oder einer gemäß § 28 zu erteilenden Bewilligung oder 4. im
+    Rahmen einer gemäß § 34 zu erteilenden Bewilligung mit gleichzeitiger Frequenzzuteilung durch die Fernmeldebehörde
+    (§ 13 Abs. 7 Z 3) oder die KommAustria (§ 13 Abs. 7 Z 1), 5. im Rahmen einer gemäß § 34 zu erteilenden Bewilligung
+    nach einer Frequenzzuteilung durch die Regulierungsbehörde gemäß § 16, 6. im Rahmen einer Amateurfunkbewilligung.
+  excerpt_en: >-
+    Building and operating radio equipment is allowed only (1) within the technical conditions of an ordinance,
+    (2) after a notification under that ordinance, (3) within a licence under paragraphs 4, 5, 6 or § 28, (4) within
+    a licence under § 34 with simultaneous frequency assignment by the Fernmeldebehörde or KommAustria, (5) within
+    a licence under § 34 after a frequency assignment by the regulator under § 16, or (6) within an amateur radio
+    licence. (Unofficial translation.)
+- id: at.tkg2021.par-34-2
+  instrument: >-
+    Bundesgesetz, mit dem ein Telekommunikationsgesetz erlassen wird (Telekommunikationsgesetz 2021 – TKG 2021),
+    BGBl. I Nr. 190/2021
+  provision: § 34(2)
+  url: https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20011678
+  retrieved: '2026-11-01'
+  language: de
+  excerpt: >-
+    (2) Über einen Antrag gemäß Abs. 1 hat das Fernmeldebüro zu entscheiden. Über Anträge gemäß Abs. 1 hinsichtlich
+    Funksendeanlagen, die für Rundfunk im Sinne des BVG Rundfunk vorgesehen sind, hat die KommAustria zu entscheiden.
+    Die Behörde hat die Entscheidung binnen sechs Wochen ab Einlangen des vollständigen Antrags zu treffen, es sei
+    denn, dass auf Grund internationaler Vereinbarungen der Abschluss einer Frequenzkoordinierung abzuwarten ist.
+    Wurden die Frequenzen in einem vergleichenden Auswahlverfahren vergeben, verlängert sich die Frist um acht Monate.
+  excerpt_en: >-
+    The Fernmeldebüro decides on an application under paragraph 1. The authority must decide within six weeks of
+    receipt of the complete application, unless the outcome of a frequency coordination under international agreements
+    must be awaited. Where the frequencies were awarded in a comparative selection procedure, the period is extended
+    by eight months. (Unofficial translation.)
+- id: at.tkg2021.par-34-5
+  instrument: >-
+    Bundesgesetz, mit dem ein Telekommunikationsgesetz erlassen wird (Telekommunikationsgesetz 2021 – TKG 2021),
+    BGBl. I Nr. 190/2021
+  provision: § 34(5)
+  url: https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20011678
+  retrieved: '2026-11-01'
+  language: de
+  excerpt: (5) Bescheide gemäß § 37 sind auf höchstens zehn Jahre befristet zu erteilen.
+  excerpt_en: Decisions under § 37 are to be granted for at most ten years. (Unofficial translation.)
+needed_by: launch
+preparation:
+  min_weeks: 2
+  typical_weeks: 6
+  max_weeks: 16
+  basis: estimate
+review:
+  min_weeks: 6
+  typical_weeks: 6
+  max_weeks: 26
+  basis: statutory
+  note: >-
+    The law sets six weeks from a complete application, but not where an international frequency coordination must
+    be awaited. Satellite links usually involve coordination, so the plan treats six weeks as the minimum and 26
+    as a cautious maximum (an estimate).
+  cite:
+  - at.tkg2021.par-34-2
+documents:
+- >-
+  Written application with name and address, the purpose and the way the radio equipment works (TKG 2021 § 34(1))
+- >-
+  Technical evidence and declaration of conformity of the equipment, if the authority asks (§ 34(1))
+- >-
+  Any decision of the regulator under § 16, where the frequencies were awarded by selection procedure (§ 34(1) point
+  4)
+fees: Not researched. Fees were not verified from an official source.
+obligations: []
+requires_local_presence: null
+local_presence_note: Not researched.
+status: draft
+last_verified: '2026-11-01'
+sources:
+- title: RIS — Telekommunikationsgesetz 2021 (consolidated federal law)
+  url: https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20011678
+  retrieved: '2026-11-01'

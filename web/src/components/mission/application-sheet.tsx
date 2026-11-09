@@ -52,6 +52,7 @@ function Body({ tracked, onChanged }: { tracked: TrackedApplication; onChanged: 
   const [note, setNote] = useState("");
   const [reference, setReference] = useState(a.reference ?? "");
   const [notes, setNotes] = useState(a.notes ?? "");
+  const [owner, setOwner] = useState(a.owner ?? "");
 
   async function patch(body: Record<string, unknown>) {
     setError(null);
@@ -134,15 +135,18 @@ function Body({ tracked, onChanged }: { tracked: TrackedApplication; onChanged: 
       </section>
 
       <section className="grid gap-3">
-        <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Reference and notes</h3>
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Owner, reference and notes</h3>
         <Field label="Authority reference" htmlFor="ref">
           <Input id="ref" value={reference} onChange={(e) => setReference(e.target.value)} placeholder="File or case number" />
+        </Field>
+        <Field label="Owner" htmlFor="owner">
+          <Input id="owner" value={owner} onChange={(e) => setOwner(e.target.value)} placeholder="Who runs this application" maxLength={200} />
         </Field>
         <Field label="Notes" htmlFor="notes">
           <Textarea id="notes" value={notes} onChange={(e) => setNotes(e.target.value)} />
         </Field>
         <div>
-          <Button size="sm" disabled={reference === (a.reference ?? "") && notes === (a.notes ?? "")} onClick={() => patch({ reference, notes })}>
+          <Button size="sm" disabled={reference === (a.reference ?? "") && notes === (a.notes ?? "") && owner === (a.owner ?? "")} onClick={() => patch({ reference, notes, owner })}>
             Save notes
           </Button>
         </div>

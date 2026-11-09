@@ -1,0 +1,58 @@
+id: es-satellite-orbit-reservation
+jurisdiction: es
+name: Orbit-spectrum use for communications satellites is reserved to the State
+name_local: 'Recursos órbita-espectro: reserva al Estado'
+authority: es-mineco
+category: itu_filing
+summary: Using orbit-spectrum resources under Spanish sovereignty through communications satellites is reserved to the State.
+  Exploitation is subject to international law and carried out as a royal decree sets out, through direct State management
+  or other means it specifies. This affects a satellite operator who wants to use Spanish orbit-spectrum. The royal decree
+  and its routes were not researched.
+applies_when:
+  field: filing_administration
+  eq: ES
+  because: Spain is the administration filing your satellite network with the ITU.
+  cite:
+  - es.lgt2022.art-85-5
+legal_basis:
+- id: es.lgt2022.art-85-5
+  instrument: Ley 11/2022, de 28 de junio, General de Telecomunicaciones (BOE-A-2022-10757)
+  provision: Artículo 85(5)
+  url: https://www.boe.es/buscar/act.php?id=BOE-A-2022-10757
+  retrieved: '2026-11-03'
+  language: es
+  excerpt: 5. La utilización de frecuencias radioeléctricas mediante redes de satélites se incluye dentro de la administración
+    del dominio público radioeléctrico. Asimismo, la utilización del dominio público radioeléctrico necesaria para la utilización
+    de los recursos órbita-espectro en el ámbito de la soberanía española y mediante satélites de comunicaciones queda reservada
+    al Estado. Su explotación estará sometida al derecho internacional y se realizará, en la forma que mediante real decreto
+    se determine, mediante su gestión directa por el Estado o mediante concesión, en el que se fijará asimismo su duración.
+  excerpt_en: Using radio frequencies through satellite networks falls within the administration of the radio public domain.
+    The use of the radio public domain needed to use orbit-spectrum resources under Spanish sovereignty through communications
+    satellites is reserved to the State; exploitation is subject to international law and carried out as a royal decree sets
+    out. (Unofficial translation.)
+needed_by: launch
+preparation:
+  min_weeks: 8
+  typical_weeks: 16
+  max_weeks: 52
+  basis: estimate
+review:
+  min_weeks: 8
+  typical_weeks: 16
+  max_weeks: 52
+  basis: estimate
+  note: No period is set by the statute. The range is an estimate, since the royal decree was not read.
+  cite:
+  - es.lgt2022.art-85-5
+documents:
+- Requirements set by royal decree (not researched)
+fees: Not researched.
+obligations: []
+requires_local_presence: null
+local_presence_note: Not researched.
+status: draft
+last_verified: '2026-11-03'
+sources:
+- title: BOE — Ley 11/2022, General de Telecomunicaciones
+  url: https://www.boe.es/buscar/act.php?id=BOE-A-2022-10757
+  retrieved: '2026-11-03'

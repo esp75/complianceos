@@ -1,7 +1,7 @@
 """Liveness and readiness endpoints.
 
 - ``/healthz`` — liveness: the process is up. Never touches upstreams.
-- ``/readyz``  — readiness. In team mode (``CELESTIA_AUTH_MODE=openlane``) the BFF must reach
+- ``/readyz``  — readiness. In team mode (``COMPLIANCEOS_AUTH_MODE=openlane``) the BFF must reach
   theopenlane's GraphQL, or it returns 503 (the M1 proof that the BFF -> L1 wire is connected).
   In local mode (the default, ADR-0018) theopenlane is optional and readiness depends on the
   planner: its knowledge pack must have loaded. Orekit, the KG and the planner store kind are

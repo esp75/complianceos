@@ -1,6 +1,6 @@
 """End-to-end smoke test for the Phase-1 DoD — opt-in, runs against the LIVE stack.
 
-Enable with:  CELESTIA_E2E=1 uv run pytest tests/test_smoke_e2e.py
+Enable with:  COMPLIANCEOS_E2E=1 uv run pytest tests/test_smoke_e2e.py
 Prerequisites: the docker-compose stack is up and `python -m app.auth.seed_tetrad`
 has been run (creates the demo org + tetrad roles + members). Skipped otherwise, so
 the default unit suite (`uv run pytest`) never touches the network.
@@ -19,11 +19,11 @@ import pytest
 
 from app.auth import seed_tetrad as seed
 
-E2E = os.environ.get("CELESTIA_E2E") == "1"
-BFF = os.environ.get("CELESTIA_BFF_URL", "http://localhost:8001")
+E2E = os.environ.get("COMPLIANCEOS_E2E") == "1"
+BFF = os.environ.get("COMPLIANCEOS_BFF_URL", "http://localhost:8001")
 
 pytestmark = pytest.mark.skipif(
-    not E2E, reason="e2e: set CELESTIA_E2E=1, start the stack, and run app.auth.seed_tetrad first"
+    not E2E, reason="e2e: set COMPLIANCEOS_E2E=1, start the stack, and run app.auth.seed_tetrad first"
 )
 
 

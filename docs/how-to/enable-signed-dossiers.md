@@ -19,7 +19,7 @@ In the `.env` file next to `compose.yaml`:
 TRUST_SIGNING_SEED=<the 64 hex characters>
 ```
 
-Docker Compose passes it to the API as `CELESTIA_TRUST_SIGNING_SEED`. Restart the stack:
+Docker Compose passes it to the API as `COMPLIANCEOS_TRUST_SIGNING_SEED`. Restart the stack:
 
 ```bash
 docker compose up -d

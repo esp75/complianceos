@@ -46,3 +46,11 @@ authorities:
           retrieved: 2026-10-15
 status: draft
 last_verified: 2026-10-15
+
+feeds:
+  - id: us-federal-register-fcc
+    title: Federal Register — Federal Communications Commission documents
+    url: https://www.federalregister.gov/api/v1/documents.rss?conditions%5Bagencies%5D%5B%5D=federal-communications-commission
+    keywords: [satellite, space station, earth station, orbital debris, NGSO, non-geostationary]
+    license_ids: [us-fcc-earth-station-licence, us-fcc-market-access, us-fcc-small-satellite-licence, us-fcc-space-station-licence]
+    retrieved: 2026-11-01

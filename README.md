@@ -73,6 +73,7 @@ contributions.
 |---|---|
 | ITU | Advance publication, coordination request, notification and bringing into use, the 7-year limit, Resolution 35 milestones for constellations |
 | France | Space operations authorisation (LOS), ANFR satellite frequency filing, ministerial authorisation to operate frequency assignments |
+| Austria | Space activity approval (Weltraumgesetz 2011, Weltraumverordnung 2015). Frequency and ITU route not yet researched |
 | Luxembourg | Space activity authorisation (2020 law), satellite system concession |
 | United Kingdom | Orbital operator licence (CAA, SIA 2018 / OSA 1986), Ofcom satellite filing, earth station licence |
 | United States | FCC Part 25 space station licence and streamlined small-satellite route, US market access, earth station licence, NOAA remote sensing licence |

@@ -2186,6 +2186,72 @@
     }
    }
   },
+  "/program": {
+   "get": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "Program",
+    "description": "The workspace's missions folded into one picture per jurisdiction: how many licences each\nmarket needs, how many are tracked, granted or overdue, and the next dates across all missions.",
+    "operationId": "program_program_get",
+    "parameters": [
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Program"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/missions/{mission_id}/deadlines": {
    "get": {
     "tags": [
@@ -2408,6 +2474,152 @@
     }
    }
   },
+  "/missions/{mission_id}/dossier.signed.json": {
+   "get": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "Mission Signed Dossier",
+    "description": "The signed deliverable on its own: roadmap and brief, SHA-256, and (with a key configured)\nthe Ed25519 signature and public key. Check it offline against the key fingerprint you were\ngiven separately; the embedded key alone proves integrity, not who signed.",
+    "operationId": "mission_signed_dossier_missions__mission_id__dossier_signed_json_get",
+    "parameters": [
+     {
+      "name": "mission_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Mission Id"
+      }
+     },
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/missions/{mission_id}/dossier.md": {
+   "get": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "Mission Review Package",
+    "description": "The dossier as Markdown with a reviewer checklist, stable between exports (ADR-0022). Ends\nwith the SHA-256 and signature of the dossier the text was rendered from.",
+    "operationId": "mission_review_package_missions__mission_id__dossier_md_get",
+    "parameters": [
+     {
+      "name": "mission_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Mission Id"
+      }
+     },
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/missions/{mission_id}/intro-email": {
    "post": {
     "tags": [
@@ -2475,6 +2687,647 @@
        "application/json": {
         "schema": {
          "$ref": "#/components/schemas/EmailDraft"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/watch/changes": {
+   "get": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "Watch Changes",
+    "description": "Source changes that touch this workspace's tracked applications, newest first.",
+    "operationId": "watch_changes_watch_changes_get",
+    "parameters": [
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/WatchItem"
+         },
+         "title": "Response Watch Changes Watch Changes Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/missions/{mission_id}/watch": {
+   "get": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "Mission Watch",
+    "operationId": "mission_watch_missions__mission_id__watch_get",
+    "parameters": [
+     {
+      "name": "mission_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Mission Id"
+      }
+     },
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/WatchItem"
+         },
+         "title": "Response Mission Watch Missions  Mission Id  Watch Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/watch/run": {
+   "post": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "Run Watch Now",
+    "description": "Check every source in the pack once. Same trust model as every other change: local mode\nneeds the client header; team mode needs ``can_create_evidence`` on the workspace. Scheduling\nwith ``python -m app.planner.watch run`` is the recommended path.",
+    "operationId": "run_watch_now_watch_run_post",
+    "parameters": [
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/RunSummary"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/history/export": {
+   "post": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "Export History",
+    "description": "Signed export of every application event in this workspace. Each export records a\ncheckpoint and names the previous export's Merkle root, so earlier history cannot be dropped\nunnoticed. Unsigned (and not checkpointed) when the server has no signing key.",
+    "operationId": "export_history_history_export_post",
+    "parameters": [
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HistoryDocument"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/missions/{mission_id}/history": {
+   "get": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "Mission History",
+    "description": "Signed export of one mission's events. A view of part of the history: it is not chained.",
+    "operationId": "mission_history_missions__mission_id__history_get",
+    "parameters": [
+     {
+      "name": "mission_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Mission Id"
+      }
+     },
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HistoryDocument"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/alerts/recipients": {
+   "get": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "Get Alert Recipients",
+    "description": "Who receives this workspace's Watch digest. Empty means the deployment-wide list is used.",
+    "operationId": "get_alert_recipients_alerts_recipients_get",
+    "parameters": [
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/RecipientsOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "put": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "Set Alert Recipients",
+    "operationId": "set_alert_recipients_alerts_recipients_put",
+    "parameters": [
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/RecipientsIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/RecipientsOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/usage": {
+   "post": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "Record Usage",
+    "description": "Record that something was used. Only the kind, workspace, actor and time are stored.",
+    "operationId": "record_usage_usage_post",
+    "parameters": [
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/UsageIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "204": {
+      "description": "Successful Response"
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/usage/summary": {
+   "get": {
+    "tags": [
+     "planner"
+    ],
+    "summary": "Usage Summary",
+    "description": "Counts per kind and the number of days with any activity, for the last ``days`` days.",
+    "operationId": "usage_summary_usage_summary_get",
+    "parameters": [
+     {
+      "name": "days",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "maximum": 365,
+       "minimum": 1,
+       "default": 30,
+       "title": "Days"
+      }
+     },
+     {
+      "name": "x-workspace",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Workspace"
+      }
+     },
+     {
+      "name": "authorization",
+      "in": "header",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Authorization"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/UsageSummary"
         }
        }
       }
@@ -2639,6 +3492,12 @@
       "title": "Notes",
       "default": ""
      },
+     "owner": {
+      "type": "string",
+      "maxLength": 200,
+      "title": "Owner",
+      "default": ""
+     },
      "created_at": {
       "type": "string",
       "format": "date-time",
@@ -2792,6 +3651,19 @@
        }
       ],
       "title": "Notes"
+     },
+     "owner": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 200
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Owner",
+      "description": "who runs this application"
      },
      "note": {
       "type": "string",
@@ -2976,6 +3848,20 @@
      "grounded": {
       "type": "boolean",
       "title": "Grounded"
+     },
+     "labels": {
+      "items": {
+       "type": "string",
+       "enum": [
+        "statute",
+        "practice",
+        "estimate",
+        "derived",
+        ""
+       ]
+      },
+      "type": "array",
+      "title": "Labels"
      }
     },
     "type": "object",
@@ -3793,6 +4679,63 @@
     "title": "Facilitator",
     "description": "A third-party firm that helps operators through licensing. Listing is neutral: no ranking,\nno paid placement, firm-level public information only (CONTRIBUTING.md, \"Facilitators\")."
    },
+   "Feed": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "maxLength": 120,
+      "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$",
+      "title": "Id"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "url": {
+      "type": "string",
+      "maxLength": 2083,
+      "minLength": 1,
+      "format": "uri",
+      "title": "Url"
+     },
+     "keywords": {
+      "items": {
+       "type": "string",
+       "minLength": 3
+      },
+      "type": "array",
+      "minItems": 1,
+      "title": "Keywords"
+     },
+     "license_ids": {
+      "items": {
+       "type": "string",
+       "maxLength": 120,
+       "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$"
+      },
+      "type": "array",
+      "minItems": 1,
+      "title": "License Ids"
+     },
+     "retrieved": {
+      "type": "string",
+      "format": "date",
+      "title": "Retrieved"
+     }
+    },
+    "additionalProperties": false,
+    "type": "object",
+    "required": [
+     "id",
+     "title",
+     "url",
+     "keywords",
+     "license_ids",
+     "retrieved"
+    ],
+    "title": "Feed",
+    "description": "An official publication feed (RSS/Atom) the Watch follows for new instruments (ADR-0020).\n\nOnly entries whose title or summary contain one of ``keywords`` are reported, and only for\napplications tracking one of ``license_ids``. Feeds are curated here, never supplied by users."
+   },
    "FilingInput": {
     "properties": {
      "network_name": {
@@ -3858,6 +4801,46 @@
     "type": "object",
     "title": "HTTPValidationError"
    },
+   "HistoryDocument": {
+    "properties": {
+     "manifest": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Manifest"
+     },
+     "signature_hex": {
+      "type": "string",
+      "title": "Signature Hex",
+      "default": ""
+     },
+     "public_key_hex": {
+      "type": "string",
+      "title": "Public Key Hex",
+      "default": ""
+     },
+     "fingerprint": {
+      "type": "string",
+      "title": "Fingerprint",
+      "default": ""
+     },
+     "signed": {
+      "type": "boolean",
+      "title": "Signed",
+      "default": false
+     },
+     "note": {
+      "type": "string",
+      "title": "Note",
+      "default": ""
+     }
+    },
+    "type": "object",
+    "required": [
+     "manifest"
+    ],
+    "title": "HistoryDocument",
+    "description": "The signed export. ``signature_hex`` covers ``canonical(manifest)``."
+   },
    "Jurisdiction": {
     "properties": {
      "id": {
@@ -3920,6 +4903,13 @@
        }
       ],
       "title": "Reviewed By"
+     },
+     "feeds": {
+      "items": {
+       "$ref": "#/components/schemas/Feed"
+      },
+      "type": "array",
+      "title": "Feeds"
      }
     },
     "additionalProperties": false,
@@ -4590,6 +5580,193 @@
     ],
     "title": "PrerequisiteOut"
    },
+   "Program": {
+    "properties": {
+     "missions": {
+      "type": "integer",
+      "title": "Missions"
+     },
+     "markets": {
+      "items": {
+       "$ref": "#/components/schemas/ProgramMarket"
+      },
+      "type": "array",
+      "title": "Markets"
+     },
+     "owners": {
+      "items": {
+       "$ref": "#/components/schemas/ProgramOwner"
+      },
+      "type": "array",
+      "title": "Owners"
+     },
+     "upcoming": {
+      "items": {
+       "$ref": "#/components/schemas/ProgramDeadline"
+      },
+      "type": "array",
+      "title": "Upcoming"
+     }
+    },
+    "type": "object",
+    "required": [
+     "missions",
+     "markets",
+     "owners",
+     "upcoming"
+    ],
+    "title": "Program"
+   },
+   "ProgramDeadline": {
+    "properties": {
+     "date": {
+      "type": "string",
+      "format": "date",
+      "title": "Date"
+     },
+     "kind": {
+      "type": "string",
+      "enum": [
+       "start",
+       "submit",
+       "obligation"
+      ],
+      "title": "Kind"
+     },
+     "license_id": {
+      "type": "string",
+      "title": "License Id"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "hard": {
+      "type": "boolean",
+      "title": "Hard"
+     },
+     "mission_id": {
+      "type": "string",
+      "title": "Mission Id"
+     },
+     "mission_name": {
+      "type": "string",
+      "title": "Mission Name"
+     },
+     "jurisdiction": {
+      "type": "string",
+      "title": "Jurisdiction"
+     },
+     "overdue": {
+      "type": "boolean",
+      "title": "Overdue"
+     }
+    },
+    "type": "object",
+    "required": [
+     "date",
+     "kind",
+     "license_id",
+     "title",
+     "hard",
+     "mission_id",
+     "mission_name",
+     "jurisdiction",
+     "overdue"
+    ],
+    "title": "ProgramDeadline"
+   },
+   "ProgramMarket": {
+    "properties": {
+     "jurisdiction": {
+      "type": "string",
+      "title": "Jurisdiction"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "kind": {
+      "type": "string",
+      "title": "Kind"
+     },
+     "licences": {
+      "type": "integer",
+      "title": "Licences"
+     },
+     "tracked": {
+      "type": "integer",
+      "title": "Tracked"
+     },
+     "granted": {
+      "type": "integer",
+      "title": "Granted"
+     },
+     "in_progress": {
+      "type": "integer",
+      "title": "In Progress"
+     },
+     "overdue": {
+      "type": "integer",
+      "title": "Overdue"
+     },
+     "next_deadline": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/ProgramDeadline"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    },
+    "type": "object",
+    "required": [
+     "jurisdiction",
+     "name",
+     "kind",
+     "licences",
+     "tracked",
+     "granted",
+     "in_progress",
+     "overdue",
+     "next_deadline"
+    ],
+    "title": "ProgramMarket"
+   },
+   "ProgramOwner": {
+    "properties": {
+     "owner": {
+      "type": "string",
+      "title": "Owner"
+     },
+     "open": {
+      "type": "integer",
+      "title": "Open"
+     },
+     "overdue": {
+      "type": "integer",
+      "title": "Overdue"
+     },
+     "jurisdictions": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Jurisdictions"
+     }
+    },
+    "type": "object",
+    "required": [
+     "owner",
+     "open",
+     "overdue",
+     "jurisdictions"
+    ],
+    "title": "ProgramOwner",
+    "description": "Workload of one person across every mission; ``owner`` is empty for unassigned."
+   },
    "RadioService": {
     "type": "string",
     "enum": [
@@ -4625,6 +5802,43 @@
      "cite"
     ],
     "title": "ReasonOut"
+   },
+   "RecipientsIn": {
+    "properties": {
+     "recipients": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Recipients"
+     }
+    },
+    "type": "object",
+    "required": [
+     "recipients"
+    ],
+    "title": "RecipientsIn"
+   },
+   "RecipientsOut": {
+    "properties": {
+     "recipients": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Recipients"
+     },
+     "fallback_to_deployment_list": {
+      "type": "boolean",
+      "title": "Fallback To Deployment List"
+     }
+    },
+    "type": "object",
+    "required": [
+     "recipients",
+     "fallback_to_deployment_list"
+    ],
+    "title": "RecipientsOut"
    },
    "ReviewStatus": {
     "type": "string",
@@ -5116,6 +6330,54 @@
     "title": "Rule",
     "description": "Applicability rule. Exactly one of: ``all``, ``any``, ``not``, or a ``field`` test.\n\nA field test uses exactly one operator: ``eq``, ``in``, ``contains`` (list fact contains the\nvalue), ``intersects`` (list fact shares a value with the list), ``gte`` / ``lte`` (numbers),\nor ``present`` (fact is set / non-empty). ``because`` and ``cite`` explain a match to the user."
    },
+   "RunSummary": {
+    "properties": {
+     "checked": {
+      "type": "integer",
+      "title": "Checked",
+      "default": 0
+     },
+     "baselined": {
+      "type": "integer",
+      "title": "Baselined",
+      "default": 0
+     },
+     "unchanged": {
+      "type": "integer",
+      "title": "Unchanged",
+      "default": 0
+     },
+     "changed": {
+      "type": "integer",
+      "title": "Changed",
+      "default": 0
+     },
+     "published": {
+      "type": "integer",
+      "title": "Published",
+      "default": 0
+     },
+     "unreachable": {
+      "type": "integer",
+      "title": "Unreachable",
+      "default": 0
+     },
+     "unsupported": {
+      "type": "integer",
+      "title": "Unsupported",
+      "default": 0
+     },
+     "changes": {
+      "items": {
+       "$ref": "#/components/schemas/WatchChange"
+      },
+      "type": "array",
+      "title": "Changes"
+     }
+    },
+    "type": "object",
+    "title": "RunSummary"
+   },
    "Source": {
     "properties": {
      "title": {
@@ -5222,6 +6484,58 @@
     ],
     "title": "TrackedApplication"
    },
+   "UsageIn": {
+    "properties": {
+     "kind": {
+      "type": "string",
+      "enum": [
+       "session_start",
+       "mission_viewed",
+       "watch_viewed",
+       "alert_opened",
+       "dossier_exported"
+      ],
+      "title": "Kind"
+     }
+    },
+    "type": "object",
+    "required": [
+     "kind"
+    ],
+    "title": "UsageIn"
+   },
+   "UsageSummary": {
+    "properties": {
+     "since": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Since"
+     },
+     "days": {
+      "type": "integer",
+      "title": "Days"
+     },
+     "counts": {
+      "additionalProperties": {
+       "type": "integer"
+      },
+      "type": "object",
+      "title": "Counts"
+     },
+     "active_days": {
+      "type": "integer",
+      "title": "Active Days"
+     }
+    },
+    "type": "object",
+    "required": [
+     "since",
+     "days",
+     "counts",
+     "active_days"
+    ],
+    "title": "UsageSummary"
+   },
    "ValidationError": {
     "properties": {
      "loc": {
@@ -5261,6 +6575,180 @@
      "type"
     ],
     "title": "ValidationError"
+   },
+   "WatchAffected": {
+    "properties": {
+     "application_id": {
+      "type": "string",
+      "title": "Application Id"
+     },
+     "mission_id": {
+      "type": "string",
+      "title": "Mission Id"
+     },
+     "license_id": {
+      "type": "string",
+      "title": "License Id"
+     },
+     "status": {
+      "$ref": "#/components/schemas/AppStatus"
+     }
+    },
+    "type": "object",
+    "required": [
+     "application_id",
+     "mission_id",
+     "license_id",
+     "status"
+    ],
+    "title": "WatchAffected"
+   },
+   "WatchChange": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "url": {
+      "type": "string",
+      "title": "Url"
+     },
+     "kind": {
+      "type": "string",
+      "enum": [
+       "changed",
+       "unreachable",
+       "published"
+      ],
+      "title": "Kind"
+     },
+     "detected_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Detected At"
+     },
+     "previous_hash": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Previous Hash"
+     },
+     "new_hash": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "New Hash"
+     },
+     "size_delta": {
+      "type": "integer",
+      "title": "Size Delta",
+      "default": 0
+     },
+     "words_added": {
+      "type": "integer",
+      "title": "Words Added",
+      "default": 0
+     },
+     "words_removed": {
+      "type": "integer",
+      "title": "Words Removed",
+      "default": 0
+     },
+     "detail": {
+      "type": "string",
+      "title": "Detail",
+      "default": ""
+     },
+     "materiality": {
+      "anyOf": [
+       {
+        "type": "string",
+        "enum": [
+         "substantive",
+         "editorial",
+         "unclear"
+        ]
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Materiality"
+     },
+     "ai_summary": {
+      "type": "string",
+      "title": "Ai Summary",
+      "default": ""
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "url",
+     "kind",
+     "detected_at"
+    ],
+    "title": "WatchChange"
+   },
+   "WatchItem": {
+    "properties": {
+     "change": {
+      "$ref": "#/components/schemas/WatchChange"
+     },
+     "license_ids": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "License Ids"
+     },
+     "citation_ids": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Citation Ids"
+     },
+     "jurisdictions": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Jurisdictions"
+     },
+     "affected": {
+      "items": {
+       "$ref": "#/components/schemas/WatchAffected"
+      },
+      "type": "array",
+      "title": "Affected"
+     },
+     "advice": {
+      "type": "string",
+      "title": "Advice",
+      "default": "Re-verify the cited provision before relying on it; the Watch does not judge the change."
+     }
+    },
+    "type": "object",
+    "required": [
+     "change",
+     "license_ids",
+     "citation_ids",
+     "jurisdictions",
+     "affected"
+    ],
+    "title": "WatchItem",
+    "description": "A source change, and the tracked applications of this workspace whose licences cite it.\n``advice`` is the only conclusion the Watch draws: re-verify the cited provision."
    },
    "WindowModel": {
     "properties": {

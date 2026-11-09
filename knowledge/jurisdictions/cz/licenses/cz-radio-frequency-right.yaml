@@ -1,0 +1,56 @@
+id: cz-radio-frequency-right
+jurisdiction: cz
+name: Individual right to use radio frequencies (ground station)
+name_local: Individuální oprávnění k využívání rádiových kmitočtů
+authority: cz-ctu
+category: spectrum
+summary: Radio frequencies that cannot be used under a general authorisation (§ 9) may be used only under an individual right
+  of use, granted by the Czech Telecommunication Office (ČTÚ) under § 17. Whether a ground station can use a general authorisation,
+  the decision period, and fees were not researched.
+applies_when:
+  field: ground_station_countries
+  contains: CZ
+  because: You plan a ground station in the Czech Republic.
+  cite:
+  - cz.zek.s17-1
+legal_basis:
+- id: cz.zek.s17-1
+  instrument: Zákon č. 127/2005 Sb., o elektronických komunikacích (consolidated text, zakonyprolidi.cz)
+  provision: § 17 odst. 1
+  url: https://www.zakonyprolidi.cz/cs/2005-127
+  retrieved: '2026-11-03'
+  language: cs
+  excerpt: Rádiové kmitočty, které nelze využívat na základě všeobecného oprávnění podle § 9, je možné využívat pouze na základě
+    individuálního oprávnění k využívání rádiových kmitočtů (dále jen „oprávnění k využívání rádiových kmitočtů“), nestanoví-li
+    tento zákon jinak.
+  excerpt_en: Radio frequencies that cannot be used under a general authorisation (§ 9) may be used only under an individual
+    right of use of radio frequencies, unless this Act provides otherwise. (Unofficial translation.)
+needed_by: launch
+preparation:
+  min_weeks: 2
+  typical_weeks: 6
+  max_weeks: 16
+  basis: estimate
+review:
+  min_weeks: 6
+  typical_weeks: 8
+  max_weeks: 16
+  basis: estimate
+  note: No decision period was found in the sections checked. The range is an estimate.
+  cite:
+  - cz.zek.s17-1
+documents:
+- Written application to the ČTÚ with the content § 17(3) requires (not fully researched)
+fees: Not researched. Fees are set under § 24 of the Act and were not verified.
+obligations: []
+requires_local_presence: null
+local_presence_note: Not researched.
+status: draft
+last_verified: '2026-11-03'
+sources:
+- title: Zákon č. 127/2005 Sb. (zakonyprolidi.cz)
+  url: https://www.zakonyprolidi.cz/cs/2005-127
+  retrieved: '2026-11-03'
+- title: ČTÚ — Český telekomunikační úřad
+  url: https://www.ctu.gov.cz/
+  retrieved: '2026-11-03'

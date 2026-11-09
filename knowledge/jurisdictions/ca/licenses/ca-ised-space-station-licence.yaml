@@ -1,0 +1,90 @@
+id: ca-ised-space-station-licence
+jurisdiction: ca
+name: Canadian space station spectrum licence and ITU filing through ISED
+authority: ca-ised
+category: itu_filing
+summary: A Canadian space station needs a spectrum licence from ISED, and its ITU filing goes to the ITU through ISED. The
+  operator enters the filing (CR/C, API or Appendix 4 data) in the ITU e-Submission system, using an account obtained from
+  ISED's International Satellite Coordination group, up to six months before applying. The licence application must follow
+  within six months of ISED submitting the filing to the ITU. Neither step reserves the spectrum. ISED's service standard for
+  a decision is 126 calendar days.
+applies_when:
+  field: filing_administration
+  eq: CA
+  because: Canada is the administration filing your satellite network with the ITU.
+  cite:
+  - ca.cpc-2-6-02.s1
+legal_basis:
+- id: ca.cpc-2-6-02.s1
+  instrument: CPC-2-6-02, Procedure for the Submission of Applications for Spectrum Licences for Space Stations, issue 7 (April
+    2026), ISED
+  provision: Section 1 (Intent)
+  url: https://ised-isde.canada.ca/site/spectrum-management-telecommunications/node/164
+  retrieved: '2026-11-09'
+  language: en
+  excerpt: This Client Procedures Circular (CPC) sets out general licensing procedures to be used when submitting licence applications
+    for all Canadian space stations. It outlines the licensing process and technical requirements for the issuance of spectrum
+    licences for space stations, including application requirements and post-authorization procedures.
+- id: ca.cpc-2-6-02.s3
+  instrument: CPC-2-6-02, Procedure for the Submission of Applications for Spectrum Licences for Space Stations, issue 7 (April
+    2026), ISED
+  provision: Section 3 (Powers of the Minister)
+  url: https://ised-isde.canada.ca/site/spectrum-management-telecommunications/node/164
+  retrieved: '2026-11-09'
+  language: en
+  excerpt: Section 5 of the Radiocommunication Act stipulates that the Minister may issue radio and spectrum licences, and fix
+    or amend terms and conditions of such licences in order to permit the operation of radio stations or the use of radio
+    spectrum in Canada.
+- id: ca.cpc-2-6-02.s5-2
+  instrument: CPC-2-6-02, Procedure for the Submission of Applications for Spectrum Licences for Space Stations, issue 7 (April
+    2026), ISED
+  provision: Section 5.2 (ITU filing submission)
+  url: https://ised-isde.canada.ca/site/spectrum-management-telecommunications/node/164
+  retrieved: '2026-11-09'
+  language: en
+  excerpt: All ITU filings must be submitted to ISED via the ITU's e-Submission system, e-Submission of Satellite Network Filings
+    . An ITU operator account and e-Submission user ID are required to perform this action. [...] A licence application must
+    be submitted to ISED within six months of the date from when ISED submits the filing information to the ITU, via the e-Submission
+    system.
+- id: ca.cpc-2-6-02.s10
+  instrument: CPC-2-6-02, Procedure for the Submission of Applications for Spectrum Licences for Space Stations, issue 7 (April
+    2026), ISED
+  provision: Section 10 (Service standards and remission policy)
+  url: https://ised-isde.canada.ca/site/spectrum-management-telecommunications/node/164
+  retrieved: '2026-11-09'
+  language: en
+  excerpt: In accordance with the Service Fees Act and related policy directives, the service standard for spectrum licences
+    for space stations is 126 calendar days.
+needed_by: launch
+preparation:
+  min_weeks: 4
+  typical_weeks: 8
+  max_weeks: 16
+  basis: estimate
+review:
+  min_weeks: 18
+  typical_weeks: 18
+  max_weeks: 26
+  basis: practice
+  note: ISED's published service standard is 126 calendar days (18 weeks); it expects most applications to be treated within
+    it and notifies the applicant of a new time frame when it will not be met. The maximum is an estimate.
+  cite:
+  - ca.cpc-2-6-02.s10
+documents:
+- ITU filing information entered in the ITU e-Submission system (CR/C for unplanned bands subject to coordination, API for
+  unplanned bands not subject to coordination, Appendix 4 data for planned bands), with an e-Submission account from ISED (CPC-2-6-02
+  s. 5.2)
+- Spectrum licence application for the space station under CPC-2-6-02 section 5, submitted within six months of ISED submitting
+  the filing to the ITU
+fees: Fees are fixed under the Fee Order for Space Stations (Notice SMSE-001-23), which CPC-2-6-02 lists as a related document.
+  The amounts were not researched.
+obligations: []
+requires_local_presence: null
+local_presence_note: CPC-2-6-02 s. 5.1.2 asks applicants to show eligibility to hold a radio authorization under section 9 of
+  the Radiocommunication Regulations. Section 9 itself was not read for this record.
+status: draft
+last_verified: '2026-11-09'
+sources:
+- title: ISED — CPC-2-6-02, Procedure for the Submission of Applications for Spectrum Licences for Space Stations (issue 7)
+  url: https://ised-isde.canada.ca/site/spectrum-management-telecommunications/node/164
+  retrieved: '2026-11-09'

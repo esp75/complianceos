@@ -28,12 +28,12 @@ import yaml
 
 from app.loaders.schema import ControlDoc, FrameworkDoc
 
-BASE = os.environ.get("CELESTIA_OPENLANE_BASE_URL", "http://localhost:17608")
-PASSWORD = os.environ.get("CELESTIA_SEED_PASSWORD", "Cel3stia!Strong#Pass1")
+BASE = os.environ.get("COMPLIANCEOS_OPENLANE_BASE_URL", "http://localhost:17608")
+PASSWORD = os.environ.get("COMPLIANCEOS_SEED_PASSWORD", "Cel3stia!Strong#Pass1")
 OWNER = ("founder@celestia.eu", "Celestia", "Founder")
 FRAMEWORKS_DIR = Path(
     os.environ.get(
-        "CELESTIA_FRAMEWORKS_DIR",
+        "COMPLIANCEOS_FRAMEWORKS_DIR",
         str(Path(__file__).resolve().parents[3] / "layers" / "L1-substrate" / "frameworks"),
     )
 )

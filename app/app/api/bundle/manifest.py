@@ -14,7 +14,7 @@ from typing import Any
 
 from app.api.trust.merkle import leaf_hash
 
-MANIFEST_VERSION = "trust-bundle/v0"
+MANIFEST_VERSION = "trust-bundle/v1"  # v1 adds "scope" (what the bundle covers)
 
 
 def canonical_bytes(obj: dict[str, Any]) -> bytes:
@@ -68,8 +68,13 @@ def build_manifest(
     leaves_hex: list[str],
     fingerprint: str,
     issued_at: str,
+    framework_filter: str | None = None,
 ) -> dict[str, Any]:
-    """Assemble the signable manifest. ``issued_at`` is injected for determinism."""
+    """Assemble the signable manifest. ``issued_at`` is injected for determinism.
+
+    ``framework_filter`` is the framework shortName the caller restricted the bundle to, if any. It
+    is recorded under ``scope`` and signed, so a partial bundle cannot pass as a complete one.
+    """
     frameworks = [
         {
             "shortName": fw.get("shortName"),
@@ -90,6 +95,7 @@ def build_manifest(
         "version": MANIFEST_VERSION,
         "org_id": org_id,
         "issued_at": issued_at,
+        "scope": {"framework": framework_filter, "complete": framework_filter is None},
         "summary": status.get("summary", {}),
         "frameworks": frameworks,
         "evidence": _evidence_records(evidence_audit),

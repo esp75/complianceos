@@ -12,7 +12,7 @@ ANTHROPIC_API_KEY=<your key>
 ```
 
 Restart the stack with `docker compose up -d`. Compose passes the key to the API as
-`CELESTIA_ANTHROPIC_API_KEY`.
+`COMPLIANCEOS_ANTHROPIC_API_KEY`.
 
 ## 2. Request an AI-written brief
 
@@ -33,6 +33,6 @@ shown. The same check guards the compliance-drafting endpoint.
 
 ## Notes
 
-- The model is set by `CELESTIA_ANTHROPIC_MODEL` (see [configuration](../reference/configuration.md)).
+- The model is set by `COMPLIANCEOS_ANTHROPIC_MODEL` (see [configuration](../reference/configuration.md)).
 - The MVP policy is to use Anthropic models only; see
   [ADR-0010](../../adr/0010-mvp-llm-policy-claude-only.md).

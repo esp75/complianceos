@@ -1,0 +1,29 @@
+id: es
+name: Spain
+kind: national
+country: ES
+summary: 'Covered: the title for using the radio public domain for a ground station (Ley 11/2022, art. 88(3)), and the State
+  reservation of orbit-spectrum use for communications satellites (art. 85(5)). Not covered: which title form a ground station
+  needs, fees, the royal decree on satellite exploitation, and the Spanish ITU filing procedure.'
+authorities:
+- id: es-mineco
+  name: Ministerio de Economía, Comercio y Empresa (telecommunications competence)
+  name_en: Ministry of Economy, Trade and Business
+  roles:
+  - spectrum_management
+  - itu_notifying_administration
+  website: https://portal.mineco.gob.es/
+  contacts:
+  - kind: web
+    value: https://portal.mineco.gob.es/
+    purpose: Ministry portal. The 2022 Act names the Secretaría de Estado de Telecomunicaciones e Infraestructuras Digitales
+      as the competent body; check the current structure.
+    source:
+      title: Ministerio de Economía, Comercio y Empresa
+      url: https://portal.mineco.gob.es/
+      retrieved: '2026-11-03'
+  notes: The 2022 Act names the Ministry of Economic Affairs and Digital Transformation and the Secretaría de Estado de Telecomunicaciones
+    e Infraestructuras Digitales. The portal shows the current name, Ministerio de Economía, Comercio y Empresa. The current
+    internal body was not verified.
+status: draft
+last_verified: '2026-11-03'

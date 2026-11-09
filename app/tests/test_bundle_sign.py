@@ -5,6 +5,7 @@ are stubbed; the keystore + PDF signer are the real v0 implementations (offline,
 
 from __future__ import annotations
 
+import json
 from typing import Any
 
 import httpx
@@ -19,6 +20,7 @@ from app.api.trust.keys import key_fingerprint, public_raw
 from app.api.trust.keystore import DerivedKeyStore
 from app.api.trust.merkle import merkle_root
 from app.api.trust.signing import verify
+from app.api.trust.store import chain_hash
 
 TEST_SEED = b"endpoint-test-master-seed-000001"
 AUTH = {"Authorization": "Bearer good"}
@@ -88,6 +90,15 @@ class StubTrustStore:
         self._roots[org_id] = merkle_root
         return len(self.appends)
 
+    async def append_next(
+        self, org_id: str, merkle_root: bytes, signature: bytes, manifest: str
+    ) -> tuple[int, bytes | None]:
+        prev = self._roots.get(org_id)
+        row = await self.append_bundle(
+            org_id, merkle_root, prev, chain_hash(prev, merkle_root, signature), signature, manifest
+        )
+        return row, prev
+
 
 def _client(allow: dict[str, bool], *, trust: StubTrustStore | None = None) -> httpx.AsyncClient:
     app = FastAPI()
@@ -118,16 +129,26 @@ async def _reconstruct(org_id: str, issued_at: str) -> bytes:
 
 
 @pytest.mark.asyncio
-async def test_sign_requires_can_view() -> None:
-    async with _client({"can_view": False}) as c:
+async def test_sign_requires_can_edit() -> None:
+    async with _client({"can_edit": False}) as c:
         r = await c.post("/bundle/sign", params={"org_id": "01O"}, headers=AUTH)
         assert r.status_code == 403
-        assert "can_view" in r.json()["detail"]
+        assert "can_edit" in r.json()["detail"]
+
+
+@pytest.mark.asyncio
+async def test_viewer_cannot_sign() -> None:
+    """THREAT_MODEL finding 2: a read-only member (insurer, regulator) must not make the org sign."""
+    trust = StubTrustStore()
+    async with _client({"can_view": True, "can_edit": False}, trust=trust) as c:
+        r = await c.post("/bundle/sign", params={"org_id": "01O"}, headers=AUTH)
+    assert r.status_code == 403
+    assert trust.appends == []
 
 
 @pytest.mark.asyncio
 async def test_sign_returns_pdf() -> None:
-    async with _client({"can_view": True}) as c:
+    async with _client({"can_edit": True}) as c:
         r = await c.post("/bundle/sign", params={"org_id": "01O"}, headers=AUTH)
         assert r.status_code == 200
         assert r.headers["content-type"] == "application/pdf"
@@ -137,7 +158,7 @@ async def test_sign_returns_pdf() -> None:
 
 @pytest.mark.asyncio
 async def test_sign_signature_verifies_offline() -> None:
-    async with _client({"can_view": True}) as c:
+    async with _client({"can_edit": True}) as c:
         r = await c.post("/bundle/sign", params={"org_id": "01O"}, headers=AUTH)
         assert r.status_code == 200
         sig = bytes.fromhex(r.headers["x-trust-signature"])
@@ -148,7 +169,7 @@ async def test_sign_signature_verifies_offline() -> None:
 
 @pytest.mark.asyncio
 async def test_sign_merkle_root_matches_recomputation() -> None:
-    async with _client({"can_view": True}) as c:
+    async with _client({"can_edit": True}) as c:
         r = await c.post("/bundle/sign", params={"org_id": "01O"}, headers=AUTH)
         openlane = StubOpenlane()
         compliance = await gather_status(openlane, "good", "01O")
@@ -160,16 +181,47 @@ async def test_sign_merkle_root_matches_recomputation() -> None:
 @pytest.mark.asyncio
 async def test_sign_appends_tamper_evident_chain() -> None:
     trust = StubTrustStore()
-    async with _client({"can_view": True}, trust=trust) as c:
+    async with _client({"can_edit": True}, trust=trust) as c:
         await c.post("/bundle/sign", params={"org_id": "01O"}, headers=AUTH)
         await c.post("/bundle/sign", params={"org_id": "01O"}, headers=AUTH)
     assert len(trust.appends) == 2
     assert trust.appends[0]["prev_root"] is None
     assert trust.appends[1]["prev_root"] == trust.appends[0]["merkle_root"]
+    first, second = trust.appends
+    assert second["chain_hash"] == chain_hash(first["merkle_root"], second["merkle_root"],
+                                              second["signature"])
+
+
+def _signed_manifest(trust: StubTrustStore) -> dict[str, Any]:
+    return dict(json.loads(trust.appends[-1]["manifest"]))
+
+
+@pytest.mark.asyncio
+async def test_full_bundle_records_complete_scope() -> None:
+    trust = StubTrustStore()
+    async with _client({"can_edit": True}, trust=trust) as c:
+        r = await c.post("/bundle/sign", params={"org_id": "01O"}, headers=AUTH)
+    assert r.status_code == 200
+    assert _signed_manifest(trust)["scope"] == {"framework": None, "complete": True}
+
+
+@pytest.mark.asyncio
+async def test_filtered_bundle_records_its_filter() -> None:
+    """THREAT_MODEL finding 3: a filtered bundle says so inside what is signed."""
+    trust = StubTrustStore()
+    async with _client({"can_edit": True}, trust=trust) as c:
+        r = await c.post("/bundle/sign", params={"org_id": "01O", "framework": "ISO-24113"},
+                         headers=AUTH)
+    assert r.status_code == 200
+    m = _signed_manifest(trust)
+    assert m["scope"] == {"framework": "ISO-24113", "complete": False}
+    sig = bytes.fromhex(r.headers["x-trust-signature"])
+    pub = DerivedKeyStore(TEST_SEED).public_key("01O")
+    assert verify(trust.appends[-1]["manifest"].encode("utf-8"), sig, pub)
 
 
 @pytest.mark.asyncio
 async def test_sign_requires_trust_store() -> None:
-    async with _client({"can_view": True}, trust=StubTrustStore(up=False)) as c:
+    async with _client({"can_edit": True}, trust=StubTrustStore(up=False)) as c:
         r = await c.post("/bundle/sign", params={"org_id": "01O"}, headers=AUTH)
         assert r.status_code == 503

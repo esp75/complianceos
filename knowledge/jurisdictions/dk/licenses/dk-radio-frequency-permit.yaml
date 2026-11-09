@@ -1,0 +1,52 @@
+id: dk-radio-frequency-permit
+jurisdiction: dk
+name: Radio frequency permit for a ground station (use of radio frequencies)
+name_local: Tilladelse til anvendelse af radiofrekvenser
+authority: dk-digst
+category: spectrum
+summary: Radio frequencies may be used only on the basis of a permit from the Danish Agency for Digitalisation (Digitaliseringsstyrelsen).
+  The agency may set rules for use without a permit. Receive-only installations do not need a permit (§ 6(3)). Permit conditions,
+  decision periods and fees were not researched.
+applies_when:
+  field: ground_station_countries
+  contains: DK
+  because: You plan a ground station in Denmark.
+  cite:
+  - dk.rf.s6-1
+legal_basis:
+- id: dk.rf.s6-1
+  instrument: Lov om radiofrekvenser, LBK nr 119 af 21/01/2026
+  provision: § 6, stk. 1
+  url: https://www.retsinformation.dk/eli/lta/2026/119
+  retrieved: '2026-11-03'
+  language: da
+  excerpt: Anvendelse af radiofrekvenser kan alene ske på grundlag af tilladelse udstedt af Digitaliseringsstyrelsen, jf.
+    dog stk. 2-6.
+  excerpt_en: Radio frequencies may be used only on the basis of a permit issued by the Danish Agency for Digitalisation (Digitaliseringsstyrelsen),
+    subject to subsections 2 to 6. (Unofficial translation.)
+needed_by: launch
+preparation:
+  min_weeks: 2
+  typical_weeks: 6
+  max_weeks: 16
+  basis: estimate
+review:
+  min_weeks: 6
+  typical_weeks: 8
+  max_weeks: 16
+  basis: estimate
+  note: No decision period was found in the sections checked. The range is an estimate.
+  cite:
+  - dk.rf.s6-1
+documents:
+- Application to Digitaliseringsstyrelsen for a radio frequency permit (form and route not researched)
+fees: Not researched. Fees were not verified from an official source.
+obligations: []
+requires_local_presence: null
+local_presence_note: Not researched.
+status: draft
+last_verified: '2026-11-03'
+sources:
+- title: Retsinformation — Lov om radiofrekvenser (LBK nr 119 af 21/01/2026)
+  url: https://www.retsinformation.dk/eli/lta/2026/119
+  retrieved: '2026-11-03'

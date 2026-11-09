@@ -176,6 +176,95 @@ def test_lu_obligations_are_dated() -> None:
     assert len(annual) == 10 and annual[1].due.year == annual[0].due.year + 1
 
 
+def test_austrian_operator_gets_the_space_approval_and_it_is_dated_and_cited() -> None:
+    m = mission(operator_country="AT")
+    assert "at-space-activity-authorisation" in ids(m)
+    r = build_roadmap(KB, m, TODAY)
+    item = next(i for i in r.items if i.license_id == "at-space-activity-authorisation")
+    assert item.review.basis == "statutory" and item.review.typical_weeks == 26
+    reg = next(o for o in item.obligations if o.id == "at-registration-particulars")
+    assert reg.when == "2 weeks after launch"
+    assert {"at.wrg2011.par-4-3", "at.wrv2015.par-8", "at.wrv2015.par-2-6"} <= set(r.citations)
+
+
+def test_austrian_launch_or_control_also_triggers_it_for_a_foreign_operator() -> None:
+    assert "at-space-activity-authorisation" in ids(mission(operator_country="LU", control_country="AT"))
+    assert "at-space-activity-authorisation" not in ids(mission(operator_country="LU"))
+
+
+def test_german_ground_station_gets_the_frequency_assignment_with_a_six_week_statutory_review() -> None:
+    m = mission(operator_country="LU", ground_station_countries=["DE"])
+    assert "de-frequency-assignment" in ids(m)
+    r = build_roadmap(KB, m, TODAY)
+    item = next(i for i in r.items if i.license_id == "de-frequency-assignment")
+    assert item.review.basis == "statutory" and item.review.min_weeks == 6
+    assert {"de.tkg.par-91-1", "de.tkg.par-91-4"} <= set(r.citations)
+    assert "de-frequency-assignment" not in ids(mission(operator_country="LU"))
+
+
+def test_filing_through_germany_needs_the_bnetza_transfer_of_orbit_rights() -> None:
+    m = mission(operator_country="DE")
+    assert "de-bnetza-satellite-filing" in ids(m)
+    assert "de-bnetza-satellite-filing" not in ids(mission(operator_country="LU"))
+
+
+def test_dutch_ground_station_needs_the_rdi_frequency_licence() -> None:
+    m = mission(operator_country="LU", ground_station_countries=["NL"])
+    assert "nl-frequency-licence" in ids(m)
+    r = build_roadmap(KB, m, TODAY)
+    item = next(i for i in r.items if i.license_id == "nl-frequency-licence")
+    assert item.review.basis == "estimate"
+    assert "nl.tw.art-3-13-1" in r.citations
+    assert "nl-frequency-licence" not in ids(mission(operator_country="LU"))
+
+def test_irish_ground_station_needs_the_comreg_wireless_licence() -> None:
+    m = mission(operator_country="LU", ground_station_countries=["IE"])
+    assert "ie-wireless-telegraphy-licence" in ids(m)
+    r = build_roadmap(KB, m, TODAY)
+    assert "ie.wta1926.s3-1" in r.citations
+    assert "ie-wireless-telegraphy-licence" not in ids(mission(operator_country="LU"))
+
+def test_canadian_ground_station_needs_a_radio_authorisation() -> None:
+    m = mission(operator_country="LU", ground_station_countries=["CA"])
+    assert "ca-radio-authorisation" in ids(m)
+    r = build_roadmap(KB, m, TODAY)
+    assert "ca.ra.s4-1" in r.citations
+    assert "ca-radio-authorisation" not in ids(mission(operator_country="LU"))
+
+def test_norwegian_ground_station_and_satellite_filing_are_separate_routes() -> None:
+    station = mission(operator_country="LU", ground_station_countries=["NO"])
+    assert "no-frequency-permit" in ids(station)
+    r = build_roadmap(KB, station, TODAY)
+    assert "no.ekom.s11-2-1" in r.citations
+    filing = mission(operator_country="LU", filing_administration="NO")
+    assert "no-satellite-filing" in ids(filing)
+    assert "no-satellite-filing" not in ids(mission(operator_country="LU"))
+
+def test_danish_ground_station_needs_a_radio_frequency_permit() -> None:
+    m = mission(operator_country="LU", ground_station_countries=["DK"])
+    assert "dk-radio-frequency-permit" in ids(m)
+    r = build_roadmap(KB, m, TODAY)
+    assert "dk.rf.s6-1" in r.citations
+    assert "dk-radio-frequency-permit" not in ids(mission(operator_country="LU"))
+
+def test_spanish_ground_station_and_satellite_orbit_routes() -> None:
+    station = mission(operator_country="LU", ground_station_countries=["ES"])
+    assert "es-radio-title" in ids(station)
+    r = build_roadmap(KB, station, TODAY)
+    item = next(i for i in r.items if i.license_id == "es-radio-title")
+    assert item.review.basis == "statutory" and item.review.typical_weeks == 6
+    assert "es.lgt2022.art-88-3" in r.citations
+    filing = mission(operator_country="LU", filing_administration="ES")
+    assert "es-satellite-orbit-reservation" in ids(filing)
+    assert "es-radio-title" not in ids(mission(operator_country="LU"))
+
+def test_czech_ground_station_needs_an_individual_frequency_right() -> None:
+    m = mission(operator_country="LU", ground_station_countries=["CZ"])
+    assert "cz-radio-frequency-right" in ids(m)
+    r = build_roadmap(KB, m, TODAY)
+    assert "cz.zek.s17-1" in r.citations
+    assert "cz-radio-frequency-right" not in ids(mission(operator_country="LU"))
+
 # --- brief ---
 
 class FakeLLM:

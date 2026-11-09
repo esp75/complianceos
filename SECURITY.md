@@ -14,7 +14,7 @@ reproduce, impact, and any suggested fix.
 - **Local mode** (the default) has no login by design, so the API checks that every request comes
   from this machine:
   - the peer, and any `X-Forwarded-For` hop, must be loopback or in
-    `CELESTIA_LOCAL_ALLOWED_NETWORKS`;
+    `COMPLIANCEOS_LOCAL_ALLOWED_NETWORKS`;
   - `Host` and `X-Forwarded-Host` must be local names, which refuses other machines and
     DNS-rebinding pages;
   - changes need the `X-ComplianceOS-Client` header, which blocks cross-site request forgery.
@@ -23,10 +23,12 @@ reproduce, impact, and any suggested fix.
   machine, or making changes from another website, is a vulnerability. Binding the servers to all
   interfaces yourself is unsupported for local mode; use team mode to share.
 - **Team mode** authorises every planner request with OpenFGA (`can_view` to read,
-  `can_create_evidence` to change). Cross-workspace access is a vulnerability.
+  `can_create_evidence` to change, and to ask Claude for a brief). Cross-workspace access is a
+  vulnerability. In Postgres, row-level security (`app/app/api/rls/`) also keeps each workspace's
+  rows apart, so a query missing its workspace filter is a bug, not a leak.
 - **Knowledge pack**: contributed data is untrusted input. Contact values are validated by kind, and
   links are restricted to http(s), mailto and tel in the UI.
-- **Trust layer** (`app/app/api/trust/**`, `app/app/api/bundle/sign*.py`) is reserved for a paid
-  external review; known open findings are listed in [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md).
+- **Trust layer** (`app/app/api/trust/**`, `app/app/api/rls/**`, `app/app/api/bundle/sign*.py`) is
+  reserved for a paid external review; known findings are listed in [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md).
 - Generated text (the optional Claude summary) must cite only sources already in the roadmap, or it
   is rejected. A way to get uncited or invented citations past that check is in scope.

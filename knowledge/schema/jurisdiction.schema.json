@@ -122,6 +122,63 @@
       "title": "ContactChannel",
       "type": "object"
     },
+    "Feed": {
+      "additionalProperties": false,
+      "description": "An official publication feed (RSS/Atom) the Watch follows for new instruments (ADR-0020).\n\nOnly entries whose title or summary contain one of ``keywords`` are reported, and only for\napplications tracking one of ``license_ids``. Feeds are curated here, never supplied by users.",
+      "properties": {
+        "id": {
+          "maxLength": 120,
+          "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "url": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "keywords": {
+          "items": {
+            "minLength": 3,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Keywords",
+          "type": "array"
+        },
+        "license_ids": {
+          "items": {
+            "maxLength": 120,
+            "pattern": "^[a-z0-9]+(?:[-.][a-z0-9]+)*$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "License Ids",
+          "type": "array"
+        },
+        "retrieved": {
+          "format": "date",
+          "title": "Retrieved",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "url",
+        "keywords",
+        "license_ids",
+        "retrieved"
+      ],
+      "title": "Feed",
+      "type": "object"
+    },
     "ReviewStatus": {
       "enum": [
         "draft",
@@ -223,6 +280,13 @@
       ],
       "default": null,
       "title": "Reviewed By"
+    },
+    "feeds": {
+      "items": {
+        "$ref": "#/$defs/Feed"
+      },
+      "title": "Feeds",
+      "type": "array"
     }
   },
   "required": [

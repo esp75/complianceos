@@ -1,0 +1,88 @@
+id: de-frequency-assignment
+jurisdiction: de
+name: Frequency assignment for a ground station (individual assignment)
+name_local: Frequenzzuteilung (Einzelzuteilung) der Bundesnetzagentur
+authority: de-bnetza
+category: earth_station
+summary: Every use of frequencies needs a prior frequency assignment from the Bundesnetzagentur. Where a general assignment
+  does not cover the use, the operator applies for an individual assignment, which the authority must decide within six weeks
+  of a complete application, without prejudice to international agreements on frequencies and orbital positions. Assignments
+  are as a rule time-limited. Whether a general assignment covers a given ground station was not researched.
+applies_when:
+  field: ground_station_countries
+  contains: DE
+  because: You plan a ground station in Germany.
+  cite:
+  - de.tkg.par-91-1
+legal_basis:
+- id: de.tkg.par-91-1
+  instrument: Telekommunikationsgesetz (TKG), Bundesgesetz vom 23. Juni 2021 (BGBl. I S. 1858)
+  provision: § 91(1)
+  url: https://www.gesetze-im-internet.de/tkg_2021/__91.html
+  retrieved: '2026-11-03'
+  language: de
+  excerpt: Jede Frequenznutzung bedarf einer vorherigen Frequenzzuteilung, soweit in diesem Gesetz nichts anderes geregelt
+    ist.
+  excerpt_en: Every use of frequencies requires a prior frequency assignment, unless this Act provides otherwise. (Unofficial
+    translation.)
+- id: de.tkg.par-91-3
+  instrument: Telekommunikationsgesetz (TKG), Bundesgesetz vom 23. Juni 2021 (BGBl. I S. 1858)
+  provision: § 91(3)
+  url: https://www.gesetze-im-internet.de/tkg_2021/__91.html
+  retrieved: '2026-11-03'
+  language: de
+  excerpt: Soweit eine Allgemeinzuteilung nicht möglich ist, werden durch die Bundesnetzagentur Frequenzen für einzelne Frequenznutzungen
+    natürlichen Personen, juristischen Personen oder Personenvereinigungen, soweit ihnen ein Recht zustehen kann, auf Antrag
+    einzeln zugeteilt.
+  excerpt_en: Where a general assignment is not possible, the Bundesnetzagentur assigns frequencies for individual uses to
+    natural or legal persons or associations, on application, individually. (Unofficial translation.)
+- id: de.tkg.par-91-4
+  instrument: Telekommunikationsgesetz (TKG), Bundesgesetz vom 23. Juni 2021 (BGBl. I S. 1858)
+  provision: § 91(4)
+  url: https://www.gesetze-im-internet.de/tkg_2021/__91.html
+  retrieved: '2026-11-03'
+  language: de
+  excerpt: Die Bundesnetzagentur entscheidet über vollständige Anträge innerhalb von sechs Wochen. Von dieser Frist unberührt
+    bleiben geltende internationale Vereinbarungen über die Nutzung von Frequenzen und Erdumlaufpositionen.
+  excerpt_en: The Bundesnetzagentur decides on complete applications within six weeks. International agreements on the use
+    of frequencies and orbital positions remain unaffected by this period. (Unofficial translation.)
+- id: de.tkg.par-92-1
+  instrument: Telekommunikationsgesetz (TKG), Bundesgesetz vom 23. Juni 2021 (BGBl. I S. 1858)
+  provision: § 92(1)
+  url: https://www.gesetze-im-internet.de/tkg_2021/__92.html
+  retrieved: '2026-11-03'
+  language: de
+  excerpt: Frequenzen werden in der Regel befristet zugeteilt. Die Befristung muss für die betreffende Nutzung angemessen
+    sein
+  excerpt_en: Frequencies are as a rule assigned for a limited period, which must be appropriate for the use concerned. (Unofficial
+    translation.)
+needed_by: launch
+preparation:
+  min_weeks: 2
+  typical_weeks: 6
+  max_weeks: 16
+  basis: estimate
+review:
+  min_weeks: 6
+  typical_weeks: 6
+  max_weeks: 26
+  basis: statutory
+  note: The law sets six weeks from a complete application but leaves international agreements on frequencies and orbital
+    positions unaffected. Satellite links usually involve coordination, so the plan treats six weeks as the minimum and 26
+    as a cautious maximum (an estimate).
+  cite:
+  - de.tkg.par-91-4
+documents:
+- Written or electronic application naming the area in which the frequency is to be used (TKG § 91(4))
+- Evidence that the applicant meets the conditions for efficient, interference-free use; the authority may ask for a frequency
+  use concept (§ 91(4))
+fees: Not researched. Fees were not verified from an official source.
+obligations: []
+requires_local_presence: null
+local_presence_note: Not researched.
+status: draft
+last_verified: '2026-11-03'
+sources:
+- title: Gesetze im Internet — Telekommunikationsgesetz (TKG)
+  url: https://www.gesetze-im-internet.de/tkg_2021/
+  retrieved: '2026-11-03'

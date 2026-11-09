@@ -13,10 +13,10 @@ can't express (cross-org insurer/regulator scoping) at the **BFF boundary**.
 
 | Tetrad role | Org membership | Group | Extra tuple | Net OpenFGA capability |
 |---|---|---|---|---|
-| **admin** | `ADMIN` | Administrators | — | `can_edit` ⇒ `can_create_*`, `audit_log_viewer`, manage org |
+| **admin** | `ADMIN` | Administrators | — | `can_edit` ⇒ `can_create_*`, `audit_log_viewer`, manage org, sign evidence bundles (`/bundle/sign`) |
 | **operator** | `MEMBER` | Operators (wired as `evidence/control/standard_creator`) | — | `can_create_evidence/control/standard`, `can_view`; **not** `can_edit` |
-| **insurer** | `MEMBER` | Insurers | — | `can_view` only (read); creation denied. BFF scopes to underwritten orgs. |
-| **regulator** | `MEMBER` | Regulators | `user:<id> audit_log_viewer organization:<id>` | `can_view` + `audit_log_viewer`; creation denied. BFF scopes by jurisdiction. |
+| **insurer** | `MEMBER` | Insurers | — | `can_view` only (read); creation and bundle signing denied. BFF scopes to underwritten orgs. |
+| **regulator** | `MEMBER` | Regulators | `user:<id> audit_log_viewer organization:<id>` | `can_view` + `audit_log_viewer`; creation and bundle signing denied. BFF scopes by jurisdiction. |
 
 Why groups for `operator` (not a direct grant): the model only accepts
 `[group#member]` for `<obj>_creator`. Adding a user to the Operators group — which is

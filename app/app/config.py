@@ -1,7 +1,7 @@
 """Application configuration via pydantic-settings.
 
-All settings are overridable by environment variables prefixed ``CELESTIA_``
-(e.g. ``CELESTIA_OPENLANE_GRAPHQL_URL``). Inside docker-compose the defaults below
+All settings are overridable by environment variables prefixed ``COMPLIANCEOS_``
+(e.g. ``COMPLIANCEOS_OPENLANE_GRAPHQL_URL``). Inside docker-compose the defaults below
 resolve services by their compose service names.
 """
 
@@ -12,7 +12,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="CELESTIA_", env_file=".env")
+    model_config = SettingsConfigDict(env_prefix="COMPLIANCEOS_", env_file=".env")
 
     # --- L1 substrate (theopenlane/core) ---
     # GraphQL endpoint of the theopenlane Go service. ADR-0012: the only integration boundary.
@@ -39,23 +39,23 @@ class Settings(BaseSettings):
     # compose profile — L2/L4 endpoints 503 when it is not running.
     kg_dsn: str = "postgresql://postgres:password@kg-postgres:5432/kg"
     # Directory of the L1 framework YAMLs that L2 ingest reads (ADR-0014). Defaults to the
-    # repo path for local dev; the app image sets CELESTIA_FRAMEWORKS_DIR=/srv/frameworks.
+    # repo path for local dev; the app image sets COMPLIANCEOS_FRAMEWORKS_DIR=/srv/frameworks.
     frameworks_dir: str = ""
 
     # --- L4 LLM (Anthropic EU, ADR-0010) ---
     # When the key is empty, drafting/extraction use deterministic offline paths (no US LLM
-    # call). Set CELESTIA_ANTHROPIC_API_KEY (env only, never committed) to wire live Claude.
+    # call). Set COMPLIANCEOS_ANTHROPIC_API_KEY (env only, never committed) to wire live Claude.
     anthropic_api_key: str = ""
     anthropic_model: str = "claude-opus-4-7"
     anthropic_base_url: str = "https://api.anthropic.com"
 
     # --- Trust layer (Phase 4, ADR-0016) ---
     # Master seed for per-Organization Ed25519 key derivation (HKDF-SHA256, info=org_id). Env-only
-    # (CELESTIA_TRUST_SIGNING_SEED), never committed, EU-side. Production target is an EU KMS behind
+    # (COMPLIANCEOS_TRUST_SIGNING_SEED), never committed, EU-side. Production target is an EU KMS behind
     # the KeyStore interface. When empty the /bundle/sign endpoint 503s (no signing with a zero key).
     trust_signing_seed: str = ""
     # DSN for the trust store (tamper-evident bundle/audit chain). Defaults to the L2 KG DSN so the
-    # trust tables share the same Postgres; set CELESTIA_TRUST_DSN to separate them later.
+    # trust tables share the same Postgres; set COMPLIANCEOS_TRUST_DSN to separate them later.
     trust_dsn: str = ""
 
     # --- Regulatory path planner (ADR-0018) ---
@@ -71,6 +71,21 @@ class Settings(BaseSettings):
     # Planner tables (missions, applications, events, contacts). Defaults to the L2 KG DSN; when no
     # Postgres is reachable the planner falls back to an in-memory store (reported by /readyz).
     planner_dsn: str = ""
+
+    # --- Watch alert email (ADR-0019 / ADR-0020) ---
+    # Plain SMTP to any relay you choose; EU-hosted relays only (sovereignty rules). Alerts are off
+    # until smtp_host, alert_from and alert_recipients are all set. Credentials are env-only.
+    smtp_host: str = ""
+    smtp_port: int = 587
+    smtp_user: str = ""
+    smtp_password: str = ""
+    # "starttls" (port 587), "ssl" (port 465) or "none" (a local relay only).
+    smtp_security: Literal["starttls", "ssl", "none"] = "starttls"
+    alert_from: str = ""
+    # Comma-separated addresses that receive the digest of changes touching tracked applications.
+    alert_recipients: str = ""
+    # Base URL of the web app, used for links in the email. Optional.
+    public_web_url: str = ""
 
     # --- HTTP client tuning ---
     upstream_timeout_seconds: float = 10.0

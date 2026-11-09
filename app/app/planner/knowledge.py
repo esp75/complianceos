@@ -45,7 +45,7 @@ from app.planner.mission import FACT_FIELDS
 
 KNOWLEDGE_DIR = Path(
     os.environ.get(
-        "CELESTIA_KNOWLEDGE_DIR",
+        "COMPLIANCEOS_KNOWLEDGE_DIR",
         str(Path(__file__).resolve().parents[3] / "knowledge"),
     )
 )
@@ -143,6 +143,20 @@ class Authority(_Strict):
     notes: str | None = None
 
 
+class Feed(_Strict):
+    """An official publication feed (RSS/Atom) the Watch follows for new instruments (ADR-0020).
+
+    Only entries whose title or summary contain one of ``keywords`` are reported, and only for
+    applications tracking one of ``license_ids``. Feeds are curated here, never supplied by users."""
+
+    id: Slug
+    title: str
+    url: HttpUrl
+    keywords: list[Annotated[str, StringConstraints(min_length=3)]] = Field(min_length=1)
+    license_ids: list[Slug] = Field(min_length=1)
+    retrieved: dt.date
+
+
 class Jurisdiction(_Strict):
     id: Slug
     name: str
@@ -154,6 +168,7 @@ class Jurisdiction(_Strict):
     status: ReviewStatus
     last_verified: dt.date
     reviewed_by: str | None = None
+    feeds: list[Feed] = Field(default_factory=list)
 
     @model_validator(mode="after")
     def _country_matches_kind(self) -> Jurisdiction:
@@ -451,6 +466,13 @@ def _cross_check(kb_j: dict[str, Jurisdiction], kb_l: dict[str, License],
     cycle = _find_cycle({lic.id: [p.license for p in lic.prerequisites] for lic in kb_l.values()})
     if cycle:
         problems.append("prerequisite cycle: " + " -> ".join(cycle))
+
+    for j in kb_j.values():
+        for feed in j.feeds:
+            for lid in feed.license_ids:
+                feed_lic = kb_l.get(lid)
+                if feed_lic is None or feed_lic.jurisdiction != j.id:
+                    problems.append(f"feed {feed.id}: licence {lid!r} is not a licence of {j.id}")
 
     for f in kb_f.values():
         for jid in f.jurisdictions:

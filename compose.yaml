@@ -2,7 +2,8 @@
 #
 #   docker compose up --build        then open http://localhost:3000
 #
-# Three containers: Postgres (with pgvector + Apache AGE), the planner API, the web app. Everything is
+# Four containers: Postgres (with pgvector + Apache AGE), the planner API, the Watch (daily source
+# check) and the web app. Everything is
 # published on 127.0.0.1 only. No login: local mode serves this machine and the compose network
 # below. For the multi-user stack (theopenlane + OpenFGA + Dex), see cross-cutting/deploy/.
 #
@@ -39,19 +40,19 @@ services:
       db:
         condition: service_healthy
     environment:
-      CELESTIA_AUTH_MODE: local
+      COMPLIANCEOS_AUTH_MODE: local
       # Local mode has no login; it answers loopback plus this compose network (the web container
       # and the host's published port both arrive from it).
-      CELESTIA_LOCAL_ALLOWED_NETWORKS: 172.29.88.0/24
-      CELESTIA_LOCAL_ALLOWED_HOSTS: api
-      CELESTIA_KG_DSN: postgresql://postgres:${POSTGRES_PASSWORD:-local-dev-only}@db:5432/kg
+      COMPLIANCEOS_LOCAL_ALLOWED_NETWORKS: 172.29.88.0/24
+      COMPLIANCEOS_LOCAL_ALLOWED_HOSTS: api
+      COMPLIANCEOS_KG_DSN: postgresql://postgres:${POSTGRES_PASSWORD:-local-dev-only}@db:5432/kg
       # Optional: signs exported dossiers (generate with `openssl rand -hex 32`).
-      CELESTIA_TRUST_SIGNING_SEED: ${TRUST_SIGNING_SEED:-}
+      COMPLIANCEOS_TRUST_SIGNING_SEED: ${TRUST_SIGNING_SEED:-}
       # Optional: lets Claude write the brief's executive summary (citation-checked).
-      CELESTIA_ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      COMPLIANCEOS_ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       # Team-mode services are not part of this stack.
-      CELESTIA_OPENLANE_GRAPHQL_URL: http://localhost:1/query
-      CELESTIA_OREKIT_BASE_URL: http://localhost:1
+      COMPLIANCEOS_OPENLANE_GRAPHQL_URL: http://localhost:1/query
+      COMPLIANCEOS_OREKIT_BASE_URL: http://localhost:1
     ports:
       - "127.0.0.1:8001:8000"
     healthcheck:
@@ -59,6 +60,39 @@ services:
       interval: 5s
       timeout: 3s
       retries: 20
+    networks: [complianceos]
+
+  # The Watch (ADR-0019/0020): re-checks every cited source once a day and emails a digest when
+  # a change touches a tracked application. Same image as the API; no published port. The first
+  # run records a baseline and reports nothing. Email is off until COMPLIANCEOS_SMTP_HOST is set.
+  watch:
+    image: complianceos/api:dev
+    depends_on:
+      api:
+        condition: service_healthy
+    entrypoint: ["sh", "-c"]
+    command:
+      - |
+        while true; do
+          python -m app.planner.watch run --alert || echo "watch run failed" >&2
+          sleep "$${WATCH_INTERVAL_SECONDS:-86400}"
+        done
+    environment:
+      WATCH_INTERVAL_SECONDS: ${WATCH_INTERVAL_SECONDS:-86400}
+      COMPLIANCEOS_AUTH_MODE: local
+      COMPLIANCEOS_KG_DSN: postgresql://postgres:${POSTGRES_PASSWORD:-local-dev-only}@db:5432/kg
+      COMPLIANCEOS_ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      COMPLIANCEOS_SMTP_HOST: ${SMTP_HOST:-}
+      COMPLIANCEOS_SMTP_PORT: ${SMTP_PORT:-587}
+      COMPLIANCEOS_SMTP_USER: ${SMTP_USER:-}
+      COMPLIANCEOS_SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      COMPLIANCEOS_SMTP_SECURITY: ${SMTP_SECURITY:-starttls}
+      COMPLIANCEOS_ALERT_FROM: ${ALERT_FROM:-}
+      COMPLIANCEOS_ALERT_RECIPIENTS: ${ALERT_RECIPIENTS:-}
+      COMPLIANCEOS_PUBLIC_WEB_URL: ${PUBLIC_WEB_URL:-http://localhost:3000}
+      COMPLIANCEOS_OPENLANE_GRAPHQL_URL: http://localhost:1/query
+      COMPLIANCEOS_OREKIT_BASE_URL: http://localhost:1
+    restart: unless-stopped
     networks: [complianceos]
 
   web:

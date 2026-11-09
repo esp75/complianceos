@@ -1,0 +1,63 @@
+id: ca-radio-authorisation
+jurisdiction: ca
+name: Radio licence for a ground station (radio authorisation for radio apparatus)
+name_local: Radio licence under the Radiocommunication Act (radio authorisation)
+authority: ca-ised
+category: earth_station
+summary: Installing, operating or possessing radio apparatus needs a radio authorisation under the Radiocommunication Act,
+  unless a regulation exempts the apparatus. Under the Act, "Minister" means the Minister of Industry, who may issue radio licences for radio apparatus under section 5(1). Exemptions under regulations, licence conditions, the decision
+  period and fees were not researched.
+applies_when:
+  field: ground_station_countries
+  contains: CA
+  because: You plan a ground station in Canada.
+  cite:
+  - ca.ra.s4-1
+legal_basis:
+- id: ca.ra.s4-1
+  instrument: Radiocommunication Act (R.S.C. 1985, c. R-2), consolidated text (Justice Laws Website)
+  provision: Section 4(1)
+  url: https://laws-lois.justice.gc.ca/eng/acts/R-2/
+  retrieved: '2026-11-03'
+  language: en
+  excerpt: No person shall, except under and in accordance with a radio authorization, install, operate or possess radio apparatus,
+    other than (a) radio apparatus exempted by or under regulations made under paragraph 6(1)(m); or (b) radio apparatus that
+    is capable only of the reception of broadcasting and that is not a distribution undertaking.
+- id: ca.ra.s5-1
+  instrument: Radiocommunication Act (R.S.C. 1985, c. R-2), consolidated text (Justice Laws Website)
+  provision: Section 5(1)
+  url: https://laws-lois.justice.gc.ca/eng/acts/R-2/
+  retrieved: '2026-11-03'
+  language: en
+  excerpt: Subject to any regulations made under section 6, the Minister may, taking into account all matters that the Minister
+    considers relevant for ensuring the orderly establishment or modification of radio stations and the orderly development
+    and efficient operation of radiocommunication in Canada, (a) issue (i) radio licences in respect of radio apparatus,
+needed_by: launch
+preparation:
+  min_weeks: 2
+  typical_weeks: 6
+  max_weeks: 16
+  basis: estimate
+review:
+  min_weeks: 6
+  typical_weeks: 8
+  max_weeks: 16
+  basis: estimate
+  note: The Act sets no decision period in the text checked. The range is an estimate, not a researched figure.
+  cite:
+  - ca.ra.s5-1
+documents:
+- Application to ISED for a radio licence (route and form not researched; check ISED)
+fees: Not researched. Fees were not verified from an official source.
+obligations: []
+requires_local_presence: null
+local_presence_note: Not researched.
+status: draft
+last_verified: '2026-11-03'
+sources:
+- title: Justice Laws Website — Radiocommunication Act
+  url: https://laws-lois.justice.gc.ca/eng/acts/R-2/
+  retrieved: '2026-11-03'
+- title: ISED — Spectrum management and telecommunications
+  url: https://ised-isde.canada.ca/site/spectrum-management-telecommunications/en
+  retrieved: '2026-11-03'

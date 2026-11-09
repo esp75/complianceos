@@ -7,10 +7,17 @@ Two tables: ``trust_org_key`` records each org's published Ed25519 public key + 
 Merkle root via ``chain_hash = sha256(prev_root || merkle_root || signature)`` — so the sequence of
 issued bundles per org is tamper-evident. Lifecycle mirrors ``KGClient``; wired tolerantly in the
 lifespan and gated by ``require_trust``.
+
+Appends go through ``append_next``: the head read and the insert run in one transaction under a
+per-org advisory lock, so two concurrent signs cannot both link to the same head. Two unique indexes
+(one on ``(org_id, prev_root)``, one allowing a single genesis row per org) make a fork impossible
+to persist even if a writer skips the lock. Creating them fails on a database that already holds a
+fork; that database's chain is already broken and must be inspected by hand.
 """
 
 from __future__ import annotations
 
+import hashlib
 from typing import cast
 
 import asyncpg
@@ -35,7 +42,20 @@ CREATE TABLE IF NOT EXISTS trust_bundle (
 );
 
 CREATE INDEX IF NOT EXISTS trust_bundle_org_idx ON trust_bundle (org_id, id);
+-- At most one successor per bundle, and at most one genesis bundle, per org: the chain is linear.
+CREATE UNIQUE INDEX IF NOT EXISTS trust_bundle_successor_uq ON trust_bundle (org_id, prev_root);
+CREATE UNIQUE INDEX IF NOT EXISTS trust_bundle_genesis_uq ON trust_bundle (org_id)
+    WHERE prev_root IS NULL;
 """
+
+# Per-org transaction-scoped advisory lock key: serialises appends to one org's chain only.
+_LOCK_SQL = "SELECT pg_advisory_xact_lock(hashtextextended('trust_bundle:' || $1, 0))"
+_HEAD_SQL = "SELECT merkle_root FROM trust_bundle WHERE org_id = $1 ORDER BY id DESC LIMIT 1"
+
+
+def chain_hash(prev_root: bytes | None, merkle_root: bytes, signature: bytes) -> bytes:
+    """``sha256(prev_root || merkle_root || signature)``; an empty prefix for the genesis bundle."""
+    return hashlib.sha256((prev_root or b"") + merkle_root + signature).digest()
 
 
 class TrustStoreError(RuntimeError):
@@ -85,10 +105,7 @@ class TrustStore:
     async def last_root(self, org_id: str) -> bytes | None:
         """The Merkle root of the most recent bundle for ``org_id`` (the chain head)."""
         async with self._require_pool().acquire() as conn:
-            row = await conn.fetchval(
-                "SELECT merkle_root FROM trust_bundle WHERE org_id = $1 ORDER BY id DESC LIMIT 1",
-                org_id,
-            )
+            row = await conn.fetchval(_HEAD_SQL, org_id)
         return cast("bytes | None", row)
 
     async def append_bundle(
@@ -100,7 +117,8 @@ class TrustStore:
         signature: bytes,
         manifest: str,
     ) -> int:
-        """Append a signed bundle to the chain. ``manifest`` is canonical JSON text. Returns row id."""
+        """Append a row as given, with no head read or lock. Signing uses ``append_next``; this is kept
+        for tests and repair tooling. ``manifest`` is canonical JSON text. Returns the row id."""
         async with self._require_pool().acquire() as conn:
             row_id = await conn.fetchval(
                 "INSERT INTO trust_bundle "
@@ -109,3 +127,23 @@ class TrustStore:
                 org_id, merkle_root, prev_root, chain_hash, signature, manifest,
             )
         return cast("int", row_id)
+
+    async def append_next(
+        self, org_id: str, merkle_root: bytes, signature: bytes, manifest: str
+    ) -> tuple[int, bytes | None]:
+        """Link a signed bundle to the org's current head and append it, atomically.
+
+        Holds a per-org advisory lock for the transaction, reads the head, computes the chain hash
+        and inserts. Returns ``(row_id, prev_root)``. ``manifest`` is canonical JSON text.
+        """
+        async with self._require_pool().acquire() as conn, conn.transaction():
+            await conn.execute(_LOCK_SQL, org_id)
+            prev_root = cast("bytes | None", await conn.fetchval(_HEAD_SQL, org_id))
+            row_id = await conn.fetchval(
+                "INSERT INTO trust_bundle "
+                "(org_id, merkle_root, prev_root, chain_hash, signature, manifest) "
+                "VALUES ($1, $2, $3, $4, $5, $6::jsonb) RETURNING id",
+                org_id, merkle_root, prev_root, chain_hash(prev_root, merkle_root, signature),
+                signature, manifest,
+            )
+        return cast("int", row_id), prev_root

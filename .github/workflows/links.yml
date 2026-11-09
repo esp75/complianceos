@@ -23,3 +23,15 @@ jobs:
       - name: Check cited URLs
         working-directory: app
         run: uv run python ../scripts/check-knowledge-links.py
+      - name: Check quoted excerpts are still on the cited pages
+        # Fails only when a page shows the law but the quote no longer matches (likely an amendment).
+        # Pages that refuse automated readers are reported as blocked or unreadable, not failures.
+        if: always()
+        working-directory: app
+        run: uv run python -m app.planner.pack_qa --json ../pack-qa.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pack-qa
+          path: pack-qa.json
+          if-no-files-found: ignore

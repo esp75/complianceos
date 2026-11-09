@@ -5,8 +5,9 @@
 > - cited requirements map, sequencing and timeline, and signed deliverable;
 > - client workspace with a program tracker, deadlines, contact log and calendar export.
 >
-> Still open from P1/P2: objection forecast, decision-maker map, the Watch (source monitoring), and
-> corpus ingest beyond the hand-researched knowledge pack.
+> Still open from P1/P2: objection forecast, decision-maker map, the Watch's alert and history
+> slices (first slice shipped 2026-11-01, ADR-0019), and corpus ingest beyond the hand-researched
+> knowledge pack.
 
 **First product:** AI regulatory-affairs for satellite operators — Market-Access Dossier → the Watch → program of record. The planner in this repository is the open-source core of that product.
 
@@ -16,29 +17,29 @@
 
 **Goal:** produce a client-grade Market-Access Dossier for one pilot jurisdiction with the existing stack.
 
-- [ ] Jurisdiction corpus ingest v1: point the L2 ingest (`app/app/kg/ingest.py` + Claude extractor) at national telecom/space acts, ministry publications, and ITU RR excerpts for the first 2–3 pilot jurisdictions (chosen by pilot signups; likely DE/AT/UK/LU from the target list)
-- [ ] Dossier composer: extend L4 drafting (`app/app/l4/drafting.py`) from single-obligation paragraphs to the dossier section set (requirements map, sequence/timeline, prerequisites, objection forecast, decision-maker map) — citation-or-422 enforced per section; practice-vs-statute confidence labels
-- [ ] Human-review loop: reviewer checklist + diff-friendly dossier format (markdown → branded PDF via existing fpdf2 path)
-- [ ] Signed deliverable: wrap the dossier through the trust layer (`POST /bundle/sign`) — every delivered dossier carries a verifiable signature from day 1
+- [~] Jurisdiction corpus ingest v1 — Austria's space approval added by hand from the RIS API (DE not started: no verified sources; the L2 extractor was not used). Original text: point the L2 ingest (`app/app/kg/ingest.py` + Claude extractor) at national telecom/space acts, ministry publications, and ITU RR excerpts for the first 2–3 pilot jurisdictions (chosen by pilot signups; likely DE/AT/UK/LU from the target list)
+- [~] Dossier composer — shipped ([ADR-0022](./adr/0022-dossier-sections-and-review-package.md)): friction points and decision-maker map, both citation-enforced, with basis labels; **open:** a sourced objection-pattern layer (practice data), L4 drafting of per-section prose. Original text: extend L4 drafting (`app/app/l4/drafting.py`) from single-obligation paragraphs to the dossier section set (requirements map, sequence/timeline, prerequisites, objection forecast, decision-maker map) — citation-or-422 enforced per section; practice-vs-statute confidence labels
+- [~] Human-review loop — Markdown reviewer package with checklist shipped (ADR-0022); the branded-PDF part is unchanged: reviewer checklist + diff-friendly dossier format (markdown → branded PDF via existing fpdf2 path)
+- [x] Signed deliverable — every dossier carries a verifiable Ed25519 signature over the roadmap and the brief ([ADR-0022](./adr/0022-dossier-sections-and-review-package.md) addendum), through the trust primitives (`/bundle/sign` seals Openlane evidence and is not the planner path). **Open:** pin the signer by fingerprint in a published verifier tool
 
 **DoD:** one real-jurisdiction dossier passes expert review with zero uncited claims; produced end-to-end in ≤2 founder-days.
 
 ## Phase P2 — Workspace + the Watch v0 (weeks 3–6) · serves: pilot delivery + retention
 
-- [ ] Client workspace v0: lightweight web UI (Next.js portal path per ADR-0003; replaces the parked openmct surface) — dossier viewer, program tracker (applications, deadlines, dependencies, statuses), tenant-isolated via L1 tetrad (roles: operator client, Celestia admin)
-- [ ] The Watch v0: scheduled source monitoring per jurisdiction (ministry/regulator pages, official journals) → change detection → delta classified against the client's tracked applications (L4 retrieval) → alert email + workspace feed
-- [ ] Signed program history: state changes appended to the per-org Merkle chain (trust layer reuse)
-- [ ] Pilot instrumentation: usage events (logins, alert opens) — MoU Annex A success criteria are measured, not vibed
+- [x] Client workspace v0 (shipped with the planner, ADR-0018; Workspace page added): lightweight web UI (Next.js portal path per ADR-0003; replaces the parked openmct surface) — dossier viewer, program tracker (applications, deadlines, dependencies, statuses), tenant-isolated via L1 tetrad (roles: operator client, Celestia admin)
+- [~] The Watch v0 — first slice shipped ([ADR-0019](./adr/0019-the-watch-v0.md)): every cited source checked on a schedule, change detection, changes linked to tracked applications, workspace feed and mission tab. alert email, PDF sources, curated publication feeds (GB, US) and advisory Claude triage shipped ([ADR-0020](./adr/0020-the-watch-alerts-pdf-feeds-triage.md)). **Open:** a Légifrance route (4 of 23 cited sources are blocked to automated fetches); more verified feeds (DE shipped; FR, LU, ITU, AT have no documented official feed, see VERIFICATION.md); signed history (below). Per-workspace alert recipients shipped
+- [~] Signed program history — first slice shipped ([ADR-0021](./adr/0021-signed-history-and-pilot-usage.md)): signed Merkle export of application events, chained across exports. **Open:** anchoring checkpoints in the trust layer's `trust_bundle` chain (needs a trust-layer change, after the external review)
+- [~] Pilot instrumentation — first slice shipped (ADR-0021): session, mission, Watch and alert-link events with a summary endpoint. Dossier-export events and the pilot-facing report (Workspace page) shipped. **Open:** none beyond what pilots ask for
 
 **DoD:** all pilot clients live in isolated workspaces; one real regulatory change detected → classified → alerted inside 48h.
 
 ## Phase P3 — Conversion hardening (weeks 7–12) · serves: pilots → paying clients
 
-- [ ] Dossier pipeline cost/time reduction (target: ≤1 founder-day/dossier): section templates per jurisdiction archetype, reusable corpus, extraction QA harness
+- [~] Dossier pipeline cost/time reduction (target: ≤1 founder-day/dossier): the extraction QA harness shipped (`app.planner.pack_qa`: every quote checked against its cited page, weekly in CI); **open:** section templates per jurisdiction archetype, reusable corpus
 - [ ] Objection-pattern layer v1: structured objection/decision-maker records per jurisdiction accumulating in the KG (the compounding asset)
-- [ ] Billing + subscription plumbing (EU provider), MoU→contract conversion flow
-- [ ] Multi-jurisdiction workspace (the S2→S3 bridge: one client, N markets)
-- [ ] `/cso` pass + RLS hardening on client-facing surfaces (licensing state is competitively sensitive — the sovereignty pitch must be true)
+- [x] ~~Billing + subscription plumbing~~ dropped: the project is free and open source
+- [~] Multi-jurisdiction workspace (the S2→S3 bridge: one client, N markets) — the Markets view (`GET /program`), per-application owners with a workload table, and a cross-mission source-changes list shipped; **open:** per-market (not per-application) ownership, if pilots ask
+- [x] `/cso` pass + RLS hardening on client-facing surfaces: Postgres RLS on the planner's workspace tables, and a static `/cso` pass on the planner API (one finding, fixed). **Open:** RLS on the trust tables; a full, non-`--paths` `/cso` audit
 
 **DoD:** a converted client is billed, multi-market, monitored, with signed history — no founder heroics in the loop.
 
