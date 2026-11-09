@@ -69,6 +69,8 @@ All notable changes to ComplianceOS are documented here. Format: [Keep a Changel
   Markets table on the Workspace page.
 
 ### Changed
+- Environment variables use the `COMPLIANCEOS_` prefix (was `CELESTIA_`). The old names still work for
+  now: each fills its unset `COMPLIANCEOS_` twin at startup, with one warning naming them.
 - `POST /watch/run` allows one run at a time (409) and one per minute per process (429).
 - `verify_history` checks the fingerprint matches the embedded key and accepts a
   `trusted_fingerprint` to pin the signer; the embedded key alone proves integrity, not origin.

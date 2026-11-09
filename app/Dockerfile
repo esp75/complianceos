@@ -19,7 +19,7 @@ COPY layers/L3-sder-engine/risk-scoring /layers/L3-sder-engine/risk-scoring
 COPY app/pyproject.toml app/uv.lock ./
 RUN uv sync --no-dev --no-install-project
 
-# L1 framework YAMLs that L2 ingest reads (ADR-0014). CELESTIA_FRAMEWORKS_DIR points here.
+# L1 framework YAMLs that L2 ingest reads (ADR-0014). COMPLIANCEOS_FRAMEWORKS_DIR points here.
 COPY layers/L1-substrate/frameworks ./frameworks
 
 # Open knowledge pack the regulatory path planner reasons over (ADR-0018).
@@ -29,8 +29,8 @@ COPY knowledge ./knowledge
 COPY app/app ./app
 
 ENV PATH="/srv/.venv/bin:$PATH"
-ENV CELESTIA_FRAMEWORKS_DIR=/srv/frameworks
-ENV CELESTIA_KNOWLEDGE_DIR=/srv/knowledge
+ENV COMPLIANCEOS_FRAMEWORKS_DIR=/srv/frameworks
+ENV COMPLIANCEOS_KNOWLEDGE_DIR=/srv/knowledge
 EXPOSE 8000
 
 # Run as an unprivileged user.

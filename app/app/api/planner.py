@@ -5,10 +5,10 @@ Missions: create / list / update / delete a mission profile, get its roadmap and
 Tracking: applications per licence, status changes, contact log, deadlines, calendar, dossier.
 The Watch (ADR-0019): changes in the sources the pack cites, scoped to each workspace's applications.
 
-Authentication depends on ``CELESTIA_AUTH_MODE``:
+Authentication depends on ``COMPLIANCEOS_AUTH_MODE``:
 
 - ``local`` (default): one workspace for the person running the server, no login. Only loopback
-  clients and networks listed in ``CELESTIA_LOCAL_ALLOWED_NETWORKS`` are served, so a local
+  clients and networks listed in ``COMPLIANCEOS_LOCAL_ALLOWED_NETWORKS`` are served, so a local
   instance is not accidentally shared.
 - ``openlane`` (team mode): the theopenlane user from the bearer token, the workspace from the
   ``X-Workspace`` header (an organization id), and OpenFGA checks at the boundary (ADR-0012):
@@ -140,7 +140,7 @@ def _local_client(request: Request) -> None:
     """Local mode has no login, so every request must provably come from this machine.
 
     - The direct peer, and every X-Forwarded-For hop when a proxy sets one, must be loopback or in
-      CELESTIA_LOCAL_ALLOWED_NETWORKS. Private ranges are not trusted by default.
+      COMPLIANCEOS_LOCAL_ALLOWED_NETWORKS. Private ranges are not trusted by default.
     - Host and X-Forwarded-Host must be local names. The Next.js proxy does not send X-Forwarded-For,
       so this is what refuses a browser on another machine (it arrives as http://<lan-ip>:3000) and
       blocks DNS-rebinding pages.
@@ -293,7 +293,7 @@ async def mission_brief(
     roadmap = build_roadmap(kb, m.profile, today)
     if ai and llm is None:
         raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE,
-                            detail="no LLM configured (set CELESTIA_ANTHROPIC_API_KEY)")
+                            detail="no LLM configured (set COMPLIANCEOS_ANTHROPIC_API_KEY)")
     try:
         return await build_brief(roadmap, llm if ai else None)
     except CitationError as exc:

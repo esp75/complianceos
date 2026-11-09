@@ -8,7 +8,7 @@ document is the pre-review baseline and will be revised against findings.
 
 ## Assets
 
-- **Master signing seed** (`CELESTIA_TRUST_SIGNING_SEED`) — derives every org's private key. Highest-
+- **Master signing seed** (`COMPLIANCEOS_TRUST_SIGNING_SEED`) — derives every org's private key. Highest-
   value secret in the system.
 - **Per-Org Ed25519 private keys** — derived on demand, never persisted.
 - **Issued bundles + the per-org chain** (`trust_bundle`) — the tamper-evidence record.

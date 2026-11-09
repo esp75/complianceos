@@ -3,7 +3,7 @@
 One interface, two implementations:
 
 - :class:`PostgresPlannerStore` — the real store (asyncpg), sharing the kg-postgres instance unless
-  ``CELESTIA_PLANNER_DSN`` points elsewhere.
+  ``COMPLIANCEOS_PLANNER_DSN`` points elsewhere.
 - :class:`MemoryPlannerStore` — process memory, used by tests and as a fallback so the planner
   still runs with no database at all (data is lost on restart; ``/readyz`` says so).
 

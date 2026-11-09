@@ -32,9 +32,9 @@ import httpx
 from app.clients.openfga import OpenFGAClient
 from app.config import Settings
 
-BASE = os.environ.get("CELESTIA_OPENLANE_BASE_URL", "http://localhost:17608")
-OPENFGA_URL = os.environ.get("CELESTIA_OPENFGA_URL", "http://localhost:8080")
-PASSWORD = os.environ.get("CELESTIA_SEED_PASSWORD", "Cel3stia!Strong#Pass1")
+BASE = os.environ.get("COMPLIANCEOS_OPENLANE_BASE_URL", "http://localhost:17608")
+OPENFGA_URL = os.environ.get("COMPLIANCEOS_OPENFGA_URL", "http://localhost:8080")
+PASSWORD = os.environ.get("COMPLIANCEOS_SEED_PASSWORD", "Cel3stia!Strong#Pass1")
 
 ORG_NAME = "Celestia Demo Operator"
 OWNER = ("founder@celestia.eu", "Celestia", "Founder")

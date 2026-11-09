@@ -12,7 +12,7 @@ and [ADR-0012](../adr/0012-fastapi-theopenlane-contract.md):
 
 ```
 app/
-  config.py            pydantic-settings (CELESTIA_* env vars)
+  config.py            pydantic-settings (COMPLIANCEOS_* env vars)
   clients/openlane.py  the one module that talks theopenlane GraphQL
   api/health.py        /healthz (liveness), /readyz (BFF->L1 wire check)
   api/trust/  api/rls/ Phase-4 trust layer stubs (MARKED-FOR-EXTERNAL-REVIEW)

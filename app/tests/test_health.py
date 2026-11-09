@@ -14,9 +14,9 @@ from app.config import get_settings
 
 @pytest.fixture
 def mode(monkeypatch: pytest.MonkeyPatch):  # noqa: ANN201
-    """Set CELESTIA_AUTH_MODE for one test (settings are cached)."""
+    """Set COMPLIANCEOS_AUTH_MODE for one test (settings are cached)."""
     def _set(value: str) -> None:
-        monkeypatch.setenv("CELESTIA_AUTH_MODE", value)
+        monkeypatch.setenv("COMPLIANCEOS_AUTH_MODE", value)
         get_settings.cache_clear()
     yield _set
     get_settings.cache_clear()

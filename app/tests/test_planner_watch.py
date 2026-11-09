@@ -299,7 +299,7 @@ WATCHED_LICENSE = "lu-space-activity-authorisation"
 
 @pytest.fixture(autouse=True)
 def local_mode(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
-    monkeypatch.setenv("CELESTIA_AUTH_MODE", "local")
+    monkeypatch.setenv("COMPLIANCEOS_AUTH_MODE", "local")
     get_settings.cache_clear()
     yield
     get_settings.cache_clear()
@@ -588,9 +588,9 @@ async def test_digest_goes_to_each_workspaces_own_recipients(
     from app.planner.sample import sample_mission
     from app.planner.watch import _alert
 
-    monkeypatch.setenv("CELESTIA_SMTP_HOST", "smtp.test")
-    monkeypatch.setenv("CELESTIA_ALERT_FROM", "watch@x.eu")
-    monkeypatch.setenv("CELESTIA_ALERT_RECIPIENTS", "default@x.eu")
+    monkeypatch.setenv("COMPLIANCEOS_SMTP_HOST", "smtp.test")
+    monkeypatch.setenv("COMPLIANCEOS_ALERT_FROM", "watch@x.eu")
+    monkeypatch.setenv("COMPLIANCEOS_ALERT_RECIPIENTS", "default@x.eu")
     get_settings.cache_clear()
     store = MemoryPlannerStore()
     for ws in ("tenant-a", "tenant-b", "tenant-c"):

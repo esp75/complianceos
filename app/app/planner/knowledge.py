@@ -45,7 +45,7 @@ from app.planner.mission import FACT_FIELDS
 
 KNOWLEDGE_DIR = Path(
     os.environ.get(
-        "CELESTIA_KNOWLEDGE_DIR",
+        "COMPLIANCEOS_KNOWLEDGE_DIR",
         str(Path(__file__).resolve().parents[3] / "knowledge"),
     )
 )

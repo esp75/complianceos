@@ -15,7 +15,7 @@ uv run python -m app.planner.knowledge validate
 ```
 
 - Property-based tests (hypothesis) check the scheduler over random prerequisite graphs.
-- `tests/test_planner_store.py` needs a Postgres instance. Set `CELESTIA_PG_TEST_DSN` to run it;
+- `tests/test_planner_store.py` needs a Postgres instance. Set `COMPLIANCEOS_PG_TEST_DSN` to run it;
   otherwise it is skipped. CI provides one.
 
 ## Web (Next.js 14, TypeScript)

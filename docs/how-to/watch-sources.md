@@ -4,7 +4,7 @@ The Watch re-checks every public source the knowledge pack cites and records wha
 tells you which of your tracked applications cite a changed source. It does not tell you what the
 change means: re-verify the cited provision before you rely on it.
 
-The Watch needs Postgres. Set `CELESTIA_PLANNER_DSN`, or leave it empty to use `CELESTIA_KG_DSN`.
+The Watch needs Postgres. Set `COMPLIANCEOS_PLANNER_DSN`, or leave it empty to use `COMPLIANCEOS_KG_DSN`.
 
 ## 1. Take a baseline
 
@@ -27,7 +27,7 @@ Without compose, run it from cron:
 
 **Who gets the email.** Each workspace sets its own recipients on the Workspace page (or
 `PUT /alerts/recipients`): its digest goes only to them. A workspace with none set falls back to
-`CELESTIA_ALERT_RECIPIENTS`, so on a shared deployment have every client set their own list.
+`COMPLIANCEOS_ALERT_RECIPIENTS`, so on a shared deployment have every client set their own list.
 
 ```cron
 30 6 * * *  cd /path/to/complianceOSv0.2/app && uv run python -m app.planner.watch run >> /var/log/watch.log 2>&1
@@ -39,19 +39,19 @@ Add `--alert` to send one digest per run, only when a change touches a tracked a
 EU-hosted SMTP relay and set these in the environment (never commit them):
 
 ```bash
-CELESTIA_SMTP_HOST=smtp.example.eu
-CELESTIA_SMTP_PORT=587            # starttls; use CELESTIA_SMTP_SECURITY=ssl for port 465
-CELESTIA_SMTP_USER=...  CELESTIA_SMTP_PASSWORD=...
-CELESTIA_ALERT_FROM=watch@example.eu
-CELESTIA_ALERT_RECIPIENTS=you@example.eu,colleague@example.eu   # fallback only, see below
-CELESTIA_PUBLIC_WEB_URL=https://planner.example.eu   # optional, for the link in the email
+COMPLIANCEOS_SMTP_HOST=smtp.example.eu
+COMPLIANCEOS_SMTP_PORT=587            # starttls; use COMPLIANCEOS_SMTP_SECURITY=ssl for port 465
+COMPLIANCEOS_SMTP_USER=...  COMPLIANCEOS_SMTP_PASSWORD=...
+COMPLIANCEOS_ALERT_FROM=watch@example.eu
+COMPLIANCEOS_ALERT_RECIPIENTS=you@example.eu,colleague@example.eu   # fallback only, see below
+COMPLIANCEOS_PUBLIC_WEB_URL=https://planner.example.eu   # optional, for the link in the email
 ```
 
 ```cron
 30 6 * * *  cd /path/to/complianceOSv0.2/app && uv run python -m app.planner.watch run --alert >> /var/log/watch.log 2>&1
 ```
 
-If you also set `CELESTIA_ANTHROPIC_API_KEY`, changed pages get an advisory label and one-line
+If you also set `COMPLIANCEOS_ANTHROPIC_API_KEY`, changed pages get an advisory label and one-line
 summary from Claude on the Anthropic EU endpoint. It is labelled unverified in the app and the
 email, and the Watch's advice stays "re-verify".
 

@@ -74,7 +74,7 @@ async def require_trust(trust: Annotated[TrustStore, Depends(get_trust)]) -> Tru
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="trust store unavailable (start the `kg` compose profile and set "
-                   "CELESTIA_TRUST_SIGNING_SEED)",
+                   "COMPLIANCEOS_TRUST_SIGNING_SEED)",
         )
     return trust
 

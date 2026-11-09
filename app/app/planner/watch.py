@@ -475,7 +475,7 @@ async def _alert(kb: KnowledgeBase, store: PlannerStore, summary: RunSummary) ->
 
     cfg = AlertConfig.from_settings(get_settings())
     if cfg is None:
-        print("alerts are not configured (CELESTIA_SMTP_HOST and _ALERT_FROM)",
+        print("alerts are not configured (COMPLIANCEOS_SMTP_HOST and _ALERT_FROM)",
               file=sys.stderr)
         return 2
     failed = False
@@ -512,7 +512,7 @@ async def _cli(cmd: str, dsn: str, alert: bool = False) -> int:
         await store.connect()
     except (OSError, asyncpg.PostgresError) as exc:
         print(f"cannot reach the planner database ({type(exc).__name__}); "
-              "set CELESTIA_PLANNER_DSN", file=sys.stderr)
+              "set COMPLIANCEOS_PLANNER_DSN", file=sys.stderr)
         return 1
     try:
         await store.apply_schema()
@@ -553,7 +553,7 @@ def main(argv: list[str] | None = None) -> int:
     settings = get_settings()
     dsn = settings.planner_dsn or settings.kg_dsn
     if not dsn:
-        print("the Watch needs Postgres: set CELESTIA_PLANNER_DSN", file=sys.stderr)
+        print("the Watch needs Postgres: set COMPLIANCEOS_PLANNER_DSN", file=sys.stderr)
         return 2
     return asyncio.run(_cli(args.cmd, dsn, alert=getattr(args, "alert", False)))
 

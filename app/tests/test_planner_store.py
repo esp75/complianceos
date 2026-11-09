@@ -1,6 +1,6 @@
 """Store contract: the same behaviour from the in-memory and the Postgres planner stores.
 
-The Postgres run is opt-in: set CELESTIA_PG_TEST_DSN to a scratch database, e.g.
+The Postgres run is opt-in: set COMPLIANCEOS_PG_TEST_DSN to a scratch database, e.g.
 ``postgresql://postgres:password@127.0.0.1:55433/kg``. Each run uses fresh workspace ids, so it
 never touches other data.
 """
@@ -20,7 +20,7 @@ from app.planner.tracker import AppStatus, ContactIn, apply_update
 from app.planner.watch import FetchResult, decide
 
 TODAY = dt.date(2026, 10, 15)
-PG_DSN = os.environ.get("CELESTIA_PG_TEST_DSN")
+PG_DSN = os.environ.get("COMPLIANCEOS_PG_TEST_DSN")
 
 
 @pytest.fixture(params=["memory", "postgres"])
@@ -29,7 +29,7 @@ async def store(request: pytest.FixtureRequest) -> AsyncIterator[PlannerStore]:
         yield MemoryPlannerStore()
         return
     if not PG_DSN:
-        pytest.skip("set CELESTIA_PG_TEST_DSN to run the Postgres store contract")
+        pytest.skip("set COMPLIANCEOS_PG_TEST_DSN to run the Postgres store contract")
     pg = PostgresPlannerStore(PG_DSN)
     await pg.connect()
     await pg.apply_schema()

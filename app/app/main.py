@@ -82,7 +82,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
             if settings.anthropic_api_key
             else None
         )
-        # Trust layer (Phase 4, ADR-0016). Shares the kg-postgres unless CELESTIA_TRUST_DSN is set;
+        # Trust layer (Phase 4, ADR-0016). Shares the kg-postgres unless COMPLIANCEOS_TRUST_DSN is set;
         # connect tolerantly so the app starts without it — /bundle/sign 503s via require_trust.
         app.state.trust = TrustStore(settings.trust_dsn or settings.kg_dsn)
         try:

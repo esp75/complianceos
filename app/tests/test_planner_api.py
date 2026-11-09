@@ -48,7 +48,7 @@ def make_app(*, llm: Any = None, seed: str = "") -> FastAPI:
 
 @pytest.fixture(autouse=True)
 def local_mode(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
-    monkeypatch.setenv("CELESTIA_AUTH_MODE", "local")
+    monkeypatch.setenv("COMPLIANCEOS_AUTH_MODE", "local")
     get_settings.cache_clear()
     yield
     get_settings.cache_clear()
@@ -292,7 +292,7 @@ class _FGA:
 
 
 async def test_team_mode_requires_workspace_token_and_permission(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("CELESTIA_AUTH_MODE", "openlane")
+    monkeypatch.setenv("COMPLIANCEOS_AUTH_MODE", "openlane")
     get_settings.cache_clear()
     for allow, expected in ((True, 200), (False, 403)):
         app = make_app()
@@ -313,7 +313,7 @@ async def test_local_mode_does_not_trust_private_networks_by_default(
     transport = httpx.ASGITransport(app=make_app(), client=("10.0.0.5", 4242))
     async with httpx.AsyncClient(transport=transport, base_url="http://localhost", headers=CLIENT) as c:
         assert (await c.get("/missions")).status_code == 403
-    monkeypatch.setenv("CELESTIA_LOCAL_ALLOWED_NETWORKS", "10.0.0.0/24, 172.30.0.0/24")
+    monkeypatch.setenv("COMPLIANCEOS_LOCAL_ALLOWED_NETWORKS", "10.0.0.0/24, 172.30.0.0/24")
     get_settings.cache_clear()
     async with httpx.AsyncClient(transport=transport, base_url="http://localhost", headers=CLIENT) as c:
         assert (await c.get("/missions")).status_code == 200
@@ -379,7 +379,7 @@ async def test_local_mode_changes_need_the_client_header() -> None:
 async def test_compose_service_name_is_an_allowed_host(monkeypatch: pytest.MonkeyPatch) -> None:
     async with httpx.AsyncClient(transport=httpx.ASGITransport(app=make_app()), base_url="http://api:8000") as c:
         assert (await c.get("/missions")).status_code == 403
-    monkeypatch.setenv("CELESTIA_LOCAL_ALLOWED_HOSTS", "api")
+    monkeypatch.setenv("COMPLIANCEOS_LOCAL_ALLOWED_HOSTS", "api")
     get_settings.cache_clear()
     async with httpx.AsyncClient(transport=httpx.ASGITransport(app=make_app()), base_url="http://api:8000") as c:
         assert (await c.get("/missions")).status_code == 200

@@ -14,7 +14,7 @@ reproduce, impact, and any suggested fix.
 - **Local mode** (the default) has no login by design, so the API checks that every request comes
   from this machine:
   - the peer, and any `X-Forwarded-For` hop, must be loopback or in
-    `CELESTIA_LOCAL_ALLOWED_NETWORKS`;
+    `COMPLIANCEOS_LOCAL_ALLOWED_NETWORKS`;
   - `Host` and `X-Forwarded-Host` must be local names, which refuses other machines and
     DNS-rebinding pages;
   - changes need the `X-ComplianceOS-Client` header, which blocks cross-site request forgery.

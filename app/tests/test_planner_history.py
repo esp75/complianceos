@@ -84,7 +84,7 @@ async def test_workspaces_do_not_see_each_others_events() -> None:
 
 @pytest.fixture(autouse=True)
 def local_mode(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
-    monkeypatch.setenv("CELESTIA_AUTH_MODE", "local")
+    monkeypatch.setenv("COMPLIANCEOS_AUTH_MODE", "local")
     get_settings.cache_clear()
     yield
     get_settings.cache_clear()

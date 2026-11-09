@@ -15,19 +15,22 @@ Settings come from the environment, or from a `.env` file next to `compose.yaml`
 ## Settings inside the API
 
 Compose maps the variables above into the API's environment. The API reads its own settings with the
-prefix `CELESTIA_` (the project's original name). Defined in
-[`app/app/config.py`](../../app/app/config.py).
+prefix `COMPLIANCEOS_`. Defined in [`app/app/config.py`](../../app/app/config.py).
+
+The old `CELESTIA_` prefix still works for now: at startup each `CELESTIA_*` variable fills its
+`COMPLIANCEOS_*` twin if that is unset, and the API logs one warning naming the old variables. A
+`.env` file read by the API directly is not translated, so rename its keys.
 
 | Setting | Default | Notes |
 |---|---|---|
-| `CELESTIA_KG_DSN` | Postgres URL | Database connection. Compose sets it. When no Postgres is reachable, the API falls back to an in-memory store. |
-| `CELESTIA_AUTH_MODE` | set by Compose (`local`) | Single-user local mode. Team mode is described in [`cross-cutting/deploy/`](../../cross-cutting/deploy/). |
-| `CELESTIA_LOCAL_ALLOWED_NETWORKS` | set by Compose | Networks allowed to use local mode. |
-| `CELESTIA_ANTHROPIC_API_KEY` | empty | Set from `ANTHROPIC_API_KEY` by Compose. |
-| `CELESTIA_ANTHROPIC_MODEL` | `claude-opus-4-7` | Model used for Claude-written briefs. |
-| `CELESTIA_ANTHROPIC_BASE_URL` | `https://api.anthropic.com` | Override for a different Anthropic endpoint. |
-| `CELESTIA_TRUST_SIGNING_SEED` | empty | Set from `TRUST_SIGNING_SEED` by Compose. |
-| `CELESTIA_PG_TEST_DSN` | unset | Enables the Postgres store tests. See [run the tests](../how-to/run-tests.md). |
+| `COMPLIANCEOS_KG_DSN` | Postgres URL | Database connection. Compose sets it. When no Postgres is reachable, the API falls back to an in-memory store. |
+| `COMPLIANCEOS_AUTH_MODE` | set by Compose (`local`) | Single-user local mode. Team mode is described in [`cross-cutting/deploy/`](../../cross-cutting/deploy/). |
+| `COMPLIANCEOS_LOCAL_ALLOWED_NETWORKS` | set by Compose | Networks allowed to use local mode. |
+| `COMPLIANCEOS_ANTHROPIC_API_KEY` | empty | Set from `ANTHROPIC_API_KEY` by Compose. |
+| `COMPLIANCEOS_ANTHROPIC_MODEL` | `claude-opus-4-7` | Model used for Claude-written briefs. |
+| `COMPLIANCEOS_ANTHROPIC_BASE_URL` | `https://api.anthropic.com` | Override for a different Anthropic endpoint. |
+| `COMPLIANCEOS_TRUST_SIGNING_SEED` | empty | Set from `TRUST_SIGNING_SEED` by Compose. |
+| `COMPLIANCEOS_PG_TEST_DSN` | unset | Enables the Postgres store tests. See [run the tests](../how-to/run-tests.md). |
 
 ## Ports
 
